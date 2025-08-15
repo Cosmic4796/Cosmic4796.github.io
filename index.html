@@ -14,7 +14,7 @@
             color: #e0e0e0; /* Light text */
             display: flex;
             min-height: 100vh;
-            background-image: url('https://cosmic4796.github.io/Background.jpg'); /* Your background image */
+            background-image: url('https://funbot.github.io/Background.jpg'); /* Your background image */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -74,7 +74,7 @@
             padding: 12px 20px; /* Increased padding */
             border-radius: 10px; /* Softer, more modern corners */
             position: relative;
-            overflow: hidden;
+            overflow: hidden; /* For pseudo-elements */
             box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for links */
         }
         .sidebar ul li a::before {
@@ -104,11 +104,13 @@
             padding: 30px; /* More overall padding */
             display: flex;
             flex-direction: column;
-            align-items: center;
+            /* align-items: center; */ /* Removed to allow content to naturally align to left within max-width */
             margin-left: 280px; /* Adjust content margin for wider sidebar */
             position: relative;
             z-index: 5;
-            padding-bottom: 100px; /* More space for the footer */
+            padding-bottom: 120px; /* Increased space for the footer to prevent overlap */
+            width: calc(100% - 280px); /* Ensure main content takes remaining width */
+            box-sizing: border-box; /* Include padding in width calculation */
         }
 
         .container {
@@ -192,24 +194,20 @@
         .footer {
             text-align: center;
             padding: 40px 20px; /* Increased padding */
-            margin-top: 60px; /* More margin from content */
+            margin-top: auto; /* Pushes footer to the bottom of the flex container */
             background-color: rgba(45, 0, 62, 0.7); /* More transparent deep purple for footer */
             backdrop-filter: blur(8px); /* Blur effect for footer */
             -webkit-backdrop-filter: blur(8px); /* Safari support */
             color: #AAAAAA;
-            font-size: 0.95em; /* Slightly larger footer font */
-            width: calc(100% - 280px); /* Adjust width for sidebar */
-            position: fixed; /* Make footer fixed */
-            bottom: 0;
-            right: 0;
-            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.9); /* Stronger shadow */
+            font-size: 0.95em;
+            width: 100%; /* Take full width of its parent */
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.9);
             box-sizing: border-box;
-            border-top: 1px solid rgba(255, 31, 142, 0.25); /* Slightly stronger pink border */
-            left: 280px; /* Align with main content */
+            border-top: 1px solid rgba(255, 31, 142, 0.25);
         }
         .footer a {
             color: #00F8FF;
-            text-shadow: 0 0 8px rgba(0, 248, 255, 0.5); /* Stronger glow for footer links */
+            text-shadow: 0 0 8px rgba(0, 248, 255, 0.5);
         }
     </style>
 </head>
