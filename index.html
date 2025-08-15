@@ -10,9 +10,20 @@
 body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#121212; color:#e0e0e0; overflow-x:hidden; scroll-behavior:smooth; }
 header { background: rgba(20,20,20,0.9); padding:15px; text-align:center; position: relative; z-index: 1000; }
 header h1 { font-size:2rem; color:#00bfff; margin-bottom:10px; }
-header .nav-toggle { display:none; font-size:1.8rem; cursor:pointer; position:absolute; top:15px; right:20px; color:#00bfff; }
 
-/* === Navigation === */
+/* Hamburger Toggle */
+header .nav-toggle {
+    display:none;
+    font-size:1.8rem;
+    cursor:pointer;
+    position:fixed;
+    top:10px;
+    right:10px;
+    z-index:2000;
+    color:#00bfff;
+}
+
+/* Navigation */
 nav { display:flex; justify-content:center; flex-wrap:wrap; gap:15px; margin-top:10px; transition:0.3s; }
 nav a {
     color:#fff;
@@ -23,45 +34,51 @@ nav a {
     transition:0.3s, box-shadow 0.3s;
 }
 nav a:hover { background:#333; box-shadow: 0 0 15px #00bfff; }
-nav.active { display:flex; flex-direction:column; align-items:center; }
 
-/* === Sections === */
+/* Invite & Support buttons pop */
+nav a#openInvite, nav a[href*="discord.gg"] {
+    background:#ff4500;
+    color:#fff;
+    font-weight:bold;
+}
+nav a#openInvite:hover, nav a[href*="discord.gg"]:hover {
+    box-shadow: 0 0 20px #ff4500;
+    background:#e03e00;
+}
+
+nav.active { display:flex; flex-direction:column; align-items:center; position:fixed; top:50px; left:0; width:100%; background:#121212; padding:10px 0; z-index:1500; }
+
+/* Sections */
 section { padding:50px 10%; text-align:center; opacity:0; transform: translateY(20px); transition:all 0.8s ease; }
 section.visible { opacity:1; transform: translateY(0); }
 h2 { margin-bottom:20px; color:#fff; }
-.features, .commands { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
 
-/* === Feature Card Styling === */
-.card {
-    background:#1e1e1e; 
-    padding:20px; 
-    border-radius:10px; 
-    max-width:300px; 
-    flex:1 1 calc(50% - 20px);
-    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+/* Features & Commands Grid */
+.features, .commands {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    justify-items: center;
 }
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0 20px #00bfff;
-    background:#272727;
-}
+.card { background:#1e1e1e; padding:20px; border-radius:10px; max-width:250px; flex:1 1 calc(50% - 20px); transition: transform 0.3s, box-shadow 0.3s, background 0.3s; }
+.card:hover { transform: translateY(-5px); box-shadow: 0 0 20px #00bfff; background:#272727; }
 
-/* === Buttons === */
+/* Buttons */
 .btn { background:#0077ff; color:white; padding:12px 24px; border:none; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-block; margin-top:10px; transition:0.3s; }
 .btn:hover { background:#005fcc; }
 
-/* === Footer === */
+/* Footer */
 footer { background:#0d0d0d; padding:20px; text-align:center; font-size:0.9em; }
 
-/* === Particle Background === */
+/* Particle Canvas */
 #particleCanvas { position:fixed; top:0; left:0; z-index:-1; }
 
-/* === Accordion === */
+/* Accordion */
 .accordion { background:#222; color:#f0f0f0; cursor:pointer; padding:18px; width:100%; border:none; text-align:left; outline:none; transition:0.3s; font-size:1.1rem; margin-bottom:5px; border-radius:8px; }
 .active, .accordion:hover { background:#333; }
 .panel { padding:0 18px; display:none; background:rgba(28,28,28,0.9); overflow:hidden; border-radius:8px; margin-bottom:15px; }
 
-/* === Mobile Styles === */
+/* Mobile Styles */
 @media (max-width:768px) {
     header h1 { font-size:1.6rem; }
     nav { display:none; width:100%; flex-direction:column; gap:10px; margin-top:0; }
@@ -97,11 +114,11 @@ footer { background:#0d0d0d; padding:20px; text-align:center; font-size:0.9em; }
 <section id="features">
     <h2>🌟 Features</h2>
     <div class="features">
-        <div class="card">🔹 Utilities – Server info, reminders, and handy tools.</div>
-        <div class="card">🎉 Fun & Games – Trivia, memes, jokes, and interactive games.</div>
-        <div class="card">💰 Economy – Earn, trade, and climb leaderboards.</div>
-        <div class="card">📊 Information – Weather, stats, and quick lookups.</div>
-        <div class="card">🤝 Social – Leveling, profiles, and community engagement.</div>
+        <div class="card">🔹 Utilities – Server info, reminders, and handy tools to make your server life easier.</div>
+        <div class="card">🎉 Fun & Games – Trivia, memes, jokes, and interactive games to entertain your members.</div>
+        <div class="card">💰 Economy – Earn, trade, and climb leaderboards for a fun server economy experience.</div>
+        <div class="card">📊 Information – Quick lookups like weather, statistics, and other utilities.</div>
+        <div class="card">🤝 Social – Leveling, profiles, and community engagement features.</div>
     </div>
 </section>
 
@@ -121,18 +138,18 @@ footer { background:#0d0d0d; padding:20px; text-align:center; font-size:0.9em; }
 <section id="tos">
     <h2>📜 Terms of Service</h2>
     <button class="accordion">General Terms</button>
-    <div class="panel"><p>By using Fun.Bot, you agree to abide by all applicable laws and regulations. Unauthorized copying or reverse-engineering is strictly prohibited.</p></div>
+    <div class="panel"><p>By accessing or using Fun.Bot, you agree to comply with all applicable laws and regulations. You may not reproduce, distribute, or reverse-engineer any part of Fun.Bot’s code, services, or content without express permission. Any unauthorized use may result in termination of access and potential legal action.</p></div>
     <button class="accordion">User Responsibilities</button>
-    <div class="panel"><p>Do not use the bot for spamming, harassment, automation abuse, or illegal activity.</p></div>
+    <div class="panel"><p>Users are responsible for using Fun.Bot in a manner that respects the community and the law. Activities including spam, harassment, automation abuse, or engaging in illegal activities are strictly prohibited. Fun.Bot reserves the right to restrict or remove access for violations.</p></div>
 </section>
 
 <!-- Privacy Section -->
 <section id="privacy">
     <h2>🔒 Privacy Policy</h2>
     <button class="accordion">Data Collection</button>
-    <div class="panel"><p>Fun.Bot collects minimal data necessary to operate commands.</p></div>
+    <div class="panel"><p>Fun.Bot collects minimal information strictly necessary to operate its features, including basic command usage and temporary session data. We do not sell or share personal user data with third parties.</p></div>
     <button class="accordion">Data Retention</button>
-    <div class="panel"><p>Data is retained only as necessary and can be deleted upon request.</p></div>
+    <div class="panel"><p>Collected data is stored only for as long as necessary to provide bot functionality. Users may request deletion of any retained data at any time. Fun.Bot takes reasonable security measures to protect user information.</p></div>
 </section>
 
 <!-- Footer -->
@@ -173,7 +190,7 @@ openInvite.addEventListener('click', e => { e.preventDefault(); modal.style.disp
 closeModal.addEventListener('click', () => { modal.style.display='none'; });
 window.addEventListener('click', e => { if(e.target === modal) modal.style.display='none'; });
 
-// Particle Background with interactive lines
+// Particle Background
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
@@ -187,60 +204,24 @@ window.addEventListener('mousemove', e => { mouse.x=e.x; mouse.y=e.y; });
 window.addEventListener('mouseleave', e => { mouse.x=null; mouse.y=null; });
 
 class Particle {
-    constructor(){
-        this.x = Math.random()*canvas.width;
-        this.y = Math.random()*canvas.height;
-        this.size = Math.random()*2+1;
-        this.vx = Math.random()*1-0.5;
-        this.vy = Math.random()*1-0.5;
-    }
+    constructor(){ this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*2+1; this.vx = Math.random()*1-0.5; this.vy = Math.random()*1-0.5; }
     update(){
-        this.x += this.vx;
-        this.y += this.vy;
-        if(this.x < 0 || this.x > canvas.width) this.vx*=-1;
-        if(this.y < 0 || this.y > canvas.height) this.vy*=-1;
-        if(mouse.x && mouse.y){
-            let dx = mouse.x - this.x;
-            let dy = mouse.y - this.y;
-            let dist = Math.sqrt(dx*dx + dy*dy);
-            if(dist < 100){ this.x += dx*0.01; this.y += dy*0.01; }
-        }
+        this.x += this.vx; this.y += this.vy;
+        if(this.x<0||this.x>canvas.width) this.vx*=-1;
+        if(this.y<0||this.y>canvas.height) this.vy*=-1;
+        if(mouse.x && mouse.y){ let dx=mouse.x-this.x; let dy=mouse.y-this.y; let dist=Math.sqrt(dx*dx+dy*dy); if(dist<100){ this.x+=dx*0.01; this.y+=dy*0.01; } }
     }
-    draw(){
-        ctx.fillStyle='#00bfff';
-        ctx.beginPath();
-        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        ctx.fill();
-    }
+    draw(){ ctx.fillStyle='#00bfff'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
 }
-
-function initParticles(){particles=[];for(let i=0;i<numParticles;i++) particles.push(new Particle());}
-function connectParticles(){
-    for(let a=0;a<particles.length;a++){
-        for(let b=a;b<particles.length;b++){
-            let dx=particles[a].x-particles[b].x;
-            let dy=particles[a].y-particles[b].y;
-            let dist=Math.sqrt(dx*dx+dy*dy);
-            if(dist<100){
-                ctx.strokeStyle='rgba(0,191,255,'+(1-dist/100)+')';
-                ctx.lineWidth=1;
-                ctx.beginPath();
-                ctx.moveTo(particles[a].x,particles[a].y);
-                ctx.lineTo(particles[b].x,particles[b].y);
-                ctx.stroke();
-            }
-        }
-    }
-}
-function animateParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.update();p.draw();});connectParticles();requestAnimationFrame(animateParticles);}
+function initParticles(){ particles=[]; for(let i=0;i<numParticles;i++) particles.push(new Particle()); }
+function connectParticles(){ for(let a=0;a<particles.length;a++){ for(let b=a;b<particles.length;b++){ let dx=particles[a].x-particles[b].x; let dy=particles[a].y-particles[b].y; let dist=Math.sqrt(dx*dx+dy*dy); if(dist<100){ ctx.strokeStyle='rgba(0,191,255,'+(1-dist/100)+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(particles[a].x,particles[a].y); ctx.lineTo(particles[b].x,particles[b].y); ctx.stroke(); } } } }
+function animateParticles(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); connectParticles(); requestAnimationFrame(animateParticles);}
 window.addEventListener('resize',()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; initParticles(); });
 initParticles(); animateParticles();
 
 // Fade-in sections
 const sections = document.querySelectorAll('section');
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('visible'); } });
-},{ threshold: 0.1 });
+const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('visible'); } }); },{ threshold:0.1 });
 sections.forEach(section => observer.observe(section));
 </script>
 </body>
