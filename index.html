@@ -1,424 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fun.Bot - Terms of Service & Privacy Policy</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.8;
-            margin: 0;
-            padding: 0;
-            background-color: #0d001e; /* Deep dark violet retrowave background */
-            color: #e0e0e0; /* Light text */
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-            z-index: 1;
-            overflow-x: hidden; /* Prevent horizontal scroll */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fun.Bot - Discord Bot</title>
+<style>
+/* === Base Styles === */
+* {margin:0; padding:0; box-sizing:border-box;}
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0f0f0f;
+    color: #f0f0f0;
+    line-height: 1.6;
+    overflow-x: hidden;
+    position: relative;
+}
 
-        /* Subtle grid overlay for retrowave vibe (lighter opacity) */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(to right, rgba(255, 31, 142, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 248, 255, 0.05) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-            opacity: 0.8; /* Keep it subtle */
-            pointer-events: none; /* Allow interaction with elements below */
-        }
+/* === Particle Canvas === */
+#particles {
+    position: fixed;
+    top:0; left:0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    background: linear-gradient(135deg, #1c1c1c, #2c2c2c);
+}
 
-        .sidebar {
-            width: 280px;
-            background-color: rgba(45, 0, 62, 0.75); /* Slight adjustment in opacity */
-            backdrop-filter: blur(6px); /* Slightly less blur for performance */
-            -webkit-backdrop-filter: blur(6px); /* Safari support */
-            padding: 30px 20px;
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.8); /* Adjusted shadow */
-            flex-shrink: 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            top: 0;
-            left: 0;
-            z-index: 10;
-            border-right: 1px solid rgba(0, 248, 255, 0.1); /* Lighter border */
-        }
-        .sidebar h2 {
-            color: #00F8FF;
-            margin-top: 0;
-            margin-bottom: 40px;
-            font-size: 1.8em;
-            text-shadow: 0 0 10px rgba(0, 248, 255, 0.6); /* Adjusted neon glow */
-            text-align: center;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            margin-bottom: 15px;
-        }
-        .sidebar ul li a {
-            color: #E0E0E0;
-            text-decoration: none;
-            font-size: 1.1em;
-            transition: all 0.3s ease-in-out;
-            display: block;
-            padding: 12px 20px;
-            border-radius: 8px; /* Less round */
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* Adjusted subtle shadow */
-            background-color: rgba(255, 31, 142, 0.03); /* Even lighter pink tint */
-        }
-        .sidebar ul li a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 248, 255, 0.1), transparent); /* Lighter highlight gradient */
-            transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Slightly faster animation */
-            z-index: -1;
-        }
-        .sidebar ul li a:hover::before {
-            left: 0;
-        }
-        .sidebar ul li a:hover {
-            color: #FF1F8E;
-            background-color: rgba(255, 31, 142, 0.1); /* Lighter hover background */
-            text-shadow: 0 0 7px rgba(255, 31, 142, 0.6); /* Adjusted neon glow on hover */
-            transform: translateY(-2px);
-            box-shadow: 0 5px 12px rgba(0,0,0,0.5); /* Adjusted shadow on hover */
-        }
+/* === Header === */
+header {
+    background-color: rgba(0,0,0,0.85);
+    padding: 25px;
+    text-align: center;
+    border-bottom: 2px solid #444;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+header h1 { font-size: 3rem; color: #00bfff; }
+header p { margin-top:10px; font-size:1.2rem; color:#ccc; }
 
-        /* Custom Scrollbar for Sidebar (Webkit) */
-        .sidebar::-webkit-scrollbar {
-            width: 10px; /* Thinner scrollbar */
-        }
-        .sidebar::-webkit-scrollbar-track {
-            background: #1a003a; /* Darker track to match background */
-            border-radius: 8px;
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background-color: #FF1F8E; /* Vibrant pink thumb */
-            border-radius: 8px;
-            border: 2px solid #1a003a; /* Thinner border matches track */
-            box-shadow: inset 0 0 5px rgba(0, 248, 255, 0.4); /* Subtle glow */
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background-color: #00F8FF; /* Cyan on hover */
-            border: 2px solid #1a003a;
-            box-shadow: inset 0 0 7px rgba(255, 31, 142, 0.6); /* Adjusted glow on hover */
-        }
+/* === Nav === */
+nav {
+    display:flex; justify-content:center; background-color:#222; padding:10px 0; border-bottom:1px solid #333;
+}
+nav a {
+    color:#f0f0f0; text-decoration:none; margin:0 25px; font-weight:bold; transition:.3s;
+}
+nav a:hover { color:#00bfff; }
 
+/* === Section Cards === */
+section {
+    padding:50px 20px;
+    max-width:1000px;
+    margin:auto;
+    backdrop-filter: blur(10px);
+    background: rgba(20,20,20,0.7);
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+h2 { color:#00bfff; margin-bottom:20px; font-size:2.2rem; border-bottom:1px solid #444; padding-bottom:10px;}
+p { margin-bottom:20px; }
 
-        .main-content {
-            flex-grow: 1;
-            padding: 40px; /* Increased overall padding */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-left: 280px;
-            position: relative;
-            z-index: 5;
-            padding-bottom: 80px; /* More space for the footer */
-            width: calc(100% - 280px);
-            box-sizing: border-box;
-        }
+/* === Accordion === */
+.accordion {
+    background-color:#222; color:#f0f0f0; cursor:pointer; padding:18px; width:100%;
+    border:none; text-align:left; outline:none; transition:0.3s; font-size:1.1rem; margin-bottom:5px;
+    border-radius:8px;
+}
+.active, .accordion:hover { background-color:#333; }
+.panel { padding:0 18px; display:none; background-color:rgba(28,28,28,0.9); overflow:hidden; border-radius:8px; margin-bottom:15px; }
 
-        .content-card {
-            max-width: 900px; /* Slightly narrower cards */
-            width: 100%;
-            margin: 30px auto; /* More margin between cards for separation */
-            background: rgba(42, 0, 62, 0.7); /* Adjusted opacity for more background visibility */
-            backdrop-filter: blur(10px); /* Adjusted blur for performance/effect balance */
-            -webkit-backdrop-filter: blur(10px); /* Safari support */
-            padding: 45px; /* Adjusted padding */
-            border-radius: 12px; /* Less round */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); /* Adjusted shadow */
-            box-sizing: border-box;
-            border: 1px solid rgba(0, 248, 255, 0.18); /* Lighter border */
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Adjusted transition speed */
-        }
-        .content-card:hover {
-            transform: translateY(-6px); /* Adjusted lift on hover */
-            box-shadow: 0 12px 40px rgba(0,0,0,0.85); /* Adjusted shadow on hover */
-        }
-
-        h1, h2, h3 {
-            color: #00F8FF;
-            text-shadow: 0 0 10px rgba(0, 248, 255, 0.7); /* Adjusted neon glow */
-            margin-top: 1.5em; /* Adjusted space above headings */
-            margin-bottom: 0.8em; /* Adjusted space below headings */
-            letter-spacing: 0.8px;
-        }
-        h1 {
-            font-size: 3em;
-            text-align: center;
-            margin-bottom: 1.5em;
-            color: #FF1F8E;
-            text-shadow: 0 0 18px rgba(255, 31, 142, 0.9); /* Adjusted vibrant pink neon glow */
-            text-transform: uppercase;
-        }
-        h2 {
-            font-size: 2.2em; /* Slightly smaller section titles */
-            border-bottom: 1px solid rgba(0, 248, 255, 0.25); /* Adjusted line under headings */
-            padding-bottom: 8px;
-            margin-bottom: 1.5em;
-        }
-        h3 {
-            font-size: 1.7em; /* Slightly smaller sub-headings */
-            margin-top: 1.8em; /* Adjusted space above sub-headings */
-            border-bottom: 1px dashed rgba(255, 31, 142, 0.2); /* Lighter dashed line */
-            padding-bottom: 5px;
-            margin-bottom: 1em;
-        }
-        p {
-            margin-bottom: 1.2em;
-            line-height: 1.9;
-            text-align: justify; /* Justify text for a cleaner look */
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin-left: 0;
-            margin-bottom: 1.5em;
-            color: #e0e0e0;
-        }
-        ul li {
-            position: relative;
-            padding-left: 25px;
-            margin-bottom: 0.8em;
-        }
-        ul li::before {
-            content: '►';
-            position: absolute;
-            left: 0;
-            color: #00F8FF;
-            font-size: 0.8em;
-            top: 50%;
-            transform: translateY(-50%);
-            text-shadow: 0 0 4px rgba(0, 248, 255, 0.4); /* Adjusted glow */
-        }
-        a {
-            color: #FF79C6;
-            text-decoration: none;
-            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
-        }
-        a:hover {
-            color: #8C00FF;
-            text-decoration: underline;
-            text-shadow: 0 0 7px rgba(140, 0, 255, 0.6); /* Adjusted neon glow on hover */
-        }
-        .last-updated {
-            font-style: italic;
-            color: #AAAAAA; /* Adjusted grey for date */
-            text-align: center;
-            margin-top: -0.8em;
-            margin-bottom: 40px;
-            font-size: 1em;
-            text-shadow: 0 0 2px rgba(255,255,255,0.1); /* Adjusted subtle glow */
-        }
-        hr {
-            border: 0;
-            height: 3px;
-            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, #FF1F8E, rgba(0, 248, 255, 0));
-            margin: 60px 0;
-            box-shadow: 0 0 15px rgba(255, 31, 142, 0.7); /* Adjusted glowing effect */
-        }
-        .footer {
-            text-align: center;
-            padding: 40px 20px;
-            margin-top: 60px; /* Ensure space from last card */
-            background-color: rgba(45, 0, 62, 0.75); /* Adjusted opacity */
-            backdrop-filter: blur(6px); /* Adjusted blur for footer */
-            -webkit-backdrop-filter: blur(6px); /* Safari support */
-            color: #AAAAAA;
-            font-size: 0.95em;
-            width: 100%;
-            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.8);
-            box-sizing: border-box;
-            border-top: 1px solid rgba(255, 31, 142, 0.2); /* Lighter pink border */
-        }
-        .footer a {
-            color: #00F8FF;
-            text-shadow: 0 0 7px rgba(0, 248, 255, 0.4); /* Adjusted glow for footer links */
-        }
-    </style>
+/* === Footer === */
+footer {
+    background-color:#111; text-align:center; padding:20px; border-top:2px solid #444; font-size:0.9rem; color:#888;
+}
+</style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Navigation</h2>
-        <ul>
-            <li><a href="#terms-of-service-title">Terms of Service</a></li>
-            <li><a href="#acceptance-of-terms">1. Acceptance of Terms</a></li>
-            <li><a href="#description-of-service">2. Description of Service</a></li>
-            <li><a href="#user-conduct">3. User Conduct</a></li>
-            <li><a href="#data-collection-usage-tos">4. Data Collection and Usage (ToS)</a></li>
-            <li><a href="#disclaimer-of-warranties">5. Disclaimer of Warranties</a></li>
-            <li><a href="#limitation-of-liability">6. Limitation of Liability</a></li>
-            <li><a href="#modifications-to-terms">7. Modifications to Terms</a></li>
-            <li><a href="#privacy-policy-title">Privacy Policy</a></li>
-            <li><a href="#introduction">1. Introduction</a></li>
-            <li><a href="#information-we-collect">2. Information We Collect</a></li>
-            <li><a href="#how-we-use-your-information">3. How We Use Your Information</a></li>
-            <li><a href="#data-storage-security">4. Data Storage and Security</a></li>
-            <li><a href="#sharing-of-information">5. Sharing of Information</a></li>
-            <li><a href="#third-party-services">6. Third-Party Services</a></li>
-            <li><a href="#your-choices">7. Your Choices</a></li>
-            <li><a href="#changes-to-privacy-policy">8. Changes to This Privacy Policy</a></li>
-            <li><a href="#contact-us">Contact Us</a></li>
-        </ul>
+
+<canvas id="particles"></canvas>
+
+<header>
+    <h1>Fun.Bot</h1>
+    <p>Your ultimate Discord entertainment bot.</p>
+</header>
+
+<nav>
+    <a href="#tos">Terms of Service</a>
+    <a href="#privacy">Privacy Policy</a>
+    <a href="#copyright">Copyright</a>
+</nav>
+
+<section id="tos">
+    <h2>Terms of Service</h2>
+    <button class="accordion">General Terms</button>
+    <div class="panel">
+        <p>By using Fun.Bot ("the Bot"), you explicitly agree to these Terms of Service and all applicable Discord regulations. All intellectual property, including source code, algorithms, and website content, is strictly proprietary. Unauthorized copying, reverse engineering, distribution, or derivative works of the Bot or website is strictly prohibited under DMCA, international copyright, and computer crime laws.</p>
     </div>
-    <div class="main-content">
-        <!-- Terms of Service Section -->
-        <div class="content-card">
-            <h1 id="terms-of-service-title">Fun.Bot - Terms of Service</h1>
-            <p class="last-updated">Last Updated: August 15, 2025</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="acceptance-of-terms">1. Acceptance of Terms</h2>
-            <p>By integrating Fun.Bot into your Discord server or engaging with any of its functionalities, you acknowledge and consent to be legally bound by these Terms of Service ("Terms"). Should you dissent from these Terms, refrain from deploying or utilizing Fun.Bot.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="description-of-service">2. Description of Service</h2>
-            <p>Fun.Bot is a Discord bot engineered to deliver a comprehensive suite of entertainment, utility, and moderation functionalities within Discord server environments. The Service's capabilities encompass, but are not restricted to, interactive gaming modules, automated moderation commands, informational retrieval protocols, and customizable server entry notifications.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="user-conduct">3. User Conduct</h2>
-            <p>You covenant to operate Fun.Bot in a responsible manner, strictly adhering to Discord's prevailing Terms of Service and Community Guidelines. You are expressly prohibited from utilizing Fun.Bot to:</p>
-            <ul>
-                <li>Transgress any pertinent statutory provisions or regulatory frameworks.</li>
-                <li>Propagate discriminatory content, hate speech, or harassment.</li>
-                <li>Disseminate malicious software, malware, or illicit digital content.</li>
-                <li>Initiate spam, flooding, or any disruptive activities detrimental to Discord server operations.</li>
-                <li>Attempt to effectuate unauthorized access to Fun.Bot's underlying systems or proprietary data repositories.</li>
-            </ul>
-        </div>
-
-        <div class="content-card">
-            <h2 id="data-collection-usage-tos">4. Data Collection and Usage</h2>
-            <p>Fun.Bot engages in the acquisition of minimal data strictly requisite for its operational efficacy. For an exhaustive exposition on data aggregation, retention, and utilization protocols, kindly refer to our comprehensive Privacy Policy articulated hereunder.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="disclaimer-of-warranties">5. Disclaimer of Warranties</h2>
-            <p>Fun.Bot is furnished "as is" and "as available" without the provision of any explicit or implicit warranties, inclusive of, but not restricted to, implied warranties of merchantability, suitability for a particular objective, or non-infringement. We proffer no guarantee that Fun.Bot's operational continuum will be uninterrupted, devoid of errors, or uninfected by deleterious components.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="limitation-of-liability">6. Limitation of Liability</h2>
-            <p>Under no circumstances shall Fun.Bot or its developmental entities be held culpable for any direct, indirect, incidental, special, consequential, or punitive damages, including, without limitation, economic losses, data corruption, usage deprivation, reputational impairment, or other intangible detriments, directly or indirectly attributable to (i) your access to, engagement with, or inability to access or engage with the Service; (ii) any conduct or content originating from third-party entities within the Service; (iii) any data or content acquired from the Service; and (iv) unauthorized intrusion, utilization, or modification of your data transmissions or content, irrespective of whether such culpability is predicated on warranty, contractual obligation, tortious act (inclusive of negligence), or any other legal doctrine, and notwithstanding prior advisement regarding the potential for such damages, even if a stipulated remedy herein fails of its fundamental purpose.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="modifications-to-terms">7. Modifications to Terms</h2>
-            <p>We retain the unilateral prerogative to revise these Terms at any juncture. Notification of such revisions will be disseminated through an update to the "Last Updated" timestamp affixed at the apex of this document. Your sustained utilization of Fun.Bot subsequent to any such amendments constitutes your unequivocal acceptance of the revised Terms.</p>
-        </div>
-
-        <hr>
-
-        <!-- Privacy Policy Section -->
-        <div class="content-card">
-            <h1 id="privacy-policy-title">Fun.Bot - Privacy Policy</h1>
-            <p class="last-updated">Last Updated: August 15, 2025</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="introduction">1. Introduction</h2>
-            <p>This Privacy Policy delineates the methodologies by which Fun.Bot ("we," "us," or "our") undertakes the collection, processing, utilization, and disclosure of information concomitant with your engagement with our Discord bot, Fun.Bot (hereinafter referred to as the "Service").</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="information-we-collect">2. Information We Collect</h2>
-            <p>Fun.Bot's data acquisition strategy is restricted to the minimal dataset indispensable for the provision of its core services. The categories of information subject to collection may encompass:</p>
-            <ul>
-                <li><strong>Server Identifiers (IDs) and Channel Identifiers (IDs):</strong> Utilized for the granular identification of command invocation contexts and to facilitate precise algorithmic responses within designated Discord servers and channels. This metadata is exclusively purposed for operational requirements (e.g., persistent storage of configuration parameters for features such as custom command prefixes or server welcome messages) and maintains no direct linkage to individual user identities.</li>
-                <li><strong>User Identifiers (IDs) for Specific Functionalities:</strong> In scenarios necessitating user disambiguation (e.g., maintaining score aggregates for integrated gaming modules, logging of moderation actions), Fun.Bot may effectuate the transient or persistent storage of User IDs. This particular data segment is solely leveraged for the intrinsic functionality of the specified feature and is not disseminated to external third-party entities.</li>
-                <li><strong>Command Telemetry Data:</strong> Aggregated, anonymized statistical data pertaining to command invocation frequency (e.g., quantitative metrics on command usage patterns) may be systematically collected to inform insights regarding feature popularity and to optimize the bot's functional architecture. This dataset is compiled in an aggregated format and does not enable the identification of individual users or their discrete actions.</li>
-            </ul>
-            <p>Conspicuously, Fun.Bot explicitly disclaims the collection of:</p>
-            <ul>
-                <li>The textual content of Discord messages (unless explicitly embedded within a command payload, in which case it is processed in real-time and not subject to persistent storage).</li>
-                <li>Personally identifiable information (PII) such as real names, electronic mail addresses, or Internet Protocol (IP) addresses.</li>
-            </ul>
-        </div>
-
-        <div class="content-card">
-            <h2 id="how-we-use-your-information">3. How We Use Your Information</h2>
-            <p>The information meticulously collected by Fun.Bot is exclusively allocated for the subsequent operational objectives:</p>
-            <ul>
-                <li>To enable and sustain the intrinsic functionalities and features inherent to Fun.Bot.</li>
-                <li>To iteratively enhance and optimize the Service's performance metrics and overall functionality.</li>
-                <li>To derive insights into the Service's usage paradigms through the analysis of aggregated, anonymized data.</li>
-                <li>To rigorously enforce the stipulations outlined in our Terms of Service.</li>
-            </ul>
-        </div>
-
-        <div class="content-card">
-            <h2 id="data-storage-security">4. Data Storage and Security</h2>
-            <p>We implement industry-standard security protocols and reasonable measures to safeguard collected information against unauthorized access, illicit disclosure, data alteration, or catastrophic destruction. Data assets are maintained on secure server infrastructure, with access rigorously restricted to authorized personnel only. While we endeavor to fortify your digital privacy, it is imperative to acknowledge that no method of data transmission across the Internet or electronic storage mechanism can guarantee absolute security.</p>
-            <p>Data elements such as Server IDs and, where contextually applicable, User IDs, may be retained for the duration of Fun.Bot's active deployment on a server or for the requisite period necessary to ensure the continuous functioning of a specific feature. Subsequent to Fun.Bot's de-integration from a server, associated server-specific data will be systematically purged within a commercially reasonable timeframe, unless legal mandates stipulate otherwise.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="sharing-of-information">5. Sharing of Information</h2>
-            <p>We adhere to a stringent policy of non-disclosure: we do not vend, trade, or otherwise transfer your information to external third parties. We may, however, share aggregated, anonymized usage statistics with reputable third-party analytics providers for the exclusive purpose of service improvement; this aggregated data is meticulously anonymized and cannot be reverse-engineered to identify individual users.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="third-party-services">6. Third-Party Services</h2>
-            <p>Fun.Bot's operational architecture interfaces with Discord's Application Programming Interface (API) to deliver its functionalities. Your engagement with the Discord platform is governed by Discord's own comprehensive Terms of Service and Privacy Policy. We expressly disclaim responsibility for the data handling practices or operational methodologies of Discord or any other external third-party services.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="your-choices">7. Your Choices</h2>
-            <p>The act of removing Fun.Bot from your Discord server will effectuate the cessation of all subsequent data collection by the bot pertaining to that specific server instance. For inquiries or concerns regarding discrete data associated with your User ID (e.g., retained game scores), please initiate communication utilizing the contact modalities enumerated in the section below.</p>
-        </div>
-
-        <div class="content-card">
-            <h2 id="changes-to-privacy-policy">8. Changes to This Privacy Policy</h2>
-            <p>We may periodically revise this Privacy Policy. All amendments will be publicized through the posting of the updated Privacy Policy on this digital resource and a corresponding revision of the "Last Updated" timestamp. Users are advised to regularly review this Privacy Policy for any modifications. Revisions to this Privacy Policy become effective immediately upon their promulgation on this page.</p>
-        </div>
-        
-        <div class="footer">
-            <h2 id="contact-us">Contact Us</h2>
-            <p>For any inquiries pertaining to these Terms of Service or the Privacy Policy, please establish communication through our designated Discord support server (if available) or via [Your Contact Email/Method Here].</p>
-            <p>&copy; 2023 Fun.Bot. All rights reserved.</p>
-        </div>
+    <button class="accordion">User Responsibilities</button>
+    <div class="panel">
+        <p>Users must not utilize the Bot for spam, harassment, automation abuse, or any illegal activity. Violation may result in immediate account bans and potential civil and criminal liability. The Bot’s developers retain the right to enforce these terms through all available legal means.</p>
     </div>
+</section>
 
-    <script>
-        document.querySelectorAll('.sidebar ul li a').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
+<section id="privacy">
+    <h2>Privacy Policy</h2>
+    <button class="accordion">Data Collection</button>
+    <div class="panel">
+        <p>The Bot collects only minimal data required for functionality. This may include Discord IDs and server IDs to execute commands. No personal data is shared with third parties without explicit consent. All data transmissions are encrypted and securely stored.</p>
+    </div>
+    <button class="accordion">Data Retention</button>
+    <div class="panel">
+        <p>Data is retained only for operational purposes. Users may request deletion at any time. Legal obligations or security audits may require certain retention despite deletion requests.</p>
+    </div>
+</section>
 
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
+<section id="copyright">
+    <h2>Copyright Information</h2>
+    <p>© 2025 Fun.Bot. All rights reserved. Unauthorized reproduction, redistribution, or use of this website or the Bot’s source code is strictly prohibited. Violators may face civil and criminal prosecution under DMCA and applicable international copyright law.</p>
+</section>
 
-                if (targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
+<footer>
+    Fun.Bot | Dark Mode Edition | All rights reserved.
+</footer>
+
+<script>
+// === Accordion functionality ===
+(function(){
+    const accordions = document.querySelectorAll('.accordion');
+    accordions.forEach(acc=>{
+        acc.addEventListener('click', function(){
+            this.classList.toggle('active');
+            const panel = this.nextElementSibling;
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
         });
-    </script>
+    });
+})();
+
+// === Smooth scroll ===
+document.querySelectorAll('nav a').forEach(anchor=>{
+    anchor.addEventListener('click', function(e){
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+    });
+});
+
+// === Disable right-click, copy, inspect (basic prevention) ===
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e=>{
+    if(e.ctrlKey && (e.key==='u' || e.key==='s' || e.key==='c' || e.key==='Shift')) e.preventDefault();
+});
+
+// === Particle Background ===
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particlesArray = [];
+const numberOfParticles = 80;
+
+class Particle {
+    constructor(){
+        this.x = Math.random()*canvas.width;
+        this.y = Math.random()*canvas.height;
+        this.size = Math.random()*3 + 1;
+        this.speedX = Math.random()*1 - 0.5;
+        this.speedY = Math.random()*1 - 0.5;
+    }
+    update(){
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if(this.x > canvas.width) this.x = 0;
+        if(this.x < 0) this.x = canvas.width;
+        if(this.y > canvas.height) this.y = 0;
+        if(this.y < 0) this.y = canvas.height;
+    }
+    draw(){
+        ctx.fillStyle = '#00bfff';
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function initParticles(){
+    particlesArray = [];
+    for(let i=0;i<numberOfParticles;i++){
+        particlesArray.push(new Particle());
+    }
+}
+initParticles();
+
+function animateParticles(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particlesArray.forEach(p=>{
+        p.update();
+        p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+window.addEventListener('resize', function(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initParticles();
+});
+</script>
 </body>
 </html>
