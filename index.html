@@ -10,16 +10,15 @@
             line-height: 1.8;
             margin: 0;
             padding: 0;
-            background-color: #1a0a2a; /* Deep violet-blue background */
+            background-color: #1a0a2a; /* Deep violet-blue fallback background */
             color: #e0e0e0; /* Light text */
             display: flex;
             min-height: 100vh;
-            background-image: url('[https://wallpapercave.com/4k-retrowave-wallpapers]'); /* Placeholder for your background image */
-            background-size: cover; /* Cover the entire background */
-            background-position: center; /* Center the image */
-            background-repeat: no-repeat; /* Do not repeat the image */
-            background-attachment: fixed; /* Keep image fixed when scrolling */
-            /* Optional: Add an overlay for better text readability */
+            background-image: url('https://cosmic4796.github.io/Background.jpg'); /* Your background image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             position: relative;
             z-index: 1;
         }
@@ -30,145 +29,187 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+            background-color: rgba(0, 0, 0, 0.4); /* Dark overlay for readability */
             z-index: -1;
         }
 
         .sidebar {
-            width: 250px;
-            background-color: rgba(45, 0, 62, 0.9); /* Semi-transparent deep purple for sidebar */
-            padding: 20px;
-            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.7); /* Stronger shadow */
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
-            position: fixed; /* Make sidebar fixed */
-            height: 100vh; /* Full height */
-            overflow-y: auto; /* Enable scrolling for sidebar content */
+            width: 280px; /* Slightly wider sidebar */
+            background-color: rgba(45, 0, 62, 0.7); /* More transparent deep purple for sidebar */
+            backdrop-filter: blur(8px); /* Blur effect for sidebar */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            padding: 30px 20px; /* More vertical padding */
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.9); /* Stronger, diffused shadow */
+            flex-shrink: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
             top: 0;
             left: 0;
-            z-index: 10; /* Ensure sidebar is above main content */
+            z-index: 10;
+            border-right: 1px solid rgba(0, 248, 255, 0.15); /* Subtle border to separate */
         }
         .sidebar h2 {
-            color: #00F8FF; /* Bright cyan for sidebar headings */
+            color: #00F8FF;
             margin-top: 0;
-            margin-bottom: 30px;
-            font-size: 1.6em;
-            text-shadow: 0 0 8px rgba(0, 248, 255, 0.5); /* Neon glow effect */
+            margin-bottom: 40px; /* More space below heading */
+            font-size: 1.8em; /* Slightly larger heading */
+            text-shadow: 0 0 10px rgba(0, 248, 255, 0.7); /* Enhanced neon glow */
+            text-align: center;
+            letter-spacing: 1px; /* Add some letter spacing */
         }
         .sidebar ul {
             list-style-type: none;
             padding: 0;
         }
         .sidebar ul li {
-            margin-bottom: 15px;
+            margin-bottom: 15px; /* More space between links */
         }
         .sidebar ul li a {
-            color: #E0E0E0; /* Light text for navigation links */
+            color: #E0E0E0;
             text-decoration: none;
             font-size: 1.1em;
-            transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
+            transition: all 0.3s ease-in-out; /* Smooth transition for all properties */
             display: block;
-            padding: 8px 10px;
-            border-radius: 5px;
+            padding: 12px 20px; /* Increased padding */
+            border-radius: 10px; /* Softer, more modern corners */
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for links */
+        }
+        .sidebar ul li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 248, 255, 0.15), transparent); /* Stronger highlight gradient */
+            transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother animation curve */
+            z-index: -1;
+        }
+        .sidebar ul li a:hover::before {
+            left: 0;
         }
         .sidebar ul li a:hover {
-            color: #FF1F8E; /* Vibrant pink on hover */
-            background-color: rgba(255, 31, 142, 0.2); /* Semi-transparent pink hover background */
-            text-shadow: 0 0 5px rgba(255, 31, 142, 0.5); /* Neon glow on hover */
+            color: #FF1F8E;
+            background-color: rgba(255, 31, 142, 0.18); /* Slightly more opaque hover background */
+            text-shadow: 0 0 8px rgba(255, 31, 142, 0.7); /* Stronger neon glow on hover */
+            transform: translateY(-2px); /* Slight lift effect on hover */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); /* More pronounced shadow on hover */
         }
 
         .main-content {
             flex-grow: 1;
-            padding: 20px;
+            padding: 30px; /* More overall padding */
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-left: 250px; /* Adjust content margin to account for fixed sidebar */
-            position: relative; /* For z-index context */
-            z-index: 5; /* Ensure content is above body background */
+            margin-left: 280px; /* Adjust content margin for wider sidebar */
+            position: relative;
+            z-index: 5;
+            padding-bottom: 100px; /* More space for the footer */
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px; /* Slightly wider content area */
             width: 100%;
-            margin: 40px auto;
-            background: rgba(42, 0, 62, 0.9); /* Semi-transparent slightly lighter purple for container */
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.8); /* Enhanced shadow for depth */
+            margin: 50px auto; /* More margin top/bottom */
+            background: rgba(42, 0, 62, 0.75); /* More transparent slightly lighter purple for container */
+            backdrop-filter: blur(10px); /* Blur effect for container */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            padding: 50px; /* Increased padding */
+            border-radius: 15px; /* Rounder corners */
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.9); /* Even stronger, diffused shadow */
             box-sizing: border-box;
-            border: 1px solid rgba(0, 248, 255, 0.3); /* Subtle cyan border */
+            border: 1px solid rgba(0, 248, 255, 0.25); /* Slightly stronger cyan border */
+            transition: transform 0.3s ease-in-out; /* Smooth transition for potential hover effects */
+        }
+        .container:hover {
+            transform: translateY(-5px); /* Slight lift on hover for container */
         }
         h1, h2, h3 {
-            color: #00F8FF; /* Bright cyan for headings */
-            text-shadow: 0 0 10px rgba(0, 248, 255, 0.6); /* Stronger neon glow */
-            margin-top: 1.5em;
-            margin-bottom: 0.8em;
+            color: #00F8FF;
+            text-shadow: 0 0 12px rgba(0, 248, 255, 0.8); /* Even stronger neon glow */
+            margin-top: 1.8em; /* More space above headings */
+            margin-bottom: 1em;
+            letter-spacing: 0.5px;
         }
         h1 {
-            font-size: 2.8em;
+            font-size: 3em; /* Larger main title */
             text-align: center;
-            margin-bottom: 1em;
-            color: #FF1F8E; /* Vibrant pink for main title */
-            text-shadow: 0 0 12px rgba(255, 31, 142, 0.7); /* Vibrant pink neon glow */
+            margin-bottom: 1.2em;
+            color: #FF1F8E;
+            text-shadow: 0 0 15px rgba(255, 31, 142, 0.9); /* More vibrant pink neon glow */
         }
         h2 {
-            font-size: 2.1em;
+            font-size: 2.3em;
+            border-bottom: 1px solid rgba(0, 248, 255, 0.3); /* Slightly stronger line under headings */
+            padding-bottom: 8px;
+            margin-bottom: 1.5em;
         }
         h3 {
-            font-size: 1.6em;
+            font-size: 1.8em;
         }
         p {
-            margin-bottom: 1em;
+            margin-bottom: 1.2em; /* More space between paragraphs */
         }
         ul {
             list-style-type: disc;
-            margin-left: 20px;
-            margin-bottom: 1em;
-            color: #e0e0e0; /* Ensure list text matches body text */
+            margin-left: 30px; /* More indentation for lists */
+            margin-bottom: 1.5em;
+            color: #e0e0e0;
         }
         li {
-            margin-bottom: 0.5em;
+            margin-bottom: 0.8em; /* More space for list items */
         }
         a {
-            color: #FF79C6; /* Vibrant pink for links */
+            color: #FF79C6;
             text-decoration: none;
             transition: color 0.3s ease-in-out;
         }
         a:hover {
-            color: #8C00FF; /* Neon purple on hover */
+            color: #8C00FF;
             text-decoration: underline;
-            text-shadow: 0 0 5px rgba(140, 0, 255, 0.5);
+            text-shadow: 0 0 8px rgba(140, 0, 255, 0.7); /* Stronger neon glow on hover */
         }
         .last-updated {
             font-style: italic;
-            color: #AAAAAA; /* Lighter grey for date */
+            color: #CCCCCC; /* Even lighter grey for date */
             text-align: center;
-            margin-top: -1em;
-            margin-bottom: 30px;
-            font-size: 0.95em;
+            margin-top: -0.8em;
+            margin-bottom: 40px; /* More space below date */
+            font-size: 1em; /* Slightly larger date font */
+            text-shadow: 0 0 3px rgba(255,255,255,0.1); /* Subtle glow for date */
         }
         hr {
             border: 0;
-            height: 2px; /* Thicker line */
-            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, rgba(0, 248, 255, 0)); /* Retrowave gradient */
-            margin: 40px 0;
-            box-shadow: 0 0 10px rgba(255, 31, 142, 0.5); /* Glowing effect */
+            height: 3px; /* Even thicker line */
+            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, rgba(0, 248, 255, 0));
+            margin: 60px 0; /* More margin for separator */
+            box-shadow: 0 0 15px rgba(255, 31, 142, 0.8); /* More intense glowing effect */
         }
         .footer {
             text-align: center;
-            padding: 30px 20px;
-            margin-top: 40px;
-            background-color: rgba(45, 0, 62, 0.9); /* Semi-transparent deep purple for footer */
-            color: #AAAAAA; /* Lighter grey for footer text */
-            font-size: 0.9em;
-            width: 100%;
-            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.7);
-            box-sizing: border-box; /* Ensure padding is included in width */
-            border-top: 1px solid rgba(255, 31, 142, 0.3); /* Subtle pink border */
+            padding: 40px 20px; /* Increased padding */
+            margin-top: 60px; /* More margin from content */
+            background-color: rgba(45, 0, 62, 0.7); /* More transparent deep purple for footer */
+            backdrop-filter: blur(8px); /* Blur effect for footer */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            color: #AAAAAA;
+            font-size: 0.95em; /* Slightly larger footer font */
+            width: calc(100% - 280px); /* Adjust width for sidebar */
+            position: fixed; /* Make footer fixed */
+            bottom: 0;
+            right: 0;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.9); /* Stronger shadow */
+            box-sizing: border-box;
+            border-top: 1px solid rgba(255, 31, 142, 0.25); /* Slightly stronger pink border */
+            left: 280px; /* Align with main content */
         }
         .footer a {
-            color: #00F8FF; /* Bright cyan for footer links */
-            text-shadow: 0 0 5px rgba(0, 248, 255, 0.3);
+            color: #00F8FF;
+            text-shadow: 0 0 8px rgba(0, 248, 255, 0.5); /* Stronger glow for footer links */
         }
     </style>
 </head>
