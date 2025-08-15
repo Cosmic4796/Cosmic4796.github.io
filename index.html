@@ -14,7 +14,7 @@
             color: #e0e0e0; /* Light text */
             display: flex;
             min-height: 100vh;
-            background-image: url('https://funbot.github.io/Background.jpg'); /* Your background image */
+            background-image: url('https://cosmic4796.github.io/Background.jpg'); /* Your background image */
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -108,9 +108,10 @@
             margin-left: 280px; /* Adjust content margin for wider sidebar */
             position: relative;
             z-index: 5;
-            padding-bottom: 120px; /* Increased space for the footer to prevent overlap */
+            padding-bottom: 60px; /* Add space for the footer without fixing it */
             width: calc(100% - 280px); /* Ensure main content takes remaining width */
             box-sizing: border-box; /* Include padding in width calculation */
+            /* Removed min-height here; it's handled by body's flex behavior */
         }
 
         .container {
@@ -194,16 +195,17 @@
         .footer {
             text-align: center;
             padding: 40px 20px; /* Increased padding */
-            margin-top: auto; /* Pushes footer to the bottom of the flex container */
+            margin-top: auto; /* This pushes the footer to the bottom of the flex column (main-content) */
             background-color: rgba(45, 0, 62, 0.7); /* More transparent deep purple for footer */
             backdrop-filter: blur(8px); /* Blur effect for footer */
             -webkit-backdrop-filter: blur(8px); /* Safari support */
             color: #AAAAAA;
             font-size: 0.95em;
-            width: 100%; /* Take full width of its parent */
+            width: 100%; /* Take full width of its parent (.main-content) */
             box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.9);
             box-sizing: border-box;
             border-top: 1px solid rgba(255, 31, 142, 0.25);
+            /* Removed position: fixed, bottom, right, left here */
         }
         .footer a {
             color: #00F8FF;
