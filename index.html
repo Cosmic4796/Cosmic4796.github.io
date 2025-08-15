@@ -1,26 +1,1423 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Fun.Bot - Terms of Service</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun.Bot - Terms & Privacy</title>
+    <link rel="icon" href="https://i.imgur.com/vHq6j0H.png">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1 { color: #5865F2; }
-        a { color: #5865F2; text-decoration: none; }
+        :root {
+            --primary: #5865F2;
+            --primary-light: #7983f5;
+            --primary-dark: #4752c4;
+            
+            /* Dark Mode (Matte) */
+            --background-dark: #1a1b1e;
+            --sidebar-dark: #232428;
+            --card-dark: #2b2d31;
+            --text-dark: #dbdee1;
+            --text-light-dark: #b5bac1;
+            --border-dark: rgba(255, 255, 255, 0.08);
+            
+            /* Light Mode (Soft White) */
+            --background-light: #f9f9fa;
+            --sidebar-light: #f0f1f2;
+            --card-light: #ffffff;
+            --text-light: #2e3338;
+            --text-light-light: #4f5660;
+            --border-light: rgba(0, 0, 0, 0.08);
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background-color: var(--background);
+            display: grid;
+            grid-template-columns: minmax(250px, auto) 1fr;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            --background: var(--background-dark);
+            --sidebar: var(--sidebar-dark);
+            --card: var(--card-dark);
+            --text: var(--text-dark);
+            --text-light: var(--text-light-dark);
+            --border: var(--border-dark);
+        }
+        
+        body.light-mode {
+            --background: var(--background-light);
+            --sidebar: var(--sidebar-light);
+            --card: var(--card-light);
+            --text: var(--text-light);
+            --text-light: var(--text-light-light);
+            --border: var(--border-light);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background-color: var(--sidebar);
+            padding: 1.5rem 0.5rem 1.5rem 1rem;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            border-right: 1px solid var(--border);
+            z-index: 100;
+        }
+        
+        .sidebar.collapsed {
+            width: 60px;
+            overflow: hidden;
+        }
+        
+        .sidebar.collapsed .sidebar-header h2,
+        .sidebar.collapsed .nav-item span,
+        .sidebar.collapsed .language-selector {
+            display: none;
+        }
+        
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            padding: 0 8px;
+        }
+        
+        .sidebar-header img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; /* Increased gap for better spacing */
+            margin-bottom: 1rem;
+            padding-right: 8px; /* Add some padding to the right */
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px; /* Increased gap between icon and text */
+            padding: 10px 14px; /* Increased padding */
+            border-radius: 6px; /* Slightly more rounded corners */
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative; /* For the active indicator */
+            overflow: hidden; /* Ensures content doesn't spill out on hover */
+        }
+        
+        .nav-item:hover {
+            background-color: var(--primary-light);
+            color: white;
+            transform: translateY(-2px); /* Subtle lift effect */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow on hover */
+        }
+        
+        .nav-item.active {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600; /* Bolder for active */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for active item */
+            transform: scale(1.01); /* Slightly larger */
+        }
+        
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0; /* Position indicator on the left edge */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px; /* Width of the indicator bar */
+            height: 70%; /* Height of the indicator bar */
+            background-color: white; /* Color of the indicator */
+            border-radius: 2px; /* Rounded corners for the indicator */
+        }
+        
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 2rem 3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin: 0 0 8px 0;
+            font-size: 2rem;
+        }
+        
+        .last-updated {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            display: block;
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            scroll-margin-top: 20px;
+        }
+        
+        h3 {
+            color: var(--text);
+            margin-top: 1.5rem;
+            font-weight: 600;
+        }
+        
+        ul, ol {
+            padding-left: 1.2rem;
+            line-height: 1.6;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .card {
+            background-color: var(--card);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            box-shadow: 0 1px 3px var(--border);
+            border: 1px solid var(--border);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--card);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        
+        .theme-toggle:hover {
+            background-color: var(--primary-light);
+            color: white;
+        }
+        
+        .theme-icon {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* Collapse Button - Adjusted Position */
+        .collapse-btn {
+            position: absolute;
+            top: 20px;
+            right: -10px; /* Changed from -12px to -10px */
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .sidebar.collapsed .collapse-btn {
+            transform: rotate(180deg);
+            right: 8px;
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        /* Language Selector */
+        .language-selector {
+            margin-top: auto;
+            padding: 0 8px;
+        }
+        
+        .language-selector select {
+            width: 100%;
+            padding: 6px 8px;
+            border-radius: 4px;
+            background-color: var(--card);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        /* Cookie Preferences Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: var(--card);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .cookie-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .cookie-option:last-child {
+            border-bottom: none;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+                grid-template-columns: 1fr !important;
+            }
+            
+            .sidebar, .theme-toggle, .collapse-btn, footer, .cookie-banner, .back-to-top {
+                display: none !important;
+            }
+            
+            .main-content {
+                padding: 0 !important;
+                max-width: 100% !important;
+            }
+            
+            a {
+                color: #0066cc !important;
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                height: auto;
+                position: relative;
+                padding: 1rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .sidebar.collapsed {
+                width: 100%;
+                height: 60px;
+            }
+            
+            .sidebar.collapsed .sidebar-nav, 
+            .sidebar.collapsed .language-selector {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .collapse-btn {
+                top: 10px;
+                right: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+            }
+        }
+        
+        /* Cookie Banner */
+        .cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 90%;
+            width: 500px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .cookie-banner.hidden {
+            display: none;
+        }
+        
+        .cookie-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .cookie-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .cookie-accept {
+            background: var(--primary);
+            color: white;
+            border: none;
+        }
+        
+        .cookie-reject {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 99;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border: none;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        
+        /* PDF Download Button */
+        .pdf-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+        
+        .pdf-download:hover {
+            background-color: var(--primary-dark);
+        }
     </style>
 </head>
-<body>
-    <h1>Fun.Bot Terms of Service</h1>
-    <p>Last Updated: [Date]</p>
-    
-    <h2>1. Usage Agreement</h2>
-    <p>By using Fun.Bot, you agree to comply with Discord's <a href="https://discord.com/terms">Terms of Service</a> and <a href="https://discord.com/guidelines">Community Guidelines</a>.</p>
-    
-    <h2>2. Data Collection</h2>
-    <p>Fun.Bot stores minimal data (e.g., user IDs for economy/game features). We do not sell or misuse your data.</p>
-    
-    <h2>3. Liability</h2>
-    <p>The bot is provided "as is." We are not responsible for misuse or disruptions.</p>
-    
-    <p><strong>Contact:</strong> [Your Support Server/Email]</p>
+<body class="dark-mode">
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <button class="collapse-btn" id="collapseBtn" aria-label="Toggle sidebar">≡</button>
+        <div class="sidebar-header">
+            <img src="https://i.imgur.com/vHq6j0H.png" alt="Fun.Bot Logo">
+            <h2>Fun.Bot</h2>
+        </div>
+        <div class="sidebar-nav">
+            <a href="#tos" class="nav-item active" data-i18n="nav_terms_of_service">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span>Terms of Service</span>
+            </a>
+            <a href="#privacy-policy" class="nav-item" data-i18n="nav_privacy_policy">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+                <span>Privacy Policy</span>
+            </a>
+            <div class="sidebar-nav">
+                <a href="#acceptance" class="nav-item" data-i18n="nav_acceptance">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    <span>1. Acceptance</span>
+                </a>
+                <a href="#usage" class="nav-item" data-i18n="nav_usage_rules">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    <span>2. Usage Rules</span>
+                </a>
+                <a href="#data" class="nav-item" data-i18n="nav_data_handling">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                    </svg>
+                    <span>3. Data Handling</span>
+                </a>
+                <a href="#economy" class="nav-item" data-i18n="nav_economy">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>4. Economy</span>
+                </a>
+                <a href="#liability" class="nav-item" data-i18n="nav_liability">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01"/>
+                    </svg>
+                    <span>5. Liability</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="language-selector">
+            <select id="languageSelect" aria-label="Select language">
+                <option value="en" data-i18n="lang_english">English</option>
+                <option value="es" data-i18n="lang_spanish">Español</option>
+                <option value="fr" data-i18n="lang_french">Français</option>
+                <option value="de" data-i18n="lang_german">Deutsch</option>
+            </select>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="header">
+            <div>
+                <h1 data-i18n="doc_title">Fun.Bot Legal Documents</h1>
+                <span class="last-updated" data-i18n="last_updated">Last Updated: June 1, 2024</span>
+            </div>
+            <div class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <svg class="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+                <span data-i18n="light_mode">Light Mode</span>
+            </div>
+        </div>
+
+        <section id="tos">
+            <h2 data-i18n="tos_title">Terms of Service</h2>
+            <a href="#" class="pdf-download" id="downloadTos" data-i18n="download_pdf">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Download as PDF
+            </a>
+            
+            <section id="acceptance">
+                <h3 data-i18n="acceptance_title">1. Acceptance of Terms</h3>
+                <p data-i18n="acceptance_p1">By utilizing Fun.Bot ("the Bot"), you explicitly agree to adhere to the following terms and policies:</p>
+                <ul>
+                    <li>Discord's <a href="https://discord.com/terms" target="_blank">Terms of Service</a></li>
+                    <li>Discord's <a href="https://discord.com/guidelines" target="_blank">Community Guidelines</a></li>
+                    <li data-i18n="acceptance_li3">This agreement. Your continued use of the Bot signifies your full and unequivocal acceptance of these terms.</li>
+                </ul>
+                <p data-i18n="acceptance_p2">Users under the age of 13 are strictly prohibited from using Fun.Bot, in accordance with Discord's Terms of Service. If you are between 13 and 18 years of age, explicit parental or guardian consent is mandatory for your use of the Bot.</p>
+            </section>
+
+            <section id="usage">
+                <h3 data-i18n="usage_title">2. Bot Usage Rules</h3>
+                <div class="card">
+                    <h4 data-i18n="prohibited_activities">Prohibited Activities</h4>
+                    <p data-i18n="prohibited_p1">You are expressly forbidden from employing Fun.Bot for any of the following activities:</p>
+                    <ul>
+                        <li data-i18n="prohibited_li1">Participating in harassment, abuse, spamming, or any conduct detrimental to other users, Discord servers, or the functionality of the bot itself.</li>
+                        <li data-i18n="prohibited_li2">Automating commands, utilizing self-bots, or employing any form of macroing to interact with the bot.</li>
+                        <li data-i18n="prohibited_li3">Exploiting bugs, glitches, or any detected vulnerabilities to gain an unfair or unintended advantage within the bot's game mechanics or economy system.</li>
+                        <li data-i18n="prohibited_li4">Participating in any illegal activities or disseminating illicit content through the functionality of the Bot.</li>
+                        <li data-i18n="prohibited_li5">Attempting to bypass or circumvent any established rate limits, operational restrictions, or security protocols implemented by Fun.Bot or Discord.</li>
+                        <li data-i18n="prohibited_li6">Supplanting the identity of any individual or entity, including but not limited to, Fun.Bot staff members or other legitimate users.</li>
+                    </ul>
+                </div>
+                <p data-i18n="prohibited_p2">Violations of these stipulated rules may result in immediate temporary or permanent suspension from using Fun.Bot, and severe violations may be reported to Discord authorities as deemed appropriate.</p>
+            </section>
+
+            <section id="data">
+                <h3 data-i18n="data_handling_title">3. Data Handling</h3>
+                <div class="card">
+                    <h4 data-i18n="what_we_store">What Data We Store</h4>
+                    <p data-i18n="what_we_store_p1">Fun.Bot is designed to store only the absolute minimum non-personally identifiable information essential for its core functionality and the delivery of its intended features:</p>
+                    <ul>
+                        <li data-i18n="what_we_store_li1"><strong>User IDs:</strong> Your unique Discord User ID is stored to facilitate the management of in-bot economy balances, progression levels, game status, and user-specific configurations. This ID is a fundamental identifier provided by the Discord platform.</li>
+                        <li data-i18n="what_we_store_li2"><strong>Server (Guild) IDs:</strong> Server identifiers are stored to manage configurations specific to each Discord server (e.g., custom command prefixes, enabled/disabled features, welcome message settings).</li>
+                        <li data-i18n="what_we_store_li3"><strong>Channel IDs & Role IDs:</strong> These identifiers are only stored when a server administrator designates and configures them explicitly for specific bot functionalities, such as automated logging channels or role assignment mechanisms.</li>
+                        <li data-i18n="what_we_store_li4"><strong>Command Usage Data:</strong> We collect aggregated and anonymized statistical data concerning command invocation frequency, feature access patterns, and interaction timestamps. This data is exclusively used for internal analytics, performance optimization, troubleshooting, and future feature planning. This data is not traceable to individual users and cannot be used for personal identification.</li>
+                        <li data-i18n="what_we_store_li5"><strong>Game Data:</strong> For interactive features such as the economy system, mini-games, or leveling systems, we store relevant gameplay data, including virtual currency balances, virtual inventory items, scores, and progression metrics. This data is directly linked to your Discord User ID to ensure a seamless and persistent in-bot experience.</li>
+                    </ul>
+                    <p data-i18n="what_we_store_p2"><strong>It is critical to emphasize that Fun.Bot does NOT collect or retain any sensitive personally identifiable information (PII), including but not limited to, your real name, email address, IP address, physical location, or private direct messages.</strong> All data acquired is either directly provided by the Discord API or generated through your voluntary interactions with the bot's publicly available commands.</p>
+                    
+                    <h4 data-i18n="data_retention">Data Retention Policies</h4>
+                    <ul>
+                        <li data-i18n="data_retention_li1"><strong>Active User Data:</strong> Information associated with users who have actively engaged with the bot within the preceding 12-month period will be retained until such a time as a deletion request is formally submitted by the user, or the user transitions to an inactive status.</li>
+                        <li data-i18n="data_retention_li2"><strong>Inactive User Data:</strong> User-specific data (primarily Discord User IDs and their linked in-bot economy/game data) belonging to users who have exhibited no interaction with Fun.Bot for a continuous duration of 1 year will be automatically purged from our databases.</li>
+                        <li data-i18n="data_retention_li3"><strong>Server Data:</strong> Server configuration data will be maintained for the entire duration that Fun.Bot remains an active member of the respective Discord server. Should the bot be removed from a server, all associated server data will be irrevocably deleted.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="economy">
+                <h3 data-i18n="economy_title">4. In-Bot Economy & Game Systems</h3>
+                <ul>
+                    <li data-i18n="economy_li1">All virtual currencies (e.g., "FunCoins"), virtual items, experience levels, and any other progression metrics within Fun.Bot are provided purely for entertainment and recreational purposes. No intrinsic real-world monetary value exists, and they cannot be exchanged, transferred, or redeemed for actual currency, goods, or services outside of the bot's defined systems.</li>
+                    <li data-i18n="economy_li2">Fun.Bot reserves the absolute right to modify, adjust, reset, or remove any virtual currency, items, or progression data at its sole discretion, particularly in instances where cheating, system exploitation, or abusive behavior within the economy system is detected or suspected.</li>
+                    <li data-i18n="economy_li3">Leaderboard rankings and positions are subject to ongoing fair play audits. Users identified by having manipulated leaderboard standings through unfair means will be subject to removal from such rankings and may incur further punitive actions.</li>
+                    <li data-i18n="economy_li4">Unless explicitly enabled by a specific bot feature designed for such functionality, all virtual items and currency are strictly non-transferable between individual users.</li>
+                </ul>
+            </section>
+
+            <section id="liability">
+                <h3 data-i18n="liability_title">5. Limitation of Liability & Exclusions of Liability</h3>
+                <div class="card">
+                    <ul>
+                        <li data-i18n="liability_li1">Fun.Bot is furnished to you on an "as is" and "as available" basis, without any warranties of any kind, express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the bot's operation will be uninterrupted, error-free, secure, or that it will satisfy your specific operational requirements or expectations.</li>
+                        <li data-i18n="liability_li2">To the maximum extent permitted by applicable law, Fun.Bot and its developers shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary damages, including, without limitation, damages for loss of profits, goodwill, data, or other intangible losses, arising out of or in connection with the use or the inability to use the Bot, even if advised of the possibility of such damages.</li>
+                        <li data-i18n="liability_li3">Discord server administrators bear the sole responsibility for establishing and enforcing rules, and for cultivating a positive and respectful environment within their respective communities where Fun.Bot is deployed. Fun.Bot assumes no responsibility or liability for the content generated or the conduct exhibited within third-party Discord servers.</li>
+                        <li data-i18n="liability_li4">We retain the unfettered right to temporarily or permanently suspend or ban individual users or entire Discord servers from accessing or utilizing Fun.Bot in cases of violations of these Terms of Service, Discord's official Terms of Service, or Discord's Community Guidelines, without prior notification.</li>
+                        <li data-i18n="liability_li5">These Terms of Service may be updated or modified periodically without prior individual notice. Your continued engagement with the bot after any modifications constitutes your explicit acknowledgment and acceptance of the revised terms.</li>
+                    </ul>
+                </div>
+            </section>
+        </section>
+
+        <section id="privacy-policy">
+            <h2 data-i18n="privacy_title">Privacy Policy</h2>
+            <a href="#" class="pdf-download" id="downloadPrivacy" data-i18n="download_pdf">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Download as PDF
+            </a>
+            
+            <div class="card">
+                <h3 data-i18n="info_collect_title">1. Information We Collect</h3>
+                <p data-i18n="info_collect_p1">Fun.Bot is committed to user privacy and collects only the absolutely essential information required for its seamless operation and to deliver its designed features:</p>
+                <ul>
+                    <li data-i18n="info_collect_li1"><strong>Discord User Data:</strong> We collect your unique Discord User ID. For certain visualizations within the bot (e.g., leaderboards, user profiles), we may access your public username, discriminator, and avatar URL via the Discord API. This information NOT persistently stored on our servers unless explicitly required for a specific bot feature (e.g., a custom profile background feature).</li>
+                    <li data-i18n="info_collect_li2"><strong>Discord Server Data:</strong> We collect Server (Guild) IDs to manage server-specific configurations (such as custom command prefixes, enabled/disabled commands or automated welcome messages) and to associate data with the correct server environment. Channel IDs and Role IDs are only collected when a server administrator configures them explicitly for specific functionalities (e.g., logging channels, automatic role assignments).</li>
+                    <li data-i18n="info_collect_li3"><strong>Usage Data:</strong> We gather anonymized and aggregated statistical data concerning command executions, feature access frequency, and interaction timestamps. These data are exclusively utilized for internal analytics, performance enhancement, debugging and strategic planning for future bot improvements. These data are not linked nor can they be utilized to identify personal users.</li>
+                    <li data-i18n="info_collect_li4"><strong>Game Data:</strong> For interactive features such as the in-bot economy, mini-games or leveling systems, we store relevant gameplay data, including virtual currency balances, virtual inventory items, game scores and progression milestones. These data are directly linked to your Discord User ID to ensure the continuity of your in-bot experience.</li>
+                </ul>
+                <p data-i18n="info_collect_p2"><strong>Fun.Bot maintains a strict policy against collecting any sensitive personal information, including, among others, your IP address, real name, email address, physical address, or private direct messages.</strong> All data obtained is either directly furnished by the Discord API or is generated through your voluntary interactions with the bot's publicly accessible commands.</p>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="how_we_use_title">2. How Your Information Is Utilized</h3>
+                <p data-i18n="how_we_use_p1">The information meticulously collected by Fun.Bot is exclusively employed for the following defined purposes:</p>
+                <ul>
+                    <li data-i18n="how_we_use_li1">To provide and rigorously maintain the core functionalities of the bot, abarcando la gestión de su saldo económico dentro del bot, la progresión del juego y las configuraciones específicas del servidor.</li>
+                    <li data-i18n="how_we_use_li2">Mejorar continuamente y desarrollar nuevas funciones, basándose en patrones de uso anonimizados y valiosos comentarios de los usuarios.</li>
+                    <li data-i18n="how_we_use_li3">Monitorear diligentemente y prevenir activamente instancias de abuso, actividades fraudulentas y violaciones tanto de nuestros Términos de Servicio como de las pautas oficiales de Discord.</li>
+                    <li data-i18n="how_we_use_li4">Generar informes estadísticos anónimos y agregados sobre el uso del bot (por ejemplo, invocaciones totales de comandos, número de servidores activos). Dichos datos agregados pueden compartirse públicamente para ilustrar de forma transparente el crecimiento y las métricas de actividad del bot.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="data_sharing_title">3. Information Sharing Protocols</h3>
+                <p data-i18n="data_sharing_p1">Fun.Bot highly values your privacy. We affirm that we do not engage in the sale, rental, or trade of your data with external third parties. Any limited data sharing occurs strictly under the following exceptional circumstances:</p>
+                <ul>
+                    <li data-i18n="data_sharing_li1"><strong>Service Providers:</strong> We may share only the necessary data with carefully selected and trusted third-party service providers (e.g., database hosting, analytics platforms) who assist us in the efficient operation of the bot. These providers are contractually obligated to adhere to strict data protection agreements and uphold privacy standards equivalent to our own.</li>
+                    <li data-i18n="data_sharing_li2"><strong>Legal Mandates:</strong> Disclosure of information may occur if explicitly mandated by applicable law or in response to legally valid requests issued by governmental or public authorities (e.g., a court order or regulatory compliance directive).</li>
+                    <li data-i18n="data_sharing_li3"><strong>Protection of Rights:</strong> We may disclose information when, in our considered judgment, such disclosure is deemed essential to safeguard our proprietary rights, protect our assets, ensure operational security, or to preserve the rights, property, or safety of our users or other pertinent entities.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="data_security_title">4. Data Security Measures Implemented</h3>
+                <p data-i18n="data_security_p1">We rigorously implement a diverse array of industry-standard security measures designed to protect your information. However, it is imperative to acknowledge that no method of transmission over the Internet or electronic storage can guarantee absolute 100% security:</p>
+                <ul>
+                    <li data-i18n="data_security_li1">Data encryption during transit (e.g., utilizing SSL/TLS protocols) for all communications with the Discord API and our underlying databases.</li>
+                    <li data-i18n="data_security_li2">Access to any potentially sensitive data is strictly limited to authorized personnel only, granted on a "need-to-know" basis to fulfill their designated roles.</li>
+                    <li data-i18n="data_security_li3">Conducting regular and comprehensive security audits and promptly applying updates to our systems to proactively mitigate against identified vulnerabilities.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="your_rights_title">5. Your Data Protection Rights</h3>
+                <p data-i18n="your_rights_p1">As a user, you are endowed with specific rights concerning your personal data that Fun.Bot may hold:</p>
+                <ul>
+                    <li data-i18n="your_rights_li1"><strong>Right to Access:</strong> You are entitled to request and obtain a comprehensive copy of the data Fun.Bot retains about you. This primarily encompasses your Discord User ID and any associated in-bot economy or game progression data.</li>
+                    <li data-i18n="your_rights_li2"><strong>Right to Deletion:</strong> You may formally request the permanent deletion of your data maintained by Fun.Bot. Tenga en cuenta que al iniciar esta solicitud, se restablecerán de forma irreversible su saldo económico dentro del bot, el progreso del juego y cualquier configuración específica del usuario.</li>
+                    <li data-i18n="your_rights_li3"><strong>Right to Correction:</strong> Si identifica alguna inexactitud en los datos que conservamos sobre usted, tiene derecho a solicitar su pronta corrección.</li>
+                    <li data-i18n="your_rights_li4">Para ejercer eficazmente cualquiera de estos derechos mencionados, le rogamos que se ponga en contacto con nosotros a través de nuestro Servidor de Soporte oficial o envíe su solicitud a través de la dirección de correo electrónico designada que se proporciona a continuación. Nos comprometemos a procesar sus solicitudes de manera razonable y oportuna.</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3 data-i18n="policy_changes_title">6. Modifications to This Policy</h3>
+                <p data-i18n="policy_changes_p1">This Privacy Policy may undergo periodic revisions and updates to accurately reflect modifications in our data practices or to comply with evolving operational, legal, or regulatory mandates. All significant amendments will be formally announced within our official <a href="https://discord.gg/your-support-server-invite" target="_blank">Support Server</a> and concurrently noted by an update to the 'Last Updated' date displayed on this webpage. Your continued engagement with Fun.Bot subsequent to the publication of any modifications constitutes your explicit consent to and acceptance of the revised policy.</p>
+            </div>
+        </section>
+
+        <section id="contact">
+            <h2 data-i18n="contact_title">Contact Information for Inquiries</h2>
+            <div class="card">
+                <p data-i18n="contact_p1">For any comprehensive inquiries, pertinent concerns, or specific requests regarding the stipulations outlined in these Terms of Service or the Privacy Policy, please utilize the following official contact channels:</p>
+                <ul>
+                    <li data-i18n="contact_li1">Support Server: <a href="https://discord.gg/your-support-server-invite" target="_blank">Únase Aquí</a></li>
+                    <li data-i18n="contact_li2">Email: cosmic4796@gmail.com</li>
+                    <li data-i18n="contact_li3">Official Data Protection Officer: Not applicable. Fun.Bot currently does not employ a dedicated Data Protection Officer (DPO) as per the current operational scope.</li>
+                </ul>
+            </div>
+        </section>
+
+        <footer>
+            <div data-i18n="footer_copyright">© 2024 Fun.Bot - All rights reserved</div>
+            <div class="footer-links">
+                <a href="#tos" data-i18n="footer_tos">Terms of Service</a>
+                <a href="#privacy-policy" data-i18n="footer_privacy">Privacy Policy</a>
+                <a href="https://discord.gg/your-support-server-invite" target="_blank" data-i18n="footer_support">Support</a>
+                <a href="#contact" data-i18n="footer_contact">Contact</a>
+                <button id="openPrefs" style="background: none; border: none; color: var(--primary); cursor: pointer; font-weight: 500;" data-i18n="footer_cookie_prefs">Cookie Preferences</button>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Cookie Banner -->
+    <div class="cookie-banner" id="cookieBanner">
+        <p data-i18n="cookie_banner_p1">We utilize cookies to optimize your user experience. By continuing to navigate this site, you implicitly agree to our <a href="#privacy-policy">Privacy Policy</a>.</p>
+        <div class="cookie-buttons">
+            <button class="cookie-btn cookie-accept" id="acceptCookies" data-i18n="cookie_accept">Accept All Cookies</button>
+            <button class="cookie-btn cookie-reject" id="rejectCookies" data-i18n="cookie_reject">Reject Non-Essential</button>
+            <button class="cookie-btn cookie-reject" id="customizeCookies" data-i18n="cookie_customize">Customize Cookies</button>
+        </div>
+    </div>
+
+    <!-- Cookie Preferences Modal -->
+    <div class="modal" id="cookieModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 data-i18n="cookie_prefs_title">Cookie Preferences Management</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="cookie-option">
+                <div>
+                    <h4 data-i18n="essential_cookies_title">Essential Cookies</h4>
+                    <p data-i18n="essential_cookies_p1">These cookies are indispensable for the fundamental operation and security of the website.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked disabled>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="cookie-option">
+                <div>
+                    <h4 data-i18n="analytics_cookies_title">Analytics Cookies</h4>
+                    <p data-i18n="analytics_cookies_p1">These cookies enable us to statistically analyze website traffic and user behavior, thereby facilitating continuous service improvement.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="analyticsCookies" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="cookie-option">
+                <div>
+                    <h4 data-i18n="marketing_cookies_title">Marketing Cookies</h4>
+                    <p data-i18n="marketing_cookies_p1">These cookies are employed to offer personalized content and advertisements that are relevant to your interests.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="marketingCookies">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <button class="cookie-btn cookie-accept" id="savePreferences" style="margin-top: 1rem;" data-i18n="save_prefs">Save My Preferences</button>
+        </div>
+    </div>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/>
+        </svg>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const translations = {
+            en: {
+                doc_title: "Fun.Bot Legal Documents",
+                last_updated: "Last Updated: June 1, 2024",
+                light_mode: "Light Mode",
+                dark_mode: "Dark Mode",
+                nav_terms_of_service: "Terms of Service",
+                nav_privacy_policy: "Privacy Policy",
+                nav_acceptance: "1. Acceptance",
+                nav_usage_rules: "2. Usage Rules",
+                nav_data_handling: "3. Data Handling",
+                nav_economy: "4. Economy",
+                nav_liability: "5. Liability",
+                tos_title: "Terms of Service",
+                download_pdf: "Download as PDF",
+                acceptance_title: "1. Acceptance of Terms",
+                acceptance_p1: "By utilizing Fun.Bot (\"the Bot\"), you explicitly agree to adhere to the following terms and policies:",
+                acceptance_li3: "This agreement. Your continued use of the Bot signifies your full and unequivocal acceptance of these terms.",
+                acceptance_p2: "Users under the age of 13 are strictly prohibited from using Fun.Bot, in accordance with Discord's Terms of Service. If you are between 13 and 18 years of age, explicit parental or guardian consent is mandatory for your use of the Bot.",
+                usage_title: "2. Bot Usage Rules",
+                prohibited_activities: "Prohibited Activities",
+                prohibited_p1: "You are expressly forbidden from employing Fun.Bot for any of the following activities:",
+                prohibited_li1: "Engaging in harassment, abuse, spamming, or any conduct detrimental to other users, Discord servers, or the functionality of the bot itself.",
+                prohibited_li2: "Automating commands, utilizing self-bots, or employing any form of macroing to interact with the bot.",
+                prohibited_li3: "Exploiting bugs, glitches, or any detected vulnerabilities to gain an unfair or unintended advantage within the bot's game mechanics or economy system.",
+                prohibited_li4: "Participating in any illegal activities or disseminating illicit content through the functionality of the Bot.",
+                prohibited_li5: "Attempting to bypass or circumvent any established rate limits, operational restrictions, or security protocols implemented by Fun.Bot or Discord.",
+                prohibited_li6: "Supplanting the identity of any individual or entity, including but not limited to, Fun.Bot staff members or other legitimate users.",
+                prohibited_p2: "Violations of these stipulated rules may result in immediate temporary or permanent suspension from using Fun.Bot, and severe violations may be reported to Discord authorities as deemed appropriate.",
+                data_handling_title: "3. Data Handling",
+                what_we_store: "What Data We Store",
+                what_we_store_p1: "Fun.Bot is designed to store only the absolute minimum non-personally identifiable information essential for its core functionality and the delivery of its intended features:",
+                what_we_store_li1: "<strong>User IDs:</strong> Your unique Discord User ID is stored to facilitate the management of in-bot economy balances, progression levels, game status, and user-specific configurations. This ID is a fundamental identifier provided by the Discord platform.",
+                what_we_store_li2: "<strong>Server (Guild) IDs:</strong> Server identifiers are stored to manage configurations specific to each Discord server (e.g., custom command prefixes, enabled/disabled features, welcome message settings).",
+                what_we_store_li3: "<strong>Channel IDs & Role IDs:</strong> These identifiers are only stored when a server administrator designates and configures them explicitly for specific bot functionalities, such as automated logging channels or role assignment mechanisms.",
+                what_we_store_li4: "<strong>Command Usage Data:</strong> We collect aggregated and anonymized statistical data concerning command invocation frequency, feature access patterns, and interaction timestamps. This data is exclusively used for internal analytics, performance optimization, troubleshooting, and future feature planning. This data is not traceable to individual users and cannot be used for personal identification.",
+                what_we_store_li5: "<strong>Game Data:</strong> For interactive features such as the economy system, mini-games, or leveling systems, we store relevant gameplay data, including virtual currency balances, virtual inventory items, scores, and progression metrics. This data is directly linked to your Discord User ID to ensure a seamless and persistent in-bot experience.",
+                what_we_store_p2: "<strong>It is critical to emphasize that Fun.Bot does NOT collect or retain any sensitive personally identifiable information (PII), including but not limited to, your real name, email address, IP address, physical location, or private direct messages.</strong> All data acquired is either directly provided by the Discord API or generated through your voluntary interactions with the bot's publicly available commands.",
+                data_retention: "Data Retention Policies",
+                data_retention_li1: "<strong>Active User Data:</strong> Information associated with users who have actively engaged with the bot within the preceding 12-month period will be retained until such a time as a deletion request is formally submitted by the user, or the user transitions to an inactive status.",
+                data_retention_li2: "<strong>Inactive User Data:</strong> User-specific data (primarily Discord User IDs and their linked in-bot economy/game data) belonging to users who have exhibited no interaction with Fun.Bot for a continuous duration of 1 year will be automatically purged from our databases.",
+                data_retention_li3: "<strong>Server Data:</strong> Server configuration data will be maintained for the entire duration that Fun.Bot remains an active member of the respective Discord server. Should the bot be removed from a server, all associated server data will be irrevocably deleted.",
+                economy_title: "4. In-Bot Economy & Game Systems",
+                economy_li1: "All virtual currencies (e.g., \"FunCoins\"), virtual items, experience levels, and any other progression metrics within Fun.Bot are provided purely for entertainment and recreational purposes. No intrinsic real-world monetary value exists, and they cannot be exchanged, transferred, or redeemed for actual currency, goods, or services outside of the bot's defined systems.",
+                economy_li2: "Fun.Bot reserves the absolute right to modify, adjust, reset, or remove any virtual currency, items, or progression data at its sole discretion, particularly in instances where cheating, system exploitation, or abusive behavior within the economy system is detected or suspected.",
+                economy_li3: "Leaderboard rankings and positions are subject to ongoing fair play audits. Users identified by having manipulated leaderboard standings through unfair means will be subject to removal from such rankings and may incur further punitive actions.",
+                economy_li4: "Unless explicitly enabled by a specific bot feature designed for such functionality, all virtual items and currency are strictly non-transferable between individual users.",
+                liability_title: "5. Limitation of Liability & Exclusions of Liability",
+                liability_li1: "Fun.Bot is furnished to you on an \"as is\" and \"as available\" basis, without any warranties of any kind, express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the bot's operation will be uninterrupted, error-free, secure, or that it will satisfy your specific operational requirements or expectations.",
+                liability_li2: "To the maximum extent permitted by applicable law, Fun.Bot and its developers shall not be liable for any direct, indirect, incidental, special, consequential, or exemplary damages, including, without limitation, damages for loss of profits, goodwill, data, or other intangible losses, arising out of or in connection with the use or the inability to use the Bot, even if advised of the possibility of such damages.",
+                liability_li3: "Discord server administrators bear the sole responsibility for establishing and enforcing rules, and for cultivating a positive and respectful environment within their respective communities where Fun.Bot is deployed. Fun.Bot assumes no responsibility or liability for the content generated or the conduct exhibited within third-party Discord servers.",
+                liability_li4: "We retain the unfettered right to temporarily or permanently suspend or ban individual users or entire Discord servers from accessing or utilizing Fun.Bot in cases of violations of these Terms of Service, Discord's official Terms of Service, or Discord's Community Guidelines, without prior notification.",
+                liability_li5: "These Terms of Service may be updated or modified periodically without prior individual notice. Your continued engagement with the bot after any modifications constitutes your explicit acknowledgment and acceptance of the revised terms.",
+                privacy_title: "Privacy Policy",
+                info_collect_title: "1. Information We Collect",
+                info_collect_p1: "Fun.Bot is committed to user privacy and collects only the absolutely essential information required for its seamless operation and to deliver its designed features:",
+                info_collect_li1: "<strong>Discord User Data:</strong> We collect your unique Discord User ID. For certain visualizations within the bot (e.g., leaderboards, user profiles), we may access your public username, discriminator, and avatar URL via the Discord API. This information NOT persistently stored on our servers unless explicitly required for a specific bot feature (e.g., a custom profile background feature).",
+                info_collect_li2: "<strong>Discord Server Data:</strong> We collect Server (Guild) IDs to manage server-specific configurations (such as custom command prefixes, enabled/disabled commands or automated welcome messages) and to associate data with the correct server environment. Channel IDs and Role IDs are only collected when a server administrator configures them explicitly for specific functionalities (e.g., logging channels, automatic role assignments).",
+                info_collect_li3: "<strong>Usage Data:</strong> We gather anonymized and aggregated statistical data concerning command executions, feature access frequency, and interaction timestamps. These data are exclusively utilized for internal analytics, performance enhancement, debugging and strategic planning for future bot improvements. These data are not linked nor can they be utilized to identify personal users.",
+                info_collect_li4: "<strong>Game Data:</strong> For interactive features such as the in-bot economy, mini-games or leveling systems, we store relevant gameplay data, including virtual currency balances, virtual inventory items, game scores and progression milestones. These data are directly linked to your Discord User ID to ensure the continuity of your in-bot experience.",
+                info_collect_p2: "<strong>Fun.Bot maintains a strict policy against collecting any sensitive personal information, including, among others, your IP address, real name, email address, physical address, or private direct messages.</strong> All data obtained is either directly furnished by the Discord API or is generated through your voluntary interactions with the bot's publicly accessible commands.",
+                how_we_use_title: "2. How Your Information Is Utilized",
+                how_we_use_p1: "The information meticulously collected by Fun.Bot is exclusively employed for the following defined purposes:",
+                how_we_use_li1: "To provide and rigorously maintain the core functionalities of the bot, abarcando la gestión de su saldo económico dentro del bot, la progresión del juego y las configuraciones específicas del servidor.",
+                how_we_use_li2: "Mejorar continuamente y desarrollar nuevas funciones, basándose en patrones de uso anonimizados y valiosos comentarios de los usuarios.",
+                how_we_use_li3: "Monitorear diligentemente y prevenir activamente instancias de abuso, actividades fraudulentas y violaciones tanto de nuestros Términos de Servicio como de las pautas oficiales de Discord.",
+                how_we_use_li4: "Generar informes estadísticos anónimos y agregados sobre el uso del bot (por ejemplo, invocaciones totales de comandos, número de servidores activos). Dichos datos agregados pueden compartirse públicamente para ilustrar de forma transparente el crecimiento y las métricas de actividad del bot.",
+                data_sharing_title: "3. Information Sharing Protocols",
+                data_sharing_p1: "Fun.Bot highly values your privacy. We affirm that we do not engage in the sale, rental, or trade of your data with external third parties. Any limited data sharing occurs strictly under the following exceptional circumstances:",
+                data_sharing_li1: "<strong>Service Providers:</strong> We may share only the necessary data with carefully selected and trusted third-party service providers (e.g., database hosting, analytics platforms) that assist us in the efficient operation of the bot. These providers are contractually obligated to adhere to strict data protection agreements and uphold privacy standards equivalent to our own.",
+                data_sharing_li2: "<strong>Legal Mandates:</strong> Disclosure of information may occur if explicitly mandated by applicable law or in response to legally valid requests issued by governmental or public authorities (e.g., a court order or regulatory compliance directive).",
+                data_sharing_li3: "<strong>Protection of Rights:</strong> We may disclose information when, in our considered judgment, such disclosure is deemed essential to safeguard our proprietary rights, protect our assets, ensure operational security, or to preserve the rights, property, or safety of our users or other pertinent entities.",
+                data_security_title: "4. Data Security Measures Implemented",
+                data_security_p1: "We rigorously implement a diverse array of industry-standard security measures designed to protect your information. However, it is imperative to acknowledge that no method of transmission over the Internet or electronic storage can guarantee absolute 100% security:",
+                data_security_li1: "Cifrado de datos durante el tránsito (por ejemplo, utilizando protocolos SSL/TLS) para todas las comunicaciones con la API de Discord y nuestras bases de datos subyacentes.",
+                data_security_li2: "El acceso a cualquier dato potencialmente sensible está estrictamente limitado solo al personal autorizado, otorgado sobre una base de 'necesidad de conocer' para cumplir con sus funciones designadas.",
+                data_security_li3: "Realización de auditorías de seguridad periódicas y exhaustivas y aplicación inmediata de actualizaciones a nuestros sistemas para mitigar de forma proactiva las vulnerabilidades identificadas.",
+                your_rights_title: "5. Your Data Protection Rights",
+                your_rights_p1: "As a user, you are endowed with specific rights concerning your personal data that Fun.Bot may hold:",
+                your_rights_li1: "<strong>Right to Access:</strong> You are entitled to request and obtain a comprehensive copy of the data Fun.Bot retains about you. This primarily encompasses your Discord User ID and any associated in-bot economy or game progression data.",
+                your_rights_li2: "<strong>Right to Deletion:</strong> You may formally request the permanent deletion of your data maintained by Fun.Bot. Tenga en cuenta que al iniciar esta solicitud, se restablecerán de forma irreversible su saldo económico dentro del bot, el progreso del juego y cualquier configuración específica del usuario.",
+                your_rights_li3: "<strong>Right to Correction:</strong> Si identifica alguna inexactitud en los datos que conservamos sobre usted, tiene derecho a solicitar su pronta corrección.",
+                your_rights_li4: "Para ejercer eficazmente cualquiera de estos derechos mencionados, le rogamos que se ponga en contacto con nosotros a través de nuestro Servidor de Soporte oficial o envíe su solicitud a través de la dirección de correo electrónico designada que se proporciona a continuación. Nos comprometemos a procesar sus solicitudes de manera razonable y oportuna.",
+                policy_changes_title: "6. Modifications to This Policy",
+                policy_changes_p1: "This Privacy Policy may undergo periodic revisions and updates to accurately reflect modifications in our data practices or to comply with evolving operational, legal, or regulatory mandates. All significant amendments will be formally announced within our official <a href=\"https://discord.gg/your-support-server-invite\" target=\"_blank\">Support Server</a> and concurrently noted by an update to the 'Last Updated' date displayed on this webpage. Your continued engagement with Fun.Bot subsequent to the publication of any modifications constitutes your explicit consent to and acceptance of the revised policy.",
+                contact_title: "Contact Information for Inquiries",
+                contact_p1: "For any comprehensive inquiries, pertinent concerns, or specific requests regarding the stipulations outlined in these Terms of Service or the Privacy Policy, please utilize the following official contact channels:",
+                contact_li1: "Support Server: <a href=\"https://discord.gg/your-support-server-invite\" target=\"_blank\">Únase Aquí</a>",
+                contact_li2: "Email: cosmic4796@gmail.com",
+                contact_li3: "Official Data Protection Officer: Not applicable. Fun.Bot currently does not employ a dedicated Data Protection Officer (DPO) as per the current operational scope.",
+                footer_copyright: "© 2024 Fun.Bot - All rights reserved",
+                footer_tos: "Terms of Service",
+                footer_privacy: "Privacy Policy",
+                footer_support: "Support",
+                footer_contact: "Contact",
+                footer_cookie_prefs: "Cookie Preferences",
+                cookie_banner_p1: "We utilize cookies to optimize your user experience. By continuing to navigate this site, you implicitly agree to our <a href=\"#privacy-policy\">Privacy Policy</a>.",
+                cookie_accept: "Accept All Cookies",
+                cookie_reject: "Reject Non-Essential",
+                cookie_customize: "Customize Cookies",
+                cookie_prefs_title: "Cookie Preferences Management",
+                essential_cookies_title: "Essential Cookies",
+                essential_cookies_p1: "These cookies are indispensable for the fundamental operation and security of the website.",
+                analytics_cookies_title: "Analytics Cookies",
+                analytics_cookies_p1: "These cookies enable us to statistically analyze website traffic and user behavior, thereby facilitating continuous service improvement.",
+                marketing_cookies_title: "Marketing Cookies",
+                marketing_cookies_p1: "These cookies are employed to offer personalized content and advertisements that are relevant to your interests.",
+                save_prefs: "Save My Preferences",
+                lang_english: "English",
+                lang_spanish: "Español",
+                lang_french: "Français",
+                lang_german: "Deutsch"
+            },
+            es: {
+                doc_title: "Documentos Legales de Fun.Bot",
+                last_updated: "Última Actualización: 1 de Junio de 2024",
+                light_mode: "Modo Claro",
+                dark_mode: "Modo Oscuro",
+                nav_terms_of_service: "Términos de Servicio",
+                nav_privacy_policy: "Política de Privacidad",
+                nav_acceptance: "1. Aceptación",
+                nav_usage_rules: "2. Reglas de Uso",
+                nav_data_handling: "3. Manejo de Datos",
+                nav_economy: "4. Economía",
+                nav_liability: "5. Responsabilidad",
+                tos_title: "Términos de Servicio",
+                download_pdf: "Descargar como PDF",
+                acceptance_title: "1. Aceptación de los Términos",
+                acceptance_p1: "Al usar Fun.Bot (\"el Bot\"), usted acepta cumplir con:",
+                acceptance_li3: "Este acuerdo. Su uso continuado del Bot constituye su aceptación total y sin reservas de estos términos.",
+                acceptance_p2: "Los usuarios menores de 13 años tienen estrictamente prohibido usar Fun.Bot, en estricto cumplimiento de los Términos de Servicio de Discord. Si tiene entre 13 y 18 años, es obligatorio el consentimiento de los padres o tutores para su interacción con el Bot.",
+                usage_title: "2. Reglas de Uso del Bot",
+                prohibited_activities: "Actividades Prohibidas",
+                prohibited_p1: "Se le prohíbe expresamente emplear Fun.Bot para cualquiera de las siguientes actividades:",
+                prohibited_li1: "Participar en acoso, abuso, spam o cualquier conducta perjudicial para otros usuarios, servidores de Discord o la integridad operativa del propio bot.",
+                prohibited_li2: "Automatizar comandos, usar auto-bots o emplear cualquier forma de macros para interactuar con el bot.",
+                prohibited_li3: "Explotar errores, fallas o cualquier vulnerabilidad detectada para obtener una ventaja injusta o no intencionada dentro de las mecánicas de juego o el sistema económico del bot.",
+                prohibited_li4: "Participar en actividades ilegales o difundir contenido ilícito a través de la funcionalidad del Bot.",
+                prohibited_li5: "Intentar eludir o sortear cualquier límite de velocidad establecido, restricciones operativas o protocolos de seguridad implementados por Fun.Bot o Discord.",
+                prohibited_li6: "Suplantar la identidad de cualquier individuo o entidad, incluyendo, entre otros, miembros del personal de Fun.Bot u otros usuarios legítimos.",
+                prohibited_p2: "Las infracciones de estas reglas estipuladas pueden resultar en una suspensión temporal o permanente inmediata del uso de Fun.Bot, y las violaciones graves pueden ser reportadas a las autoridades de Discord según se considere apropiado.",
+                data_handling_title: "3. Manejo de Datos",
+                what_we_store: "Qué Datos Almacenamos",
+                what_we_store_p1: "Fun.Bot está diseñado para almacenar solo la información no identificable personalmente mínima esencial para su funcionalidad principal y la entrega de sus características previstas:",
+                what_we_store_li1: "<strong>IDs de Usuario:</strong> Su ID de Usuario de Discord único se almacena para facilitar la gestión de los saldos de la economía dentro del bot, los niveles de progresión, el estado del juego y las configuraciones específicas del usuario. Este ID es un identificador fundamental proporcionado por la plataforma Discord.",
+                what_we_store_li2: "<strong>IDs de Servidor (Gremio):</strong> Los identificadores de servidor se almacenan para gestionar configuraciones específicas de cada servidor de Discord (por ejemplo, prefijos de comandos personalizados, características habilitadas/deshabilitadas, configuraciones de mensajes de bienvenida).",
+                what_we_store_li3: "<strong>IDs de Canal y IDs de Rol:</strong> Estos identificadores solo se almacenan cuando un administrador del servidor los designa y configura explícitamente para funcionalidades específicas del bot, como canales de registro automatizados o mecanismos de asignación de roles.",
+                what_we_store_li4: "<strong>Datos de Uso de Comandos:</strong> Recopilamos datos estadísticos agregados y anonimizados sobre la frecuencia de invocación de comandos, los patrones de acceso a funciones y las marcas de tiempo de interacción. Estos datos se utilizan exclusivamente para análisis internos, optimización del rendimiento, diagnóstico de problemas y planificación de futuras características. Estos datos no son rastreables a usuarios individuales y no se pueden utilizar para la identificación personal.",
+                what_we_store_li5: "<strong>Datos de Juego:</strong> Para funciones interactivas como el sistema económico, los mini-juegos o los sistemas de nivelación, almacenamos datos relevantes del juego, incluidos los saldos de la moneda virtual, los elementos del inventario dentro del juego, las puntuaciones y las métricas de progresión. Estos datos están directamente vinculados a su ID de usuario de Discord para garantizar la continuidad de su experiencia dentro del bot.",
+                what_we_store_p2: "<strong>Es fundamental enfatizar que Fun.Bot NO recopila ni retiene ninguna información personal sensible (PII), incluyendo, entre otros, su nombre real, dirección de correo electrónico, dirección IP, ubicación física o mensajes directos privados.</strong> Todos los datos adquiridos son proporcionados directamente por la API de Discord o generados a través de sus interacciones voluntarias con los comandos públicamente accesibles del bot.",
+                data_retention: "Políticas de Retención de Datos",
+                data_retention_li1: "<strong>Datos de Usuario Activo:</strong> La información asociada con los usuarios que han interactuado activamente con el bot dentro del período de 12 meses anterior se retendrá hasta que el usuario solicite formalmente su eliminación o pase a un estado inactivo.",
+                data_retention_li2: "<strong>Datos de Usuario Inactivo:</strong> Los datos específicos del usuario (principalmente IDs de Usuario de Discord y sus datos económicos/de juego vinculados dentro del bot) pertenecientes a usuarios que no han interactuado con Fun.Bot durante un período continuo de 1 año se eliminarán automáticamente de nuestras bases de datos.",
+                data_retention_li3: "<strong>Datos de Servidor:</strong> Los datos de configuración del servidor se mantendrán durante toda la duración en que Fun.Bot siga siendo un miembro activo del servidor de Discord correspondiente. Si el bot se elimina de un servidor, todos los datos asociados al servidor se eliminarán irrevocablemente.",
+                economy_title: "4. Sistemas de Juego y Economía Dentro del Bot",
+                economy_li1: "Todas las monedas virtuales (e.g., 'FunCoins'), los elementos virtuales, los niveles de experiencia y cualquier otra métrica de progresión dentro de Fun.Bot se proporcionan puramente con fines de entretenimiento y recreativos. No poseen ningún valor monetario intrínseco en el mundo real y no se pueden intercambiar, transferir o canjear por moneda real, bienes o servicios fuera de los sistemas definidos del bot.",
+                economy_li2: "Fun.Bot se reserva el derecho absoluto de modificar, ajustar, restablecer o eliminar cualquier moneda virtual, elemento o dato de progresión a su entera discreción, particularmente en los casos en que se detecte o se sospeche de trampas, explotación del sistema o comportamiento abusivo dentro del sistema económico.",
+                economy_li3: "Las clasificaciones y posiciones en la tabla de clasificación están sujetas a auditorías continuas de juego limpio. Los usuarios identificados por haber manipulado las clasificaciones de la tabla de clasificación por medios injustos serán eliminados de dichas clasificaciones y pueden incurrir en acciones punitivas adicionales.",
+                economy_li4: "A menos que una función específica del bot diseñada para tal funcionalidad lo habilite explícitamente, todos los elementos virtuales y la moneda son estrictamente intransferibles entre usuarios individuales.",
+                liability_title: "5. Limitación de Responsabilidad y Exenciones de Responsabilidad",
+                liability_li1: "Fun.Bot se le proporciona 'tal cual' y 'según esté disponible', sin garantías de ningún tipo, expresas o implícitas, incluidas, entre otras, las garantías implícitas de comerciabilidad, idoneidad para un propósito particular o no infracción. No garantizamos que el funcionamiento del bot sea ininterrumpido, sin errores, seguro o que satisfaga sus requisitos u expectativas operativas específicas.",
+                liability_li2: "En la máxima medida permitida por la ley aplicable, Fun.Bot y sus desarrolladores no serán responsables de ningún daño directo, indirecto, incidental, especial, consecuente o ejemplar, incluidos, entre otros, los daños por pérdida de beneficios, buena voluntad, datos u otras pérdidas intangibles, que surjan de o en relación con el uso o la incapacidad de usar el Bot, incluso si se les ha informado de la posibilidad de tales daños.",
+                liability_li3: "Los administradores del servidor de Discord son los únicos responsables de establecer y hacer cumplir las reglas, y de cultivar un ambiente positivo y respetuoso dentro de sus respectivas comunidades donde se implementa Fun.Bot. Fun.Bot no asume ninguna responsabilidad por el contenido generado o la conducta exhibida dentro de los servidores de Discord de terceros.",
+                liability_li4: "Nos reservamos el derecho irrestricto de suspender o prohibir temporal o permanentemente a usuarios individuales o a servidores de Discord completos el acceso o la utilización de Fun.Bot en casos de violaciones de estos Términos de Servicio, los Términos de Servicio oficiales de Discord o las Directrices de la Comunidad de Discord, sin previo aviso.",
+                liability_li5: "Estos Términos de Servicio pueden ser actualizados o modificados periódicamente sin previo aviso individual. Su uso continuado del bot después de cualquier modificación constituye su reconocimiento y aceptación explícitos de los términos revisados.",
+                privacy_title: "Política de Privacidad",
+                info_collect_title: "1. Información que Recopilamos",
+                info_collect_p1: "Fun.Bot está comprometido con la privacidad del usuario y recopila solo la información absolutamente esencial requerida para su funcionamiento sin problemas y para ofrecer sus características diseñadas:",
+                info_collect_li1: "<strong>Datos de Usuario de Discord:</strong> Recopilamos su ID de Usuario de Discord único. Para ciertas visualizaciones dentro del bot (por ejemplo, tablas de clasificación, perfiles de usuario), podemos acceder temporalmente a su nombre de usuario público, discriminador y URL del avatar a través de la API de Discord. Esta información NO se almacena persistentemente en nuestros servidores a menos que sea explícitamente requerida para una función específica del bot (por ejemplo, una función de fondo de perfil personalizado).",
+                info_collect_li2: "<strong>Datos de Servidor de Discord:</strong> Recopilamos IDs de Servidor (Gremio) para gestionar configuraciones específicas del servidor (como prefijos de comandos personalizados, comandos habilitados/deshabilitados o mensajes de bienvenida automáticos) y para asociar datos con el entorno de servidor correcto. Los IDs de Canal y los IDs de Rol solo se recopilan cuando un administrador del servidor los configura explícitamente para funcionalidades específicas (por ejemplo, canales de registro, asignaciones automáticas de roles).",
+                info_collect_li3: "<strong>Datos de Uso:</strong> Recopilamos datos estadísticos anonimizados y agregados sobre las ejecuciones de comandos, la frecuencia de acceso a las funciones y las marcas de tiempo de interacción. Estos datos se utilizan exclusivamente para análisis internos, mejora del rendimiento, depuración y planificación estratégica para futuras mejoras del bot. Estos datos no están vinculados ni pueden utilizarse para identificar personalmente a usuarios individuales.",
+                info_collect_li4: "<strong>Datos de Juego:</strong> Para funciones interactivas como el sistema económico dentro del bot, mini-juegos o sistemas de nivelación, almacenamos datos de juego relevantes, incluidos saldos de moneda virtual, elementos de inventario virtual, puntuaciones de juego e hitos de progresión. Estos datos están directamente vinculados a su ID de usuario de Discord para garantizar la continuidad de su experiencia dentro del bot.",
+                info_collect_p2: "<strong>Fun.Bot mantiene una política estricta contra la recopilación de cualquier información personal sensible, incluyendo, entre otros, su dirección IP, nombre real, dirección de correo electrónico, dirección física o mensajes directos privados.</strong> Todos los datos obtenidos son proporcionados directamente por la API de Discord o generados a través de sus interacciones voluntarias con los comandos públicamente accesibles del bot.",
+                how_we_use_title: "2. Cómo Se Utiliza Su Información",
+                how_we_use_p1: "La información recopilada meticulosamente por Fun.Bot se emplea exclusivamente para los siguientes propósitos definidos:",
+                how_we_use_li1: "Proporcionar y mantener rigurosamente las funcionalidades principales del bot, abarcando la gestión de su saldo económico dentro del bot, la progresión del juego y las configuraciones específicas del servidor.",
+                how_we_use_li2: "Mejorar continuamente y desarrollar nuevas funciones, basándose en patrones de uso anonimizados y valiosos comentarios de los usuarios.",
+                how_we_use_li3: "Monitorear diligentemente y prevenir activamente instancias de abuso, actividades fraudulentas y violaciones tanto de nuestros Términos de Servicio como de las pautas oficiales de Discord.",
+                how_we_use_li4: "Generar informes estadísticos anónimos y agregados sobre el uso del bot (por ejemplo, invocaciones totales de comandos, número de servidores activos). Dichos datos agregados pueden compartirse públicamente para ilustrar de forma transparente el crecimiento y las métricas de actividad del bot.",
+                data_sharing_title: "3. Protocolos de Compartición de Información",
+                data_sharing_p1: "Fun.Bot valora enormemente su privacidad. Afirmamos que no participamos en la venta, alquiler o intercambio de sus datos con terceros externos. Cualquier compartición limitada de datos ocurre estrictamente bajo las siguientes circunstancias excepcionales:",
+                data_sharing_li1: "<strong>Proveedores de Servicios:</strong> Podemos compartir solo los datos necesarios con proveedores de servicios externos cuidadosamente seleccionados y de confianza (por ejemplo, alojamiento de bases de datos, plataformas de análisis) que nos asisten en la operación eficiente del bot. Estos proveedores están obligados contractualmente a adherirse a estrictos acuerdos de protección de datos y a mantener estándares de privacidad equivalentes a los nuestros.",
+                data_sharing_li2: "<strong>Mandatos Legales:</strong> La divulgación de información puede ocurrir si es explícitamente obligatoria por la ley aplicable o en respuesta a solicitudes legalmente válidas emitidas por autoridades gubernamentales o públicas (por ejemplo, una orden judicial o una directiva de cumplimiento normativo).",
+                data_sharing_li3: "<strong>Protección de Derechos:</strong> Podemos divulgar información cuando, a nuestro juicio, dicha divulgación se considere esencial para salvaguardar nuestros derechos de propiedad, proteger nuestros activos, garantizar la seguridad operativa o preservar los derechos, la propiedad o la seguridad de nuestros usuarios o otras entidades pertinentes.",
+                data_security_title: "4. Medidas de Seguridad de Datos Implementadas",
+                data_security_p1: "Implementamos rigurosamente una amplia gama de medidas de seguridad estándar de la industria diseñadas para proteger su información. Sin embargo, es imperativo reconocer que ningún método de transmisión por Internet o almacenamiento electrónico puede garantizar una seguridad absoluta del 100%:",
+                data_security_li1: "Cifrado de datos durante el tránsito (por ejemplo, utilizando protocolos SSL/TLS) para todas las comunicaciones con la API de Discord y nuestras bases de datos subyacentes.",
+                data_security_li2: "El acceso a cualquier dato potencialmente sensible está estrictamente limitado solo al personal autorizado, otorgado sobre una base de 'necesidad de conocer' para cumplir con sus funciones designadas.",
+                data_security_li3: "Realización de auditorías de seguridad periódicas y exhaustivas y aplicación inmediata de actualizaciones a nuestros sistemas para mitigar de forma proactiva las vulnerabilidades identificadas.",
+                your_rights_title: "5. Sus Derechos de Protección de Datos",
+                your_rights_p1: "Como usuario, usted está investido de derechos específicos con respecto a sus datos personales que Fun.Bot pueda poseer:",
+                your_rights_li1: "<strong>Derecho de Acceso:</strong> Tiene derecho a solicitar y obtener una copia completa de los datos que Fun.Bot conserva sobre usted. Esto abarca principalmente su ID de Usuario de Discord y cualquier dato asociado a la economía o progresión del juego dentro del bot.",
+                your_rights_li2: "<strong>Derecho de Eliminación:</strong> Puede solicitar formalmente la eliminación permanente de sus datos mantenidos por Fun.Bot. Tenga en cuenta que al iniciar esta solicitud, se restablecerán de forma irreversible su saldo económico dentro del bot, el progreso del juego y cualquier configuración específica del usuario.",
+                your_rights_li3: "<strong>Derecho de Rectificación:</strong> Si identifica alguna inexactitud en los datos que conservamos sobre usted, tiene derecho a solicitar su pronta corrección.",
+                your_rights_li4: "Para ejercer eficazmente cualquiera de estos derechos mencionados, le rogamos que se ponga en contacto con nosotros a través de nuestro Servidor de Soporte oficial o envíe su solicitud a través de la dirección de correo electrónico designada que se proporciona a continuación. Nos comprometemos a procesar sus solicitudes de manera razonable y oportuna.",
+                policy_changes_title: "6. Modificaciones a Esta Política",
+                policy_changes_p1: "Esta Política de Privacidad puede ser objeto de revisiones y actualizaciones periódicas para reflejar con precisión las modificaciones en nuestras prácticas de datos o para cumplir con los mandatos operativos, legales o regulatorios en evolución. Todas las modificaciones significativas se anunciarán formalmente en nuestro <a href=\"https://discord.gg/your-support-server-invite\" target=\"_blank\">Servidor de Soporte</a> oficial y se indicarán simultáneamente mediante una actualización de la fecha de 'Última Actualización' que se muestra en esta página web. Su interacción continua con Fun.Bot después de la publicación de cualquier modificación constituye su consentimiento explícito y la aceptación de la política revisada.",
+                contact_title: "Información de Contacto para Consultas",
+                contact_p1: "Para cualquier consulta exhaustiva, pertinente, o solicitud específica relacionada con las estipulaciones descritas en estos Términos de Servicio o la Política de Privacidad, utilice los siguientes canales de contacto oficiales:",
+                contact_li1: "Support Server: <a href=\"https://discord.gg/your-support-server-invite\" target=\"_blank\">Únase Aquí</a>",
+                contact_li2: "Correo Electrónico: cosmic4796@gmail.com",
+                contact_li3: "Oficial de Protección de Datos: No aplicable. Fun.Bot actualmente no cuenta con un Oficial de Protección de Datos (DPO) dedicado según el alcance operativo actual.",
+                footer_copyright: "© 2024 Fun.Bot - Todos los derechos reservados",
+                footer_tos: "Términos de Servicio",
+                footer_privacy: "Política de Privacidad",
+                footer_support: "Soporte",
+                footer_contact: "Contacto",
+                footer_cookie_prefs: "Preferencias de Cookies",
+                cookie_banner_p1: "Utilizamos cookies para optimizar su experiencia de usuario. Al continuar navegando por este sitio, usted acepta implícitamente nuestra <a href=\"#privacy-policy\">Política de Privacidad</a>.",
+                cookie_accept: "Aceptar Todas las Cookies",
+                cookie_reject: "Rechazar No Esenciales",
+                cookie_customize: "Personalizar Cookies",
+                cookie_prefs_title: "Gestión de Preferencias de Cookies",
+                essential_cookies_title: "Cookies Esenciales",
+                essential_cookies_p1: "Estas cookies son indispensables para el funcionamiento fundamental y la seguridad del sitio web.",
+                analytics_cookies_title: "Cookies de Análisis",
+                analytics_cookies_p1: "Estas cookies nos permiten analizar estadísticamente el tráfico del sitio web y el comportamiento del usuario, facilitando así la mejora continua del servicio.",
+                marketing_cookies_title: "Cookies de Marketing",
+                marketing_cookies_p1: "Estas cookies se emplean para ofrecer contenido personalizado y anuncios que son relevantes para sus intereses.",
+                save_prefs: "Guardar Mis Preferencias",
+                lang_english: "English",
+                lang_spanish: "Español",
+                lang_french: "Français",
+                lang_german: "Deutsch"
+            }
+        };
+
+        function applyTranslations(lang) {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    // Handle cases where content is inside <a> tags or has strong tags
+                    if (key.includes('_li') && element.querySelector('strong')) {
+                        const strongTag = element.querySelector('strong');
+                        if (strongTag) {
+                            const strongText = strongTag.textContent;
+                            let translatedText = translations[lang][key];
+                            // Re-insert strong tag content at the beginning of the translated text
+                            if (translatedText.startsWith('<strong>') && translatedText.includes(strongText)) {
+                                element.innerHTML = translatedText;
+                            } else {
+                                // If the strong tag is not at the beginning, or doesn't match, just set textContent
+                                element.textContent = translations[lang][key];
+                            }
+                        } else {
+                            element.textContent = translations[lang][key];
+                        }
+                    } else if (element.tagName === 'A' || element.tagName === 'BUTTON') {
+                        // For anchor tags and buttons with data-i18n
+                        const svg = element.querySelector('svg');
+                        const newText = translations[lang][key];
+                        if (svg) {
+                            element.innerHTML = ''; // Clear existing content
+                            element.appendChild(svg); // Add SVG back
+                            const textNode = document.createTextNode(newText);
+                            element.appendChild(textNode);
+                        } else {
+                            element.textContent = newText;
+                        }
+                    } else if (element.tagName === 'OPTION') {
+                        element.textContent = translations[lang][key];
+                    } else if (key === 'cookie_banner_p1') {
+                        // Special handling for cookie banner paragraph with an anchor tag inside
+                        const privacyLink = element.querySelector('a');
+                        if (privacyLink) {
+                            const linkHref = privacyLink.getAttribute('href');
+                            const translatedHtml = translations[lang][key].replace('<a href="#privacy-policy">Privacy Policy</a>', `<a href="${linkHref}">${translations[lang].nav_privacy_policy}</a>`);
+                            element.innerHTML = translatedHtml;
+                        } else {
+                            element.textContent = translations[lang][key];
+                        }
+                    } else if (key === 'acceptance_p2') {
+                        element.innerHTML = translations[lang][key];
+                    } else if (key === 'policy_changes_p1') {
+                        const supportLink = element.querySelector('a');
+                        if (supportLink) {
+                            const linkHref = supportLink.getAttribute('href');
+                            const translatedHtml = translations[lang][key].replace('<a href="https://discord.gg/your-support-server-invite" target="_blank">Support Server</a>', `<a href="${linkHref}" target="_blank">${translations[lang].footer_support}</a>`);
+                            element.innerHTML = translatedHtml;
+                        } else {
+                            element.textContent = translations[lang][key];
+                        }
+                    } else if (key === 'contact_li1') {
+                        const supportLink = element.querySelector('a');
+                        if (supportLink) {
+                            const linkHref = supportLink.getAttribute('href');
+                            const translatedHtml = translations[lang][key].replace('<a href="https://discord.gg/your-support-server-invite" target="_blank">Join Here</a>', `<a href="${linkHref}" target="_blank">${translations[lang].footer_support}</a>`);
+                            element.innerHTML = translatedHtml;
+                        } else {
+                            element.textContent = translations[lang][key];
+                        }
+                    } else {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light-mode' : 'dark-mode');
+        if (savedTheme) {
+            body.classList.add(savedTheme);
+            updateThemeToggle(savedTheme);
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light-mode');
+                updateThemeToggle('light-mode');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark-mode');
+                updateThemeToggle('dark-mode');
+            }
+        });
+        
+        function updateThemeToggle(theme) {
+            const icon = themeToggle.querySelector('.theme-icon');
+            const text = themeToggle.querySelector('span');
+            
+            if (theme === 'dark-mode') {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>';
+                text.textContent = 'Light Mode';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>';
+                text.textContent = 'Dark Mode';
+            }
+        }
+        
+        // Sidebar Collapse
+        const collapseBtn = document.getElementById('collapseBtn');
+        const sidebar = document.getElementById('sidebar');
+        
+        collapseBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
+        
+        // Check for saved sidebar state
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.add('collapsed');
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update active nav item
+                    document.querySelectorAll('.nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Update URL without page reload
+                    history.pushState(null, null, this.getAttribute('href'));
+                }
+            });
+        });
+        
+        // Update active nav item on scroll
+        window.addEventListener('scroll', function() {
+            const sections = document.querySelectorAll('section[id]');
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === `#${current}`) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Show/hide back to top button
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+        
+        // Back to top button
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Cookie Banner
+        const cookieBanner = document.getElementById('cookieBanner');
+        const acceptCookies = document.getElementById('acceptCookies');
+        const rejectCookies = document.getElementById('rejectCookies');
+        const customizeCookies = document.getElementById('customizeCookies');
+        const cookieModal = document.getElementById('cookieModal');
+        const closeModal = document.getElementById('closeModal');
+        const savePreferences = document.getElementById('savePreferences');
+        
+        if (!localStorage.getItem('cookiesAccepted')) {
+            cookieBanner.classList.remove('hidden');
+        }
+        
+        acceptCookies.addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', 'all');
+            localStorage.setItem('analyticsCookies', 'true');
+            localStorage.setItem('marketingCookies', 'true');
+            cookieBanner.classList.add('hidden');
+            // Here you would load all cookies
+        });
+        
+        rejectCookies.addEventListener('click', () => {
+            localStorage.setItem('cookiesAccepted', 'essential');
+            localStorage.setItem('analyticsCookies', 'false');
+            localStorage.setItem('marketingCookies', 'false');
+            cookieBanner.classList.add('hidden');
+            // Here you would only load essential cookies
+        });
+        
+        customizeCookies.addEventListener('click', () => {
+            cookieModal.style.display = 'flex';
+            // Set toggle states based on previous choices
+            document.getElementById('analyticsCookies').checked = localStorage.getItem('analyticsCookies') !== 'false';
+            document.getElementById('marketingCookies').checked = localStorage.getItem('marketingCookies') === 'true';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            cookieModal.style.display = 'none';
+        });
+        
+        savePreferences.addEventListener('click', () => {
+            const analytics = document.getElementById('analyticsCookies').checked;
+            const marketing = document.getElementById('marketingCookies').checked;
+            
+            localStorage.setItem('analyticsCookies', analytics);
+            localStorage.setItem('marketingCookies', marketing);
+            localStorage.setItem('cookiesAccepted', analytics || marketing ? 'custom' : 'essential');
+            
+            cookieModal.style.display = 'none';
+            cookieBanner.classList.add('hidden');
+            
+            // Here you would load cookies based on preferences
+        });
+        
+        // Cookie Preferences Button
+        document.getElementById('openPrefs').addEventListener('click', () => {
+            cookieModal.style.display = 'flex';
+        });
+        
+        // Language Selector (placeholder functionality)
+        document.getElementById('languageSelect').addEventListener('change', (e) => {
+            applyTranslations(e.target.value);
+            localStorage.setItem('selectedLanguage', e.target.value);
+        });
+        
+        // Set initial language from localStorage or default to English
+        const initialLang = localStorage.getItem('selectedLanguage') || 'en';
+        document.getElementById('languageSelect').value = initialLang;
+        applyTranslations(initialLang);
+        
+        // PDF Download Buttons
+        document.getElementById('downloadTos').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('This would generate a PDF of the Terms of Service. In a real implementation, you would use a library like jsPDF or a server-side solution.');
+        });
+        
+        document.getElementById('downloadPrivacy').addEventListener('click', (e) => {
+            e.preventDefault();
+            const privacyPolicy = document.getElementById('privacy-policy');
+            
+            html2canvas(privacyPolicy, {
+                scale: 2, // Increase scale for better resolution
+                useCORS: true // Required if you have external images/resources
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF({
+                    orientation: 'p',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+            
+                let position = 0;
+            
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+            
+                pdf.save('FunBot_Privacy_Policy.pdf');
+            });
+        });
+        
+        // Initialize scroll position for hash links
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView();
+                    }, 100);
+                }
+            }
+            
+            // Load cookies based on preferences
+            const cookiesAccepted = localStorage.getItem('cookiesAccepted');
+            if (cookiesAccepted === 'all' || 
+                (cookiesAccepted === 'custom' && localStorage.getItem('analyticsCookies') !== 'false')) {
+                // Load analytics scripts
+                console.log('Loading analytics cookies');
+            }
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === cookieModal) {
+                cookieModal.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
