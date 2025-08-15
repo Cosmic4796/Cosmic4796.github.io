@@ -9,14 +9,54 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.8;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: #1a1a2e; /* Dark background */
             color: #e0e0e0; /* Light text */
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
             min-height: 100vh;
         }
+        .sidebar {
+            width: 250px;
+            background-color: #2a2a4a; /* Slightly lighter dark background for sidebar */
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+        }
+        .sidebar h2 {
+            color: #8be9fd;
+            margin-top: 0;
+            margin-bottom: 30px;
+            font-size: 1.5em;
+        }
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+        .sidebar ul li a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: color 0.3s ease-in-out;
+            display: block;
+            padding: 8px 10px;
+            border-radius: 5px;
+        }
+        .sidebar ul li a:hover {
+            color: #ff79c6;
+            background-color: #3a3a5a;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .container {
             max-width: 900px;
             width: 100%;
@@ -79,92 +119,129 @@
             background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(100, 100, 100, 0.75), rgba(0, 0, 0, 0));
             margin: 40px 0;
         }
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+            background-color: #2a2a4a;
+            color: #999;
+            font-size: 0.9em;
+            width: 100%;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+        }
+        .footer a {
+            color: #8be9fd;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Fun.Bot - Terms of Service</h1>
-        <p class="last-updated">Last Updated: October 26, 2023</p>
-
-        <h2>1. Acceptance of Terms</h2>
-        <p>By inviting Fun.Bot to your Discord server or using any of its features, you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, do not use Fun.Bot.</p>
-
-        <h2>2. Description of Service</h2>
-        <p>Fun.Bot is a Discord bot designed to provide entertainment, utility, and moderation features within Discord servers. Features may include, but are not limited to, mini-games, moderation commands, informational lookups, and customizable greetings.</p>
-
-        <h2>3. User Conduct</h2>
-        <p>You agree to use Fun.Bot responsibly and in accordance with Discord's Terms of Service and Community Guidelines. You agree not to use Fun.Bot to:</p>
+    <div class="sidebar">
+        <h2>Navigation</h2>
         <ul>
-            <li>Violate any applicable laws or regulations.</li>
-            <li>Promote hate speech, discrimination, or harassment.</li>
-            <li>Distribute malicious software or content.</li>
-            <li>Spam, flood, or otherwise disrupt Discord servers.</li>
-            <li>Attempt to gain unauthorized access to Fun.Bot's systems or data.</li>
+            <li><a href="#terms-of-service">Terms of Service</a></li>
+            <li><a href="#acceptance-of-terms">1. Acceptance of Terms</a></li>
+            <li><a href="#description-of-service">2. Description of Service</a></li>
+            <li><a href="#user-conduct">3. User Conduct</a></li>
+            <li><a href="#data-collection-usage-tos">4. Data Collection and Usage</a></li>
+            <li><a href="#disclaimer-of-warranties">5. Disclaimer of Warranties</a></li>
+            <li><a href="#limitation-of-liability">6. Limitation of Liability</a></li>
+            <li><a href="#modifications-to-terms">7. Modifications to Terms</a></li>
+            <li><a href="#privacy-policy">Privacy Policy</a></li>
+            <li><a href="#introduction">1. Introduction</a></li>
+            <li><a href="#information-we-collect">2. Information We Collect</a></li>
+            <li><a href="#how-we-use-your-information">3. How We Use Your Information</a></li>
+            <li><a href="#data-storage-security">4. Data Storage and Security</a></li>
+            <li><a href="#sharing-of-information">5. Sharing of Information</a></li>
+            <li><a href="#third-party-services">6. Third-Party Services</a></li>
+            <li><a href="#your-choices">7. Your Choices</a></li>
+            <li><a href="#changes-to-privacy-policy">8. Changes to This Privacy Policy</a></li>
+            <li><a href="#contact-us">Contact Us</a></li>
         </ul>
+    </div>
+    <div class="main-content">
+        <div class="container">
+            <h1 id="terms-of-service">Fun.Bot - Terms of Service</h1>
+            <p class="last-updated">Last Updated: October 26, 2023</p>
 
-        <h2>4. Data Collection and Usage</h2>
-        <p>Fun.Bot collects minimal data necessary for its operation. Please refer to our Privacy Policy below for detailed information on data collection, storage, and usage.</p>
+            <h2 id="acceptance-of-terms">1. Acceptance of Terms</h2>
+            <p>By integrating Fun.Bot into your Discord server or engaging with any of its functionalities, you acknowledge and consent to be legally bound by these Terms of Service ("Terms"). Should you dissent from these Terms, refrain from deploying or utilizing Fun.Bot.</p>
 
-        <h2>5. Disclaimer of Warranties</h2>
-        <p>Fun.Bot is provided "as is" and "as available" without any warranties, express or implied, including but not limited to, implied warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that Fun.Bot will be uninterrupted, error-free, or free of harmful components.</p>
+            <h2 id="description-of-service">2. Description of Service</h2>
+            <p>Fun.Bot is a Discord bot engineered to deliver a comprehensive suite of entertainment, utility, and moderation functionalities within Discord server environments. The Service's capabilities encompass, but are not restricted to, interactive gaming modules, automated moderation commands, informational retrieval protocols, and customizable server entry notifications.</p>
 
-        <h2>6. Limitation of Liability</h2>
-        <p>In no event shall Fun.Bot or its developers be liable for any direct, indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from (i) your access to or use of or inability to access or use the Service; (ii) any conduct or content of any third party on the Service; (iii) any content obtained from the Service; and (iv) unauthorized access, use or alteration of your transmissions or content, whether based on warranty, contract, tort (including negligence) or any other legal theory, whether or not we have been informed of the possibility of such damage, and even if a remedy set forth herein is found to have failed of its essential purpose.</p>
+            <h2 id="user-conduct">3. User Conduct</h2>
+            <p>You covenant to operate Fun.Bot in a responsible manner, strictly adhering to Discord's prevailing Terms of Service and Community Guidelines. You are expressly prohibited from utilizing Fun.Bot to:</p>
+            <ul>
+                <li>Transgress any pertinent statutory provisions or regulatory frameworks.</li>
+                <li>Propagate discriminatory content, hate speech, or harassment.</li>
+                <li>Disseminate malicious software, malware, or illicit digital content.</li>
+                <li>Initiate spam, flooding, or any disruptive activities detrimental to Discord server operations.</li>
+                <li>Attempt to effectuate unauthorized access to Fun.Bot's underlying systems or proprietary data repositories.</li>
+            </ul>
 
-        <h2>7. Modifications to Terms</h2>
-        <p>We reserve the right to modify these Terms at any time. We will notify you of any changes by updating the "Last Updated" date at the top of this document. Your continued use of Fun.Bot after any such changes constitutes your acceptance of the new Terms.</p>
+            <h2 id="data-collection-usage-tos">4. Data Collection and Usage</h2>
+            <p>Fun.Bot engages in the acquisition of minimal data strictly requisite for its operational efficacy. For an exhaustive exposition on data aggregation, retention, and utilization protocols, kindly refer to our comprehensive Privacy Policy articulated hereunder.</p>
 
-        <h2>8. Contact Information</h2>
-        <p>If you have any questions about these Terms of Service, please contact us through our Discord support server (if available) or via [Your Contact Email/Method Here].</p>
+            <h2 id="disclaimer-of-warranties">5. Disclaimer of Warranties</h2>
+            <p>Fun.Bot is furnished "as is" and "as available" without the provision of any explicit or implicit warranties, inclusive of, but not restricted to, implied warranties of merchantability, suitability for a particular objective, or non-infringement. We proffer no guarantee that Fun.Bot's operational continuum will be uninterrupted, devoid of errors, or uninfected by deleterious components.</p>
 
-        <hr>
+            <h2 id="limitation-of-liability">6. Limitation of Liability</h2>
+            <p>Under no circumstances shall Fun.Bot or its developmental entities be held culpable for any direct, indirect, incidental, special, consequential, or punitive damages, including, without limitation, economic losses, data corruption, usage deprivation, reputational impairment, or other intangible detriments, directly or indirectly attributable to (i) your access to, engagement with, or inability to access or engage with the Service; (ii) any conduct or content originating from third-party entities within the Service; (iii) any data or content acquired from the Service; and (iv) unauthorized intrusion, utilization, or modification of your data transmissions or content, irrespective of whether such culpability is predicated on warranty, contractual obligation, tortious act (inclusive of negligence), or any other legal doctrine, and notwithstanding prior advisement regarding the potential for such damages, even if a stipulated remedy herein fails of its fundamental purpose.</p>
 
-        <h1>Fun.Bot - Privacy Policy</h1>
-        <p class="last-updated">Last Updated: October 26, 2023</p>
+            <h2 id="modifications-to-terms">7. Modifications to Terms</h2>
+            <p>We retain the unilateral prerogative to revise these Terms at any juncture. Notification of such revisions will be disseminated through an update to the "Last Updated" timestamp affixed at the apex of this document. Your sustained utilization of Fun.Bot subsequent to any such amendments constitutes your unequivocal acceptance of the revised Terms.</p>
 
-        <h2>1. Introduction</h2>
-        <p>This Privacy Policy describes how Fun.Bot ("we," "us," or "our") collects, uses, and discloses information when you use our Discord bot, Fun.Bot (the "Service").</p>
+            <hr>
 
-        <h2>2. Information We Collect</h2>
-        <p>Fun.Bot collects minimal data necessary to provide its services. The types of information we may collect include:</p>
-        <ul>
-            <li><strong>Server IDs and Channel IDs:</strong> To identify where commands are used and to properly respond within specific servers and channels. This data is used for operational purposes only (e.g., storing configuration for features like custom prefixes or welcome messages) and is not linked to individual users.</li>
-            <li><strong>User IDs (for specific features):</strong> In cases where a feature requires identifying a user (e.g., tracking scores in a game, moderation actions), Fun.Bot may temporarily or persistently store User IDs. This data is used solely for the functionality of that specific feature and is not shared with third parties.</li>
-            <li><strong>Command Usage Data:</strong> Anonymous statistics on command usage (e.g., how often a command is used) may be collected to help us understand feature popularity and improve the bot. This data is aggregated and does not identify individual users or their specific actions.</li>
-        </ul>
-        <p>We do NOT collect:</p>
-        <ul>
-            <li>Discord messages content (unless explicitly part of a command, which is processed in real-time and not stored).</li>
-            <li>Personal information such as your real name, email address, or IP address.</li>
-        </ul>
+            <h1 id="privacy-policy">Fun.Bot - Privacy Policy</h1>
+            <p class="last-updated">Last Updated: October 26, 2023</p>
 
-        <h2>3. How We Use Your Information</h2>
-        <p>The information we collect is used solely for the following purposes:</p>
-        <ul>
-            <li>To operate and provide the features of Fun.Bot.</li>
-            <li>To improve and optimize Fun.Bot's performance and functionality.</li>
-            <li>To understand how Fun.Bot is used (through aggregated, anonymized data).</li>
-            <li>To enforce our Terms of Service.</li>
-        </ul>
+            <h2 id="introduction">1. Introduction</h2>
+            <p>This Privacy Policy delineates the methodologies by which Fun.Bot ("we," "us," or "our") undertakes the collection, processing, utilization, and disclosure of information concomitant with your engagement with our Discord bot, Fun.Bot (hereinafter referred to as the "Service").</p>
 
-        <h2>4. Data Storage and Security</h2>
-        <p>We take reasonable measures to protect the information collected through Fun.Bot from unauthorized access, disclosure, alteration, or destruction. Data is stored on secure servers and access is restricted to authorized personnel only. While we strive to protect your personal information, no method of transmission over the Internet or method of electronic storage is 100% secure.</p>
-        <p>Data such as Server IDs and User IDs (where applicable) may be stored as long as Fun.Bot is active on a server or as long as necessary for the functioning of a specific feature. Upon removal of Fun.Bot from a server, associated server data will be deleted within a reasonable timeframe, unless otherwise required by law.</p>
+            <h2 id="information-we-collect">2. Information We Collect</h2>
+            <p>Fun.Bot's data acquisition strategy is restricted to the minimal dataset indispensable for the provision of its core services. The categories of information subject to collection may encompass:</p>
+            <ul>
+                <li><strong>Server Identifiers (IDs) and Channel Identifiers (IDs):</strong> Utilized for the granular identification of command invocation contexts and to facilitate precise algorithmic responses within designated Discord servers and channels. This metadata is exclusively purposed for operational requirements (e.g., persistent storage of configuration parameters for features such as custom command prefixes or server welcome messages) and maintains no direct linkage to individual user identities.</li>
+                <li><strong>User Identifiers (IDs) for Specific Functionalities:</strong> In scenarios necessitating user disambiguation (e.g., maintaining score aggregates for integrated gaming modules, logging of moderation actions), Fun.Bot may effectuate the transient or persistent storage of User IDs. This particular data segment is solely leveraged for the intrinsic functionality of the specified feature and is not disseminated to external third-party entities.</li>
+                <li><strong>Command Telemetry Data:</strong> Aggregated, anonymized statistical data pertaining to command invocation frequency (e.g., quantitative metrics on command usage patterns) may be systematically collected to inform insights regarding feature popularity and to optimize the bot's functional architecture. This dataset is compiled in an aggregated format and does not enable the identification of individual users or their discrete actions.</li>
+            </ul>
+            <p>Conspicuously, Fun.Bot explicitly disclaims the collection of:</p>
+            <ul>
+                <li>The textual content of Discord messages (unless explicitly embedded within a command payload, in which case it is processed in real-time and not subject to persistent storage).</li>
+                <li>Personally identifiable information (PII) such as real names, electronic mail addresses, or Internet Protocol (IP) addresses.</li>
+            </ul>
 
-        <h2>5. Sharing of Information</h2>
-        <p>We do not sell, trade, or otherwise transfer your information to outside parties. We may share aggregated, anonymized usage data with third-party services for analytics purposes, but this data cannot be used to identify you personally.</p>
+            <h2 id="how-we-use-your-information">3. How We Use Your Information</h2>
+            <p>The information meticulously collected by Fun.Bot is exclusively allocated for the subsequent operational objectives:</p>
+            <ul>
+                <li>To enable and sustain the intrinsic functionalities and features inherent to Fun.Bot.</li>
+                <li>To iteratively enhance and optimize the Service's performance metrics and overall functionality.</li>
+                <li>To derive insights into the Service's usage paradigms through the analysis of aggregated, anonymized data.</li>
+                <li>To rigorously enforce the stipulations outlined in our Terms of Service.</li>
+            </ul>
 
-        <h2>6. Third-Party Services</h2>
-        <p>Fun.Bot may interact with Discord's API to provide its features. Your use of Discord is subject to Discord's own Terms of Service and Privacy Policy. We are not responsible for the practices of Discord or any other third-party services.</p>
+            <h2 id="data-storage-security">4. Data Storage and Security</h2>
+            <p>We implement industry-standard security protocols and reasonable measures to safeguard collected information against unauthorized access, illicit disclosure, data alteration, or catastrophic destruction. Data assets are maintained on secure server infrastructure, with access rigorously restricted to authorized personnel only. While we endeavor to fortify your digital privacy, it is imperative to acknowledge that no method of data transmission across the Internet or electronic storage mechanism can guarantee absolute security.</p>
+            <p>Data elements such as Server IDs and, where contextually applicable, User IDs, may be retained for the duration of Fun.Bot's active deployment on a server or for the requisite period necessary to ensure the continuous functioning of a specific feature. Subsequent to Fun.Bot's de-integration from a server, associated server-specific data will be systematically purged within a commercially reasonable timeframe, unless legal mandates stipulate otherwise.</p>
 
-        <h2>7. Your Choices</h2>
-        <p>By removing Fun.Bot from your Discord server, you will stop all further data collection by the bot for that server. If you have concerns about specific data associated with your User ID (e.g., game scores), please contact us using the information below.</p>
+            <h2 id="sharing-of-information">5. Sharing of Information</h2>
+            <p>We adhere to a stringent policy of non-disclosure: we do not vend, trade, or otherwise transfer your information to external third parties. We may, however, share aggregated, anonymized usage statistics with reputable third-party analytics providers for the exclusive purpose of service improvement; this aggregated data is meticulously anonymized and cannot be reverse-engineered to identify individual users.</p>
 
-        <h2>8. Changes to This Privacy Policy</h2>
-        <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date. You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.</p>
+            <h2 id="third-party-services">6. Third-Party Services</h2>
+            <p>Fun.Bot's operational architecture interfaces with Discord's Application Programming Interface (API) to deliver its functionalities. Your engagement with the Discord platform is governed by Discord's own comprehensive Terms of Service and Privacy Policy. We expressly disclaim responsibility for the data handling practices or operational methodologies of Discord or any other external third-party services.</p>
 
-        <h2>9. Contact Us</h2>
-        <p>If you have any questions about this Privacy Policy, please contact us through our Discord support server (if available) or via [Your Contact Email/Method Here].</p>
+            <h2 id="your-choices">7. Your Choices</h2>
+            <p>The act of removing Fun.Bot from your Discord server will effectuate the cessation of all subsequent data collection by the bot pertaining to that specific server instance. For inquiries or concerns regarding discrete data associated with your User ID (e.g., retained game scores), please initiate communication utilizing the contact modalities enumerated in the section below.</p>
+
+            <h2 id="changes-to-privacy-policy">8. Changes to This Privacy Policy</h2>
+            <p>We may periodically revise this Privacy Policy. All amendments will be publicized through the posting of the updated Privacy Policy on this digital resource and a corresponding revision of the "Last Updated" timestamp. Users are advised to regularly review this Privacy Policy for any modifications. Revisions to this Privacy Policy become effective immediately upon their promulgation on this page.</p>
+        </div>
+        <div class="footer">
+            <h2 id="contact-us">Contact Us</h2>
+            <p>For any inquiries pertaining to these Terms of Service or the Privacy Policy, please establish communication through our designated Discord support server (if available) or via [Your Contact Email/Method Here].</p>
+            <p>&copy; 2023 Fun.Bot. All rights reserved.</p>
+        </div>
     </div>
 </body>
 </html>
