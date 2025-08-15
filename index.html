@@ -21,6 +21,11 @@
             padding: 20px;
             box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
             flex-shrink: 0; /* Prevent sidebar from shrinking */
+            position: fixed; /* Make sidebar fixed */
+            height: 100vh; /* Full height */
+            overflow-y: auto; /* Enable scrolling for sidebar content */
+            top: 0;
+            left: 0;
         }
         .sidebar h2 {
             color: #8be9fd;
@@ -39,7 +44,7 @@
             color: #e0e0e0;
             text-decoration: none;
             font-size: 1.1em;
-            transition: color 0.3s ease-in-out;
+            transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
             display: block;
             padding: 8px 10px;
             border-radius: 5px;
@@ -55,6 +60,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-left: 250px; /* Adjust content margin to account for fixed sidebar */
         }
 
         .container {
@@ -128,6 +134,7 @@
             font-size: 0.9em;
             width: 100%;
             box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box; /* Ensure padding is included in width */
         }
         .footer a {
             color: #8be9fd;
@@ -243,5 +250,22 @@
             <p>&copy; 2023 Fun.Bot. All rights reserved.</p>
         </div>
     </div>
+
+    <script>
+        document.querySelectorAll('.sidebar ul li a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
