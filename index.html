@@ -10,36 +10,38 @@
             line-height: 1.8;
             margin: 0;
             padding: 0;
-            background-color: #1a0a2a; /* Deep violet-blue fallback background */
+            background-color: #0d001e; /* Deep dark violet for retrowave background */
             color: #e0e0e0; /* Light text */
             display: flex;
             min-height: 100vh;
-            background-image: url('https://raw.githubusercontent.com/Cosmic4796/funbot.github.io/main/Background.jpg'); /* Your corrected background image URL */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
             position: relative;
             z-index: 1;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
+
+        /* Retrowave Grid Overlay (Optional, for visual flair) */
         body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.4); /* Dark overlay for readability */
+            background-image: 
+                linear-gradient(to right, rgba(255, 31, 142, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 248, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
             z-index: -1;
+            opacity: 0.3;
         }
 
         .sidebar {
-            width: 280px; /* Slightly wider sidebar */
-            background-color: rgba(45, 0, 62, 0.7); /* More transparent deep purple for sidebar */
-            backdrop-filter: blur(8px); /* Blur effect for sidebar */
-            -webkit-backdrop-filter: blur(8px); /* Safari support */
-            padding: 30px 20px; /* More vertical padding */
-            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.9); /* Stronger, diffused shadow */
+            width: 280px;
+            background-color: rgba(45, 0, 62, 0.8); /* Slightly more transparent deep purple */
+            backdrop-filter: blur(10px); /* Enhanced blur effect for sidebar */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            padding: 30px 20px;
+            box-shadow: 2px 0 25px rgba(0, 0, 0, 0.9); /* Stronger, diffused shadow */
             flex-shrink: 0;
             position: fixed;
             height: 100vh;
@@ -47,35 +49,37 @@
             top: 0;
             left: 0;
             z-index: 10;
-            border-right: 1px solid rgba(0, 248, 255, 0.15); /* Subtle border to separate */
+            border-right: 1px solid rgba(0, 248, 255, 0.2); /* Slightly stronger border */
         }
         .sidebar h2 {
             color: #00F8FF;
             margin-top: 0;
-            margin-bottom: 40px; /* More space below heading */
-            font-size: 1.8em; /* Slightly larger heading */
-            text-shadow: 0 0 10px rgba(0, 248, 255, 0.7); /* Enhanced neon glow */
+            margin-bottom: 40px;
+            font-size: 1.8em;
+            text-shadow: 0 0 12px rgba(0, 248, 255, 0.8); /* Enhanced neon glow */
             text-align: center;
-            letter-spacing: 1px; /* Add some letter spacing */
+            letter-spacing: 1.5px; /* More letter spacing */
+            text-transform: uppercase; /* Uppercase for flair */
         }
         .sidebar ul {
             list-style-type: none;
             padding: 0;
         }
         .sidebar ul li {
-            margin-bottom: 15px; /* More space between links */
+            margin-bottom: 15px;
         }
         .sidebar ul li a {
             color: #E0E0E0;
             text-decoration: none;
             font-size: 1.1em;
-            transition: all 0.3s ease-in-out; /* Smooth transition for all properties */
+            transition: all 0.3s ease-in-out;
             display: block;
-            padding: 12px 20px; /* Increased padding */
-            border-radius: 10px; /* Softer, more modern corners */
+            padding: 12px 20px;
+            border-radius: 10px;
             position: relative;
-            overflow: hidden; /* For pseudo-elements */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Subtle shadow for links */
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4); /* Stronger subtle shadow for links */
+            background-color: rgba(255, 31, 142, 0.05); /* Very slight pink tint */
         }
         .sidebar ul li a::before {
             content: '';
@@ -84,8 +88,8 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 248, 255, 0.15), transparent); /* Stronger highlight gradient */
-            transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smoother animation curve */
+            background: linear-gradient(90deg, transparent, rgba(0, 248, 255, 0.2), transparent); /* Stronger highlight gradient */
+            transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: -1;
         }
         .sidebar ul li a:hover::before {
@@ -93,120 +97,163 @@
         }
         .sidebar ul li a:hover {
             color: #FF1F8E;
-            background-color: rgba(255, 31, 142, 0.18); /* Slightly more opaque hover background */
-            text-shadow: 0 0 8px rgba(255, 31, 142, 0.7); /* Stronger neon glow on hover */
-            transform: translateY(-2px); /* Slight lift effect on hover */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4); /* More pronounced shadow on hover */
+            background-color: rgba(255, 31, 142, 0.25); /* More opaque hover background */
+            text-shadow: 0 0 10px rgba(255, 31, 142, 0.8); /* Stronger neon glow on hover */
+            transform: translateY(-3px); /* More pronounced lift effect */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6); /* Even more pronounced shadow */
         }
+
+        /* Custom Scrollbar for Sidebar (Webkit) */
+        .sidebar::-webkit-scrollbar {
+            width: 12px; /* Width of the scrollbar */
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: #2a004a; /* Dark purple track */
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background-color: #FF1F8E; /* Vibrant pink thumb */
+            border-radius: 10px;
+            border: 3px solid #2a004a; /* Border color matches track */
+            box-shadow: inset 0 0 6px rgba(0, 248, 255, 0.5); /* Subtle glow */
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background-color: #00F8FF; /* Cyan on hover */
+            border: 3px solid #2a004a;
+            box-shadow: inset 0 0 8px rgba(255, 31, 142, 0.7); /* More intense glow on hover */
+        }
+
 
         .main-content {
             flex-grow: 1;
-            padding: 30px; /* More overall padding */
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            margin-left: 280px; /* Adjust content margin for wider sidebar */
+            align-items: center; /* Keep centered for overall layout */
+            margin-left: 280px;
             position: relative;
             z-index: 5;
-            padding-bottom: 60px; /* Add space for the footer without fixing it */
+            padding-bottom: 60px; /* Space for the footer */
             width: calc(100% - 280px); /* Ensure main content takes remaining width */
-            box-sizing: border-box; /* Include padding in width calculation */
+            box-sizing: border-box;
         }
 
-        .container {
-            max-width: 950px; /* Slightly wider content area */
+        .content-card {
+            max-width: 950px;
             width: 100%;
-            margin: 50px auto; /* More margin top/bottom */
-            background: rgba(42, 0, 62, 0.75); /* More transparent slightly lighter purple for container */
-            backdrop-filter: blur(10px); /* Blur effect for container */
-            -webkit-backdrop-filter: blur(10px); /* Safari support */
-            padding: 50px; /* Increased padding */
-            border-radius: 15px; /* Rounder corners */
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.9); /* Even stronger, diffused shadow */
+            margin: 25px auto; /* Reduced margin between cards */
+            background: rgba(42, 0, 62, 0.7); /* More transparent for blur effect */
+            backdrop-filter: blur(12px); /* Stronger blur effect for content cards */
+            -webkit-backdrop-filter: blur(12px); /* Safari support */
+            padding: 40px; /* Consistent padding */
+            border-radius: 18px; /* Even rounder corners for a softer look */
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.9); /* Even stronger, diffused shadow */
             box-sizing: border-box;
-            border: 1px solid rgba(0, 248, 255, 0.25); /* Slightly stronger cyan border */
-            transition: transform 0.3s ease-in-out; /* Smooth transition for potential hover effects */
+            border: 1px solid rgba(0, 248, 255, 0.2); /* Subtle cyan border */
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease-in-out; /* Smooth transition for hover effects */
         }
-        .container:hover {
-            transform: translateY(-5px); /* Slight lift on hover for container */
+        .content-card:hover {
+            transform: translateY(-8px); /* More pronounced lift on hover */
+            box-shadow: 0 15px 70px rgba(0,0,0,0.95); /* Intense shadow on hover */
         }
+
         h1, h2, h3 {
             color: #00F8FF;
-            text-shadow: 0 0 12px rgba(0, 248, 255, 0.8); /* Even stronger neon glow */
-            margin-top: 1.8em; /* More space above headings */
+            text-shadow: 0 0 15px rgba(0, 248, 255, 0.9); /* Even stronger neon glow */
+            margin-top: 1.8em;
             margin-bottom: 1em;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px; /* Increased letter spacing for headings */
         }
         h1 {
-            font-size: 3em; /* Larger main title */
+            font-size: 3.2em; /* Even larger main title */
             text-align: center;
-            margin-bottom: 1.2em;
+            margin-bottom: 1.5em; /* More space below main title */
             color: #FF1F8E;
-            text-shadow: 0 0 15px rgba(255, 31, 142, 0.9); /* More vibrant pink neon glow */
+            text-shadow: 0 0 20px rgba(255, 31, 142, 1); /* Intense vibrant pink neon glow */
+            text-transform: uppercase;
         }
         h2 {
-            font-size: 2.3em;
-            border-bottom: 1px solid rgba(0, 248, 255, 0.3); /* Slightly stronger line under headings */
-            padding-bottom: 8px;
-            margin-bottom: 1.5em;
+            font-size: 2.5em; /* Larger section titles */
+            border-bottom: 1px solid rgba(0, 248, 255, 0.4); /* Stronger line under headings */
+            padding-bottom: 10px;
+            margin-bottom: 1.8em; /* More space below section titles */
         }
         h3 {
-            font-size: 1.8em;
+            font-size: 2em; /* Larger sub-headings */
+            margin-top: 2em; /* More space above sub-headings */
+            border-bottom: 1px dashed rgba(255, 31, 142, 0.3); /* Dashed line for sub-headings */
+            padding-bottom: 5px;
+            margin-bottom: 1em;
         }
         p {
-            margin-bottom: 1.2em; /* More space between paragraphs */
+            margin-bottom: 1.5em; /* More space between paragraphs */
+            line-height: 1.9; /* Increased line height for readability */
         }
         ul {
-            list-style-type: disc;
-            margin-left: 30px; /* More indentation for lists */
+            list-style-type: none; /* Removed default disc, using custom styling */
+            padding: 0;
+            margin-left: 0;
             margin-bottom: 1.5em;
             color: #e0e0e0;
         }
-        li {
-            margin-bottom: 0.8em; /* More space for list items */
+        ul li {
+            position: relative;
+            padding-left: 25px; /* Space for custom bullet */
+            margin-bottom: 0.8em;
+        }
+        ul li::before {
+            content: '►'; /* Custom retro arrow bullet */
+            position: absolute;
+            left: 0;
+            color: #00F8FF; /* Cyan bullet */
+            font-size: 0.8em;
+            top: 50%;
+            transform: translateY(-50%);
+            text-shadow: 0 0 5px rgba(0, 248, 255, 0.5);
         }
         a {
             color: #FF79C6;
             text-decoration: none;
-            transition: color 0.3s ease-in-out;
+            transition: color 0.3s ease-in-out, text-shadow 0.3s ease-in-out;
         }
         a:hover {
             color: #8C00FF;
             text-decoration: underline;
-            text-shadow: 0 0 8px rgba(140, 0, 255, 0.7); /* Stronger neon glow on hover */
+            text-shadow: 0 0 10px rgba(140, 0, 255, 0.9); /* Stronger neon glow on hover */
         }
         .last-updated {
             font-style: italic;
-            color: #CCCCCC; /* Even lighter grey for date */
+            color: #AAAAAA;
             text-align: center;
             margin-top: -0.8em;
-            margin-bottom: 40px; /* More space below date */
-            font-size: 1em; /* Slightly larger date font */
-            text-shadow: 0 0 3px rgba(255,255,255,0.1); /* Subtle glow for date */
+            margin-bottom: 50px; /* More space below date */
+            font-size: 1.1em; /* Slightly larger date font */
+            text-shadow: 0 0 5px rgba(255,255,255,0.2); /* Subtle glow for date */
         }
         hr {
             border: 0;
-            height: 3px; /* Even thicker line */
-            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, rgba(0, 248, 255, 0));
-            margin: 60px 0; /* More margin for separator */
-            box-shadow: 0 0 15px rgba(255, 31, 142, 0.8); /* More intense glowing effect */
+            height: 4px; /* Even thicker line */
+            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, #FF1F8E, rgba(0, 248, 255, 0)); /* More complex gradient */
+            margin: 80px 0; /* More margin for separator */
+            box-shadow: 0 0 20px rgba(255, 31, 142, 1); /* Intense glowing effect */
         }
         .footer {
             text-align: center;
-            padding: 40px 20px; /* Increased padding */
-            margin-top: auto; /* This pushes the footer to the bottom of the flex column (main-content) */
-            background-color: rgba(45, 0, 62, 0.7); /* More transparent deep purple for footer */
-            backdrop-filter: blur(8px); /* Blur effect for footer */
-            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            padding: 40px 20px;
+            margin-top: 60px; /* Ensure space from last card */
+            background-color: rgba(45, 0, 62, 0.8); /* More transparent deep purple for footer */
+            backdrop-filter: blur(10px); /* Blur effect for footer */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
             color: #AAAAAA;
             font-size: 0.95em;
-            width: 100%; /* Take full width of its parent (.main-content) */
-            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.9);
+            width: calc(100% - 280px); /* Adjust width for sidebar */
+            box-shadow: 0 -2px 25px rgba(0, 0, 0, 0.9);
             box-sizing: border-box;
-            border-top: 1px solid rgba(255, 31, 142, 0.25);
+            border-top: 1px solid rgba(255, 31, 142, 0.3); /* Stronger pink border */
         }
         .footer a {
             color: #00F8FF;
-            text-shadow: 0 0 8px rgba(0, 248, 255, 0.5);
+            text-shadow: 0 0 10px rgba(0, 248, 255, 0.7); /* Stronger glow for footer links */
         }
     </style>
 </head>
@@ -214,15 +261,15 @@
     <div class="sidebar">
         <h2>Navigation</h2>
         <ul>
-            <li><a href="#terms-of-service">Terms of Service</a></li>
+            <li><a href="#terms-of-service-title">Terms of Service</a></li>
             <li><a href="#acceptance-of-terms">1. Acceptance of Terms</a></li>
             <li><a href="#description-of-service">2. Description of Service</a></li>
             <li><a href="#user-conduct">3. User Conduct</a></li>
-            <li><a href="#data-collection-usage-tos">4. Data Collection and Usage</a></li>
+            <li><a href="#data-collection-usage-tos">4. Data Collection and Usage (ToS)</a></li>
             <li><a href="#disclaimer-of-warranties">5. Disclaimer of Warranties</a></li>
             <li><a href="#limitation-of-liability">6. Limitation of Liability</a></li>
             <li><a href="#modifications-to-terms">7. Modifications to Terms</a></li>
-            <li><a href="#privacy-policy">Privacy Policy</a></li>
+            <li><a href="#privacy-policy-title">Privacy Policy</a></li>
             <li><a href="#introduction">1. Introduction</a></li>
             <li><a href="#information-we-collect">2. Information We Collect</a></li>
             <li><a href="#how-we-use-your-information">3. How We Use Your Information</a></li>
@@ -235,16 +282,23 @@
         </ul>
     </div>
     <div class="main-content">
-        <div class="container">
-            <h1 id="terms-of-service">Fun.Bot - Terms of Service</h1>
+        <!-- Terms of Service Section -->
+        <div class="content-card">
+            <h1 id="terms-of-service-title">Fun.Bot - Terms of Service</h1>
             <p class="last-updated">Last Updated: October 26, 2023</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="acceptance-of-terms">1. Acceptance of Terms</h2>
             <p>By integrating Fun.Bot into your Discord server or engaging with any of its functionalities, you acknowledge and consent to be legally bound by these Terms of Service ("Terms"). Should you dissent from these Terms, refrain from deploying or utilizing Fun.Bot.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="description-of-service">2. Description of Service</h2>
             <p>Fun.Bot is a Discord bot engineered to deliver a comprehensive suite of entertainment, utility, and moderation functionalities within Discord server environments. The Service's capabilities encompass, but are not restricted to, interactive gaming modules, automated moderation commands, informational retrieval protocols, and customizable server entry notifications.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="user-conduct">3. User Conduct</h2>
             <p>You covenant to operate Fun.Bot in a responsible manner, strictly adhering to Discord's prevailing Terms of Service and Community Guidelines. You are expressly prohibited from utilizing Fun.Bot to:</p>
             <ul>
@@ -254,27 +308,42 @@
                 <li>Initiate spam, flooding, or any disruptive activities detrimental to Discord server operations.</li>
                 <li>Attempt to effectuate unauthorized access to Fun.Bot's underlying systems or proprietary data repositories.</li>
             </ul>
+        </div>
 
+        <div class="content-card">
             <h2 id="data-collection-usage-tos">4. Data Collection and Usage</h2>
             <p>Fun.Bot engages in the acquisition of minimal data strictly requisite for its operational efficacy. For an exhaustive exposition on data aggregation, retention, and utilization protocols, kindly refer to our comprehensive Privacy Policy articulated hereunder.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="disclaimer-of-warranties">5. Disclaimer of Warranties</h2>
             <p>Fun.Bot is furnished "as is" and "as available" without the provision of any explicit or implicit warranties, inclusive of, but not restricted to, implied warranties of merchantability, suitability for a particular objective, or non-infringement. We proffer no guarantee that Fun.Bot's operational continuum will be uninterrupted, devoid of errors, or uninfected by deleterious components.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="limitation-of-liability">6. Limitation of Liability</h2>
             <p>Under no circumstances shall Fun.Bot or its developmental entities be held culpable for any direct, indirect, incidental, special, consequential, or punitive damages, including, without limitation, economic losses, data corruption, usage deprivation, reputational impairment, or other intangible detriments, directly or indirectly attributable to (i) your access to, engagement with, or inability to access or engage with the Service; (ii) any conduct or content originating from third-party entities within the Service; (iii) any data or content acquired from the Service; and (iv) unauthorized intrusion, utilization, or modification of your data transmissions or content, irrespective of whether such culpability is predicated on warranty, contractual obligation, tortious act (inclusive of negligence), or any other legal doctrine, and notwithstanding prior advisement regarding the potential for such damages, even if a stipulated remedy herein fails of its fundamental purpose.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="modifications-to-terms">7. Modifications to Terms</h2>
             <p>We retain the unilateral prerogative to revise these Terms at any juncture. Notification of such revisions will be disseminated through an update to the "Last Updated" timestamp affixed at the apex of this document. Your sustained utilization of Fun.Bot subsequent to any such amendments constitutes your unequivocal acceptance of the revised Terms.</p>
+        </div>
 
-            <hr>
+        <hr>
 
-            <h1 id="privacy-policy">Fun.Bot - Privacy Policy</h1>
+        <!-- Privacy Policy Section -->
+        <div class="content-card">
+            <h1 id="privacy-policy-title">Fun.Bot - Privacy Policy</h1>
             <p class="last-updated">Last Updated: October 26, 2023</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="introduction">1. Introduction</h2>
             <p>This Privacy Policy delineates the methodologies by which Fun.Bot ("we," "us," or "our") undertakes the collection, processing, utilization, and disclosure of information concomitant with your engagement with our Discord bot, Fun.Bot (hereinafter referred to as the "Service").</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="information-we-collect">2. Information We Collect</h2>
             <p>Fun.Bot's data acquisition strategy is restricted to the minimal dataset indispensable for the provision of its core services. The categories of information subject to collection may encompass:</p>
             <ul>
@@ -287,7 +356,9 @@
                 <li>The textual content of Discord messages (unless explicitly embedded within a command payload, in which case it is processed in real-time and not subject to persistent storage).</li>
                 <li>Personally identifiable information (PII) such as real names, electronic mail addresses, or Internet Protocol (IP) addresses.</li>
             </ul>
+        </div>
 
+        <div class="content-card">
             <h2 id="how-we-use-your-information">3. How We Use Your Information</h2>
             <p>The information meticulously collected by Fun.Bot is exclusively allocated for the subsequent operational objectives:</p>
             <ul>
@@ -296,23 +367,34 @@
                 <li>To derive insights into the Service's usage paradigms through the analysis of aggregated, anonymized data.</li>
                 <li>To rigorously enforce the stipulations outlined in our Terms of Service.</li>
             </ul>
+        </div>
 
+        <div class="content-card">
             <h2 id="data-storage-security">4. Data Storage and Security</h2>
             <p>We implement industry-standard security protocols and reasonable measures to safeguard collected information against unauthorized access, illicit disclosure, data alteration, or catastrophic destruction. Data assets are maintained on secure server infrastructure, with access rigorously restricted to authorized personnel only. While we endeavor to fortify your digital privacy, it is imperative to acknowledge that no method of data transmission across the Internet or electronic storage mechanism can guarantee absolute security.</p>
             <p>Data elements such as Server IDs and, where contextually applicable, User IDs, may be retained for the duration of Fun.Bot's active deployment on a server or for the requisite period necessary to ensure the continuous functioning of a specific feature. Subsequent to Fun.Bot's de-integration from a server, associated server-specific data will be systematically purged within a commercially reasonable timeframe, unless legal mandates stipulate otherwise.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="sharing-of-information">5. Sharing of Information</h2>
             <p>We adhere to a stringent policy of non-disclosure: we do not vend, trade, or otherwise transfer your information to external third parties. We may, however, share aggregated, anonymized usage statistics with reputable third-party analytics providers for the exclusive purpose of service improvement; this aggregated data is meticulously anonymized and cannot be reverse-engineered to identify individual users.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="third-party-services">6. Third-Party Services</h2>
             <p>Fun.Bot's operational architecture interfaces with Discord's Application Programming Interface (API) to deliver its functionalities. Your engagement with the Discord platform is governed by Discord's own comprehensive Terms of Service and Privacy Policy. We expressly disclaim responsibility for the data handling practices or operational methodologies of Discord or any other external third-party services.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="your-choices">7. Your Choices</h2>
             <p>The act of removing Fun.Bot from your Discord server will effectuate the cessation of all subsequent data collection by the bot pertaining to that specific server instance. For inquiries or concerns regarding discrete data associated with your User ID (e.g., retained game scores), please initiate communication utilizing the contact modalities enumerated in the section below.</p>
+        </div>
 
+        <div class="content-card">
             <h2 id="changes-to-privacy-policy">8. Changes to This Privacy Policy</h2>
             <p>We may periodically revise this Privacy Policy. All amendments will be publicized through the posting of the updated Privacy Policy on this digital resource and a corresponding revision of the "Last Updated" timestamp. Users are advised to regularly review this Privacy Policy for any modifications. Revisions to this Privacy Policy become effective immediately upon their promulgation on this page.</p>
         </div>
+        
         <div class="footer">
             <h2 id="contact-us">Contact Us</h2>
             <p>For any inquiries pertaining to these Terms of Service or the Privacy Policy, please establish communication through our designated Discord support server (if available) or via [Your Contact Email/Method Here].</p>
