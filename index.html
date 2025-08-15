@@ -10,28 +10,49 @@
             line-height: 1.8;
             margin: 0;
             padding: 0;
-            background-color: #1a1a2e; /* Dark background */
+            background-color: #1a0a2a; /* Deep violet-blue background */
             color: #e0e0e0; /* Light text */
             display: flex;
             min-height: 100vh;
+            background-image: url('[YOUR_IMAGE_URL_HERE]'); /* Placeholder for your background image */
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Do not repeat the image */
+            background-attachment: fixed; /* Keep image fixed when scrolling */
+            /* Optional: Add an overlay for better text readability */
+            position: relative;
+            z-index: 1;
         }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay for readability */
+            z-index: -1;
+        }
+
         .sidebar {
             width: 250px;
-            background-color: #2a2a4a; /* Slightly lighter dark background for sidebar */
+            background-color: rgba(45, 0, 62, 0.9); /* Semi-transparent deep purple for sidebar */
             padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.7); /* Stronger shadow */
             flex-shrink: 0; /* Prevent sidebar from shrinking */
             position: fixed; /* Make sidebar fixed */
             height: 100vh; /* Full height */
             overflow-y: auto; /* Enable scrolling for sidebar content */
             top: 0;
             left: 0;
+            z-index: 10; /* Ensure sidebar is above main content */
         }
         .sidebar h2 {
-            color: #8be9fd;
+            color: #00F8FF; /* Bright cyan for sidebar headings */
             margin-top: 0;
             margin-bottom: 30px;
-            font-size: 1.5em;
+            font-size: 1.6em;
+            text-shadow: 0 0 8px rgba(0, 248, 255, 0.5); /* Neon glow effect */
         }
         .sidebar ul {
             list-style-type: none;
@@ -41,7 +62,7 @@
             margin-bottom: 15px;
         }
         .sidebar ul li a {
-            color: #e0e0e0;
+            color: #E0E0E0; /* Light text for navigation links */
             text-decoration: none;
             font-size: 1.1em;
             transition: color 0.3s ease-in-out, background-color 0.3s ease-in-out;
@@ -50,8 +71,9 @@
             border-radius: 5px;
         }
         .sidebar ul li a:hover {
-            color: #ff79c6;
-            background-color: #3a3a5a;
+            color: #FF1F8E; /* Vibrant pink on hover */
+            background-color: rgba(255, 31, 142, 0.2); /* Semi-transparent pink hover background */
+            text-shadow: 0 0 5px rgba(255, 31, 142, 0.5); /* Neon glow on hover */
         }
 
         .main-content {
@@ -61,35 +83,39 @@
             flex-direction: column;
             align-items: center;
             margin-left: 250px; /* Adjust content margin to account for fixed sidebar */
+            position: relative; /* For z-index context */
+            z-index: 5; /* Ensure content is above body background */
         }
 
         .container {
             max-width: 900px;
             width: 100%;
             margin: 40px auto;
-            background: #2a2a4a; /* Slightly lighter dark background for container */
+            background: rgba(42, 0, 62, 0.9); /* Semi-transparent slightly lighter purple for container */
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5); /* Enhanced shadow for depth */
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.8); /* Enhanced shadow for depth */
             box-sizing: border-box;
+            border: 1px solid rgba(0, 248, 255, 0.3); /* Subtle cyan border */
         }
         h1, h2, h3 {
-            color: #8be9fd; /* Bright, modern blue for headings */
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            color: #00F8FF; /* Bright cyan for headings */
+            text-shadow: 0 0 10px rgba(0, 248, 255, 0.6); /* Stronger neon glow */
             margin-top: 1.5em;
             margin-bottom: 0.8em;
         }
         h1 {
-            font-size: 2.5em;
+            font-size: 2.8em;
             text-align: center;
             margin-bottom: 1em;
-            color: #f8f8f2; /* Lighter color for main title */
+            color: #FF1F8E; /* Vibrant pink for main title */
+            text-shadow: 0 0 12px rgba(255, 31, 142, 0.7); /* Vibrant pink neon glow */
         }
         h2 {
-            font-size: 1.8em;
+            font-size: 2.1em;
         }
         h3 {
-            font-size: 1.4em;
+            font-size: 1.6em;
         }
         p {
             margin-bottom: 1em;
@@ -98,46 +124,51 @@
             list-style-type: disc;
             margin-left: 20px;
             margin-bottom: 1em;
+            color: #e0e0e0; /* Ensure list text matches body text */
         }
         li {
             margin-bottom: 0.5em;
         }
         a {
-            color: #ff79c6; /* Vibrant pink for links */
+            color: #FF79C6; /* Vibrant pink for links */
             text-decoration: none;
             transition: color 0.3s ease-in-out;
         }
         a:hover {
-            color: #bd93f9; /* Purple on hover */
+            color: #8C00FF; /* Neon purple on hover */
             text-decoration: underline;
+            text-shadow: 0 0 5px rgba(140, 0, 255, 0.5);
         }
         .last-updated {
             font-style: italic;
-            color: #999; /* Slightly lighter grey */
+            color: #AAAAAA; /* Lighter grey for date */
             text-align: center;
             margin-top: -1em;
             margin-bottom: 30px;
-            font-size: 0.9em;
+            font-size: 0.95em;
         }
         hr {
             border: 0;
-            height: 1px;
-            background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(100, 100, 100, 0.75), rgba(0, 0, 0, 0));
+            height: 2px; /* Thicker line */
+            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, rgba(0, 248, 255, 0)); /* Retrowave gradient */
             margin: 40px 0;
+            box-shadow: 0 0 10px rgba(255, 31, 142, 0.5); /* Glowing effect */
         }
         .footer {
             text-align: center;
             padding: 30px 20px;
             margin-top: 40px;
-            background-color: #2a2a4a;
-            color: #999;
+            background-color: rgba(45, 0, 62, 0.9); /* Semi-transparent deep purple for footer */
+            color: #AAAAAA; /* Lighter grey for footer text */
             font-size: 0.9em;
             width: 100%;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.7);
             box-sizing: border-box; /* Ensure padding is included in width */
+            border-top: 1px solid rgba(255, 31, 142, 0.3); /* Subtle pink border */
         }
         .footer a {
-            color: #8be9fd;
+            color: #00F8FF; /* Bright cyan for footer links */
+            text-shadow: 0 0 5px rgba(0, 248, 255, 0.3);
         }
     </style>
 </head>
