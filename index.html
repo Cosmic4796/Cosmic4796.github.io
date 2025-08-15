@@ -10,7 +10,7 @@
             line-height: 1.8;
             margin: 0;
             padding: 0;
-            background-color: #0d001e; /* Deep dark violet for retrowave background */
+            background-color: #0d001e; /* Deep dark violet retrowave background */
             color: #e0e0e0; /* Light text */
             display: flex;
             min-height: 100vh;
@@ -19,7 +19,7 @@
             overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
-        /* Retrowave Grid Overlay (Optional, for visual flair) */
+        /* Subtle grid overlay for retrowave vibe (lighter opacity) */
         body::before {
             content: '';
             position: fixed;
@@ -28,20 +28,21 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(to right, rgba(255, 31, 142, 0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 248, 255, 0.1) 1px, transparent 1px);
+                linear-gradient(to right, rgba(255, 31, 142, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 248, 255, 0.05) 1px, transparent 1px);
             background-size: 50px 50px;
             z-index: -1;
-            opacity: 0.3;
+            opacity: 0.8; /* Keep it subtle */
+            pointer-events: none; /* Allow interaction with elements below */
         }
 
         .sidebar {
             width: 280px;
-            background-color: rgba(45, 0, 62, 0.8); /* Slightly more transparent deep purple */
-            backdrop-filter: blur(10px); /* Enhanced blur effect for sidebar */
-            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            background-color: rgba(45, 0, 62, 0.75); /* Slight adjustment in opacity */
+            backdrop-filter: blur(6px); /* Slightly less blur for performance */
+            -webkit-backdrop-filter: blur(6px); /* Safari support */
             padding: 30px 20px;
-            box-shadow: 2px 0 25px rgba(0, 0, 0, 0.9); /* Stronger, diffused shadow */
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.8); /* Adjusted shadow */
             flex-shrink: 0;
             position: fixed;
             height: 100vh;
@@ -49,17 +50,17 @@
             top: 0;
             left: 0;
             z-index: 10;
-            border-right: 1px solid rgba(0, 248, 255, 0.2); /* Slightly stronger border */
+            border-right: 1px solid rgba(0, 248, 255, 0.1); /* Lighter border */
         }
         .sidebar h2 {
             color: #00F8FF;
             margin-top: 0;
             margin-bottom: 40px;
             font-size: 1.8em;
-            text-shadow: 0 0 12px rgba(0, 248, 255, 0.8); /* Enhanced neon glow */
+            text-shadow: 0 0 10px rgba(0, 248, 255, 0.6); /* Adjusted neon glow */
             text-align: center;
-            letter-spacing: 1.5px; /* More letter spacing */
-            text-transform: uppercase; /* Uppercase for flair */
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
         .sidebar ul {
             list-style-type: none;
@@ -75,11 +76,11 @@
             transition: all 0.3s ease-in-out;
             display: block;
             padding: 12px 20px;
-            border-radius: 10px;
+            border-radius: 8px; /* Less round */
             position: relative;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4); /* Stronger subtle shadow for links */
-            background-color: rgba(255, 31, 142, 0.05); /* Very slight pink tint */
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* Adjusted subtle shadow */
+            background-color: rgba(255, 31, 142, 0.03); /* Even lighter pink tint */
         }
         .sidebar ul li a::before {
             content: '';
@@ -88,8 +89,8 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 248, 255, 0.2), transparent); /* Stronger highlight gradient */
-            transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background: linear-gradient(90deg, transparent, rgba(0, 248, 255, 0.1), transparent); /* Lighter highlight gradient */
+            transition: left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Slightly faster animation */
             z-index: -1;
         }
         .sidebar ul li a:hover::before {
@@ -97,100 +98,101 @@
         }
         .sidebar ul li a:hover {
             color: #FF1F8E;
-            background-color: rgba(255, 31, 142, 0.25); /* More opaque hover background */
-            text-shadow: 0 0 10px rgba(255, 31, 142, 0.8); /* Stronger neon glow on hover */
-            transform: translateY(-3px); /* More pronounced lift effect */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.6); /* Even more pronounced shadow */
+            background-color: rgba(255, 31, 142, 0.1); /* Lighter hover background */
+            text-shadow: 0 0 7px rgba(255, 31, 142, 0.6); /* Adjusted neon glow on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.5); /* Adjusted shadow on hover */
         }
 
         /* Custom Scrollbar for Sidebar (Webkit) */
         .sidebar::-webkit-scrollbar {
-            width: 12px; /* Width of the scrollbar */
+            width: 10px; /* Thinner scrollbar */
         }
         .sidebar::-webkit-scrollbar-track {
-            background: #2a004a; /* Dark purple track */
-            border-radius: 10px;
+            background: #1a003a; /* Darker track to match background */
+            border-radius: 8px;
         }
         .sidebar::-webkit-scrollbar-thumb {
             background-color: #FF1F8E; /* Vibrant pink thumb */
-            border-radius: 10px;
-            border: 3px solid #2a004a; /* Border color matches track */
-            box-shadow: inset 0 0 6px rgba(0, 248, 255, 0.5); /* Subtle glow */
+            border-radius: 8px;
+            border: 2px solid #1a003a; /* Thinner border matches track */
+            box-shadow: inset 0 0 5px rgba(0, 248, 255, 0.4); /* Subtle glow */
         }
         .sidebar::-webkit-scrollbar-thumb:hover {
             background-color: #00F8FF; /* Cyan on hover */
-            border: 3px solid #2a004a;
-            box-shadow: inset 0 0 8px rgba(255, 31, 142, 0.7); /* More intense glow on hover */
+            border: 2px solid #1a003a;
+            box-shadow: inset 0 0 7px rgba(255, 31, 142, 0.6); /* Adjusted glow on hover */
         }
 
 
         .main-content {
             flex-grow: 1;
-            padding: 30px;
+            padding: 40px; /* Increased overall padding */
             display: flex;
             flex-direction: column;
-            align-items: center; /* Keep centered for overall layout */
+            align-items: center;
             margin-left: 280px;
             position: relative;
             z-index: 5;
-            padding-bottom: 60px; /* Space for the footer */
-            width: calc(100% - 280px); /* Ensure main content takes remaining width */
+            padding-bottom: 80px; /* More space for the footer */
+            width: calc(100% - 280px);
             box-sizing: border-box;
         }
 
         .content-card {
-            max-width: 950px;
+            max-width: 900px; /* Slightly narrower cards */
             width: 100%;
-            margin: 25px auto; /* Reduced margin between cards */
-            background: rgba(42, 0, 62, 0.7); /* More transparent for blur effect */
-            backdrop-filter: blur(12px); /* Stronger blur effect for content cards */
-            -webkit-backdrop-filter: blur(12px); /* Safari support */
-            padding: 40px; /* Consistent padding */
-            border-radius: 18px; /* Even rounder corners for a softer look */
-            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.9); /* Even stronger, diffused shadow */
+            margin: 30px auto; /* More margin between cards for separation */
+            background: rgba(42, 0, 62, 0.7); /* Adjusted opacity for more background visibility */
+            backdrop-filter: blur(10px); /* Adjusted blur for performance/effect balance */
+            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            padding: 45px; /* Adjusted padding */
+            border-radius: 12px; /* Less round */
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7); /* Adjusted shadow */
             box-sizing: border-box;
-            border: 1px solid rgba(0, 248, 255, 0.2); /* Subtle cyan border */
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease-in-out; /* Smooth transition for hover effects */
+            border: 1px solid rgba(0, 248, 255, 0.18); /* Lighter border */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Adjusted transition speed */
         }
         .content-card:hover {
-            transform: translateY(-8px); /* More pronounced lift on hover */
-            box-shadow: 0 15px 70px rgba(0,0,0,0.95); /* Intense shadow on hover */
+            transform: translateY(-6px); /* Adjusted lift on hover */
+            box-shadow: 0 12px 40px rgba(0,0,0,0.85); /* Adjusted shadow on hover */
         }
 
         h1, h2, h3 {
             color: #00F8FF;
-            text-shadow: 0 0 15px rgba(0, 248, 255, 0.9); /* Even stronger neon glow */
-            margin-top: 1.8em;
-            margin-bottom: 1em;
-            letter-spacing: 1px; /* Increased letter spacing for headings */
+            text-shadow: 0 0 10px rgba(0, 248, 255, 0.7); /* Adjusted neon glow */
+            margin-top: 1.5em; /* Adjusted space above headings */
+            margin-bottom: 0.8em; /* Adjusted space below headings */
+            letter-spacing: 0.8px;
         }
         h1 {
-            font-size: 3.2em; /* Even larger main title */
+            font-size: 3em;
             text-align: center;
-            margin-bottom: 1.5em; /* More space below main title */
+            margin-bottom: 1.5em;
             color: #FF1F8E;
-            text-shadow: 0 0 20px rgba(255, 31, 142, 1); /* Intense vibrant pink neon glow */
+            text-shadow: 0 0 18px rgba(255, 31, 142, 0.9); /* Adjusted vibrant pink neon glow */
             text-transform: uppercase;
         }
         h2 {
-            font-size: 2.5em; /* Larger section titles */
-            border-bottom: 1px solid rgba(0, 248, 255, 0.4); /* Stronger line under headings */
-            padding-bottom: 10px;
-            margin-bottom: 1.8em; /* More space below section titles */
+            font-size: 2.2em; /* Slightly smaller section titles */
+            border-bottom: 1px solid rgba(0, 248, 255, 0.25); /* Adjusted line under headings */
+            padding-bottom: 8px;
+            margin-bottom: 1.5em;
         }
         h3 {
-            font-size: 2em; /* Larger sub-headings */
-            margin-top: 2em; /* More space above sub-headings */
-            border-bottom: 1px dashed rgba(255, 31, 142, 0.3); /* Dashed line for sub-headings */
+            font-size: 1.7em; /* Slightly smaller sub-headings */
+            margin-top: 1.8em; /* Adjusted space above sub-headings */
+            border-bottom: 1px dashed rgba(255, 31, 142, 0.2); /* Lighter dashed line */
             padding-bottom: 5px;
             margin-bottom: 1em;
         }
         p {
-            margin-bottom: 1.5em; /* More space between paragraphs */
-            line-height: 1.9; /* Increased line height for readability */
+            margin-bottom: 1.2em;
+            line-height: 1.9;
+            text-align: justify; /* Justify text for a cleaner look */
         }
         ul {
-            list-style-type: none; /* Removed default disc, using custom styling */
+            list-style-type: none;
             padding: 0;
             margin-left: 0;
             margin-bottom: 1.5em;
@@ -198,18 +200,18 @@
         }
         ul li {
             position: relative;
-            padding-left: 25px; /* Space for custom bullet */
+            padding-left: 25px;
             margin-bottom: 0.8em;
         }
         ul li::before {
-            content: '►'; /* Custom retro arrow bullet */
+            content: '►';
             position: absolute;
             left: 0;
-            color: #00F8FF; /* Cyan bullet */
+            color: #00F8FF;
             font-size: 0.8em;
             top: 50%;
             transform: translateY(-50%);
-            text-shadow: 0 0 5px rgba(0, 248, 255, 0.5);
+            text-shadow: 0 0 4px rgba(0, 248, 255, 0.4); /* Adjusted glow */
         }
         a {
             color: #FF79C6;
@@ -219,41 +221,41 @@
         a:hover {
             color: #8C00FF;
             text-decoration: underline;
-            text-shadow: 0 0 10px rgba(140, 0, 255, 0.9); /* Stronger neon glow on hover */
+            text-shadow: 0 0 7px rgba(140, 0, 255, 0.6); /* Adjusted neon glow on hover */
         }
         .last-updated {
             font-style: italic;
-            color: #AAAAAA;
+            color: #AAAAAA; /* Adjusted grey for date */
             text-align: center;
             margin-top: -0.8em;
-            margin-bottom: 50px; /* More space below date */
-            font-size: 1.1em; /* Slightly larger date font */
-            text-shadow: 0 0 5px rgba(255,255,255,0.2); /* Subtle glow for date */
+            margin-bottom: 40px;
+            font-size: 1em;
+            text-shadow: 0 0 2px rgba(255,255,255,0.1); /* Adjusted subtle glow */
         }
         hr {
             border: 0;
-            height: 4px; /* Even thicker line */
-            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, #FF1F8E, rgba(0, 248, 255, 0)); /* More complex gradient */
-            margin: 80px 0; /* More margin for separator */
-            box-shadow: 0 0 20px rgba(255, 31, 142, 1); /* Intense glowing effect */
+            height: 3px;
+            background-image: linear-gradient(to right, rgba(0, 248, 255, 0), #FF1F8E, #00F8FF, #FF1F8E, rgba(0, 248, 255, 0));
+            margin: 60px 0;
+            box-shadow: 0 0 15px rgba(255, 31, 142, 0.7); /* Adjusted glowing effect */
         }
         .footer {
             text-align: center;
             padding: 40px 20px;
             margin-top: 60px; /* Ensure space from last card */
-            background-color: rgba(45, 0, 62, 0.8); /* More transparent deep purple for footer */
-            backdrop-filter: blur(10px); /* Blur effect for footer */
-            -webkit-backdrop-filter: blur(10px); /* Safari support */
+            background-color: rgba(45, 0, 62, 0.75); /* Adjusted opacity */
+            backdrop-filter: blur(6px); /* Adjusted blur for footer */
+            -webkit-backdrop-filter: blur(6px); /* Safari support */
             color: #AAAAAA;
             font-size: 0.95em;
-            width: calc(100% - 280px); /* Adjust width for sidebar */
-            box-shadow: 0 -2px 25px rgba(0, 0, 0, 0.9);
+            width: 100%;
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.8);
             box-sizing: border-box;
-            border-top: 1px solid rgba(255, 31, 142, 0.3); /* Stronger pink border */
+            border-top: 1px solid rgba(255, 31, 142, 0.2); /* Lighter pink border */
         }
         .footer a {
             color: #00F8FF;
-            text-shadow: 0 0 10px rgba(0, 248, 255, 0.7); /* Stronger glow for footer links */
+            text-shadow: 0 0 7px rgba(0, 248, 255, 0.4); /* Adjusted glow for footer links */
         }
     </style>
 </head>
@@ -285,7 +287,7 @@
         <!-- Terms of Service Section -->
         <div class="content-card">
             <h1 id="terms-of-service-title">Fun.Bot - Terms of Service</h1>
-            <p class="last-updated">Last Updated: October 26, 2023</p>
+            <p class="last-updated">Last Updated: August 15, 2025</p>
         </div>
 
         <div class="content-card">
@@ -335,7 +337,7 @@
         <!-- Privacy Policy Section -->
         <div class="content-card">
             <h1 id="privacy-policy-title">Fun.Bot - Privacy Policy</h1>
-            <p class="last-updated">Last Updated: October 26, 2023</p>
+            <p class="last-updated">Last Updated: August 15, 2025</p>
         </div>
 
         <div class="content-card">
