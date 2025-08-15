@@ -25,16 +25,24 @@ body {
     background: linear-gradient(135deg, #1c1c1c, #2c2c2c);
 }
 
-/* === Header === */
+/* === Header / Hero === */
 header {
     background-color: rgba(0,0,0,0.85);
-    padding: 25px;
+    padding: 40px 20px;
     text-align: center;
     border-bottom: 2px solid #444;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    animation: fadeIn 1s ease forwards;
 }
-header h1 { font-size: 3rem; color: #00bfff; }
-header p { margin-top:10px; font-size:1.2rem; color:#ccc; }
+header h1 { font-size: 3.5rem; color: #00bfff; margin-bottom:10px; animation: slideDown 1s ease forwards; }
+header p { font-size:1.3rem; color:#ccc; margin-bottom:20px; animation: slideUp 1s ease forwards; }
+header .cta-buttons a {
+    display:inline-block; margin:10px 15px; padding:12px 25px;
+    background:#00bfff; color:#fff; border-radius:8px;
+    text-decoration:none; font-weight:bold; transition:.3s;
+    animation: fadeIn 1.5s ease forwards;
+}
+header .cta-buttons a:hover { background:#0094cc; transform: scale(1.05); }
 
 /* === Nav === */
 nav {
@@ -45,7 +53,7 @@ nav a {
 }
 nav a:hover { color:#00bfff; }
 
-/* === Section Cards === */
+/* === Sections === */
 section {
     padding:50px 20px;
     max-width:1000px;
@@ -55,23 +63,83 @@ section {
     border-radius: 12px;
     margin-bottom: 30px;
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    opacity:0;
+    transform: translateY(30px);
+    animation: fadeUp 1s ease forwards;
+    animation-delay: 0.2s;
 }
-h2 { color:#00bfff; margin-bottom:20px; font-size:2.2rem; border-bottom:1px solid #444; padding-bottom:10px;}
-p { margin-bottom:20px; }
+section h2 { color:#00bfff; margin-bottom:25px; font-size:2.2rem; border-bottom:1px solid #444; padding-bottom:10px;}
+section p { margin-bottom:20px; font-size:1.1rem; }
+
+/* === Feature Cards === */
+.features {
+    display:grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+.feature-card {
+    background: rgba(30,30,30,0.8);
+    padding:20px;
+    border-radius:12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition:.3s;
+    opacity:0;
+    transform: translateY(20px);
+    animation: fadeUp 1s ease forwards;
+}
+.feature-card:hover { transform: translateY(-5px) scale(1.03); box-shadow:0 0 25px rgba(0,191,255,0.5);}
+.feature-card h3 { color:#00bfff; margin-bottom:12px; font-size:1.4rem; }
+.feature-card p { font-size:1rem; }
 
 /* === Accordion === */
 .accordion {
     background-color:#222; color:#f0f0f0; cursor:pointer; padding:18px; width:100%;
     border:none; text-align:left; outline:none; transition:0.3s; font-size:1.1rem; margin-bottom:5px;
     border-radius:8px;
+    opacity:0;
+    transform: translateY(10px);
+    animation: fadeUp 1s ease forwards;
 }
 .active, .accordion:hover { background-color:#333; }
 .panel { padding:0 18px; display:none; background-color:rgba(28,28,28,0.9); overflow:hidden; border-radius:8px; margin-bottom:15px; }
 
 /* === Footer === */
 footer {
-    background-color:#111; text-align:center; padding:20px; border-top:2px solid #444; font-size:0.9rem; color:#888;
+    background-color:#111; text-align:center; padding:25px; border-top:2px solid #444; font-size:0.9rem; color:#888;
+    animation: fadeIn 1s ease forwards;
 }
+
+/* === Animations === */
+@keyframes fadeIn {
+    from { opacity:0; }
+    to { opacity:1; }
+}
+@keyframes slideDown {
+    from { opacity:0; transform: translateY(-20px); }
+    to { opacity:1; transform: translateY(0); }
+}
+@keyframes slideUp {
+    from { opacity:0; transform: translateY(20px); }
+    to { opacity:1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to { opacity:1; transform: translateY(0); }
+}
+
+/* === CTA Buttons === */
+.button {
+    display:inline-block;
+    margin-top:15px;
+    padding:12px 25px;
+    background:#00bfff;
+    color:#fff;
+    border-radius:8px;
+    font-weight:bold;
+    text-decoration:none;
+    transition:.3s;
+}
+.button:hover { background:#0094cc; transform: scale(1.05); }
 </style>
 </head>
 <body>
@@ -80,24 +148,80 @@ footer {
 
 <header>
     <h1>Fun.Bot</h1>
-    <p>Your ultimate Discord entertainment bot.</p>
+    <p>Your ultimate Discord entertainment bot</p>
+    <div class="cta-buttons">
+        <a href="#">Invite Fun.Bot</a>
+        <a href="#">Support Server</a>
+    </div>
 </header>
 
 <nav>
-    <a href="#tos">Terms of Service</a>
-    <a href="#privacy">Privacy Policy</a>
-    <a href="#copyright">Copyright</a>
+    <a href="#features">Features</a>
+    <a href="#commands">Commands</a>
+    <a href="#faq">FAQ</a>
+    <a href="#tos">TOS</a>
+    <a href="#privacy">Privacy</a>
 </nav>
+
+<section id="features">
+    <h2>Fun.Bot Features</h2>
+    <div class="features">
+        <div class="feature-card" style="animation-delay:0.2s">
+            <h3>Utilities</h3>
+            <p>Server info, reminders, timers, and handy tools to keep your community organized.</p>
+        </div>
+        <div class="feature-card" style="animation-delay:0.4s">
+            <h3>Fun & Games</h3>
+            <p>Trivia, memes, jokes, and interactive mini-games for endless entertainment.</p>
+        </div>
+        <div class="feature-card" style="animation-delay:0.6s">
+            <h3>Economy</h3>
+            <p>Earn coins, trade items, and climb the leaderboard with a fully-featured economy system.</p>
+        </div>
+        <div class="feature-card" style="animation-delay:0.8s">
+            <h3>Information</h3>
+            <p>Quick lookups for weather, stats, and server info – fast and accurate.</p>
+        </div>
+        <div class="feature-card" style="animation-delay:1s">
+            <h3>Social</h3>
+            <p>Profiles, leveling, and community engagement tools to keep members active and connected.</p>
+        </div>
+    </div>
+</section>
+
+<section id="commands">
+    <h2>Sample Commands</h2>
+    <p>Fun.Bot offers over 100+ commands! Here’s a preview of some popular ones:</p>
+    <ul>
+        <li><strong>!trivia</strong> – Play a trivia game with your server members.</li>
+        <li><strong>!meme</strong> – Get a random meme from the internet.</li>
+        <li><strong>!remind [time] [message]</strong> – Set a personal reminder.</li>
+        <li><strong>!daily</strong> – Claim daily coins and rewards.</li>
+        <li><strong>!profile [user]</strong> – View your or another member’s profile and stats.</li>
+    </ul>
+</section>
+
+<section id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <button class="accordion">Is Fun.Bot free?</button>
+    <div class="panel"><p>Yes! Fun.Bot is completely free to use in any Discord server.</p></div>
+
+    <button class="accordion">Does it have moderation commands?</button>
+    <div class="panel"><p>No, Fun.Bot focuses on fun, utilities, economy, and social features—no moderation tools included.</p></div>
+
+    <button class="accordion">Where can I get support?</button>
+    <div class="panel"><p>You can join our support server using the link above or contact the developers directly.</p></div>
+</section>
 
 <section id="tos">
     <h2>Terms of Service</h2>
     <button class="accordion">General Terms</button>
     <div class="panel">
-        <p>By using Fun.Bot ("the Bot"), you explicitly agree to these Terms of Service and all applicable Discord regulations. All intellectual property, including source code, algorithms, and website content, is strictly proprietary. Unauthorized copying, reverse engineering, distribution, or derivative works of the Bot or website is strictly prohibited under DMCA, international copyright, and computer crime laws.</p>
+        <p>By using Fun.Bot ("the Bot"), you agree to our TOS and all applicable Discord regulations. All IP, source code, algorithms, and website content are strictly proprietary. Unauthorized copying or reverse-engineering is prohibited under DMCA and copyright laws.</p>
     </div>
     <button class="accordion">User Responsibilities</button>
     <div class="panel">
-        <p>Users must not utilize the Bot for spam, harassment, automation abuse, or any illegal activity. Violation may result in immediate account bans and potential civil and criminal liability. The Bot’s developers retain the right to enforce these terms through all available legal means.</p>
+        <p>Do not use the bot for spamming, harassment, automation abuse, or illegal activity. Violations may result in bans or legal action.</p>
     </div>
 </section>
 
@@ -105,25 +229,20 @@ footer {
     <h2>Privacy Policy</h2>
     <button class="accordion">Data Collection</button>
     <div class="panel">
-        <p>The Bot collects only minimal data required for functionality. This may include Discord IDs and server IDs to execute commands. No personal data is shared with third parties without explicit consent. All data transmissions are encrypted and securely stored.</p>
+        <p>The Bot collects minimal data such as Discord IDs to function. No personal information is shared without consent.</p>
     </div>
     <button class="accordion">Data Retention</button>
     <div class="panel">
-        <p>Data is retained only for operational purposes. Users may request deletion at any time. Legal obligations or security audits may require certain retention despite deletion requests.</p>
+        <p>Data is kept only as long as necessary. Users can request deletion at any time, except when legally required.</p>
     </div>
 </section>
 
-<section id="copyright">
-    <h2>Copyright Information</h2>
-    <p>© 2025 Fun.Bot. All rights reserved. Unauthorized reproduction, redistribution, or use of this website or the Bot’s source code is strictly prohibited. Violators may face civil and criminal prosecution under DMCA and applicable international copyright law.</p>
-</section>
-
 <footer>
-    Fun.Bot | Dark Mode Edition | All rights reserved.
+    © 2025 Fun.Bot | All rights reserved.
 </footer>
 
 <script>
-// === Accordion functionality ===
+// === Accordion ===
 (function(){
     const accordions = document.querySelectorAll('.accordion');
     accordions.forEach(acc=>{
@@ -143,20 +262,21 @@ document.querySelectorAll('nav a').forEach(anchor=>{
     });
 });
 
-// === Disable right-click, copy, inspect (basic prevention) ===
+// === Disable right-click and copy ===
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e=>{
     if(e.ctrlKey && (e.key==='u' || e.key==='s' || e.key==='c' || e.key==='Shift')) e.preventDefault();
 });
 
-// === Particle Background ===
+// === Particle Network ===
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 let particlesArray = [];
-const numberOfParticles = 80;
+const numberOfParticles = 120;
+const maxDistance = 150;
 
 class Particle {
     constructor(){
@@ -182,6 +302,24 @@ class Particle {
     }
 }
 
+function connectParticles(){
+    for(let a=0;a<particlesArray.length;a++){
+        for(let b=a;b<particlesArray.length;b++){
+            const dx = particlesArray[a].x - particlesArray[b].x;
+            const dy = particlesArray[a].y - particlesArray[b].y;
+            const distance = Math.sqrt(dx*dx + dy*dy);
+            if(distance < maxDistance){
+                ctx.strokeStyle = 'rgba(0,191,255,' + (1 - distance/maxDistance) + ')';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                ctx.stroke();
+            }
+        }
+    }
+}
+
 function initParticles(){
     particlesArray = [];
     for(let i=0;i<numberOfParticles;i++){
@@ -196,6 +334,7 @@ function animateParticles(){
         p.update();
         p.draw();
     });
+    connectParticles();
     requestAnimationFrame(animateParticles);
 }
 animateParticles();
