@@ -8,11 +8,15 @@
         :root {
             --primary: #5865F2;
             --secondary: #404EED;
-            --dark: #23272A;
-            --light: #FFFFFF;
+            --dark: #1a1d21;
+            --darker: #121416;
+            --light: #f0f0f0;
+            --lighter: #ffffff;
             --accent: #57F287;
             --danger: #ED4245;
             --warning: #FEE75C;
+            --text: #e0e0e0;
+            --text-secondary: #b0b0b0;
         }
         
         * {
@@ -23,17 +27,18 @@
         }
         
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            background-color: var(--darker);
+            color: var(--text);
             line-height: 1.6;
+            scroll-behavior: smooth;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
+            color: var(--lighter);
             padding: 2rem 0;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .container {
@@ -50,6 +55,7 @@
             min-height: 60vh;
             text-align: center;
             padding: 2rem 0;
+            background-color: var(--dark);
         }
         
         .hero h1 {
@@ -65,12 +71,13 @@
             font-size: 1.2rem;
             max-width: 800px;
             margin-bottom: 2rem;
+            color: var(--text-secondary);
         }
         
         .btn {
             display: inline-block;
             background-color: var(--primary);
-            color: white;
+            color: var(--lighter);
             padding: 12px 24px;
             border-radius: 4px;
             text-decoration: none;
@@ -85,12 +92,12 @@
         .btn:hover {
             background-color: var(--secondary);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
         
         .btn-accent {
             background-color: var(--accent);
-            color: var(--dark);
+            color: var(--darker);
         }
         
         .btn-accent:hover {
@@ -99,7 +106,7 @@
         
         .features {
             padding: 4rem 0;
-            background-color: white;
+            background-color: var(--dark);
         }
         
         .features-grid {
@@ -110,17 +117,19 @@
         }
         
         .feature-card {
-            background-color: white;
+            background-color: rgba(30, 33, 36, 0.7);
             border-radius: 8px;
             padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border-left: 4px solid var(--primary);
+            backdrop-filter: blur(5px);
         }
         
         .feature-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            background-color: rgba(35, 38, 42, 0.8);
         }
         
         .feature-card h3 {
@@ -130,7 +139,7 @@
         }
         
         .feature-card p {
-            color: #666;
+            color: var(--text-secondary);
         }
         
         .feature-icon {
@@ -144,43 +153,95 @@
         }
         
         section:nth-child(even) {
-            background-color: white;
+            background-color: var(--dark);
         }
         
         h2 {
             text-align: center;
             margin-bottom: 3rem;
             font-size: 2.5rem;
-            color: var(--dark);
+            color: var(--lighter);
         }
         
         .legal-section {
             max-width: 800px;
             margin: 0 auto;
-            padding: 2rem;
-            background-color: white;
+            background-color: rgba(30, 33, 36, 0.7);
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         
-        .legal-section h3 {
-            margin: 2rem 0 1rem;
+        .legal-accordion {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .legal-accordion:last-child {
+            border-bottom: none;
+        }
+        
+        .legal-accordion-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(40, 43, 48, 0.5);
+            transition: background-color 0.3s ease;
+        }
+        
+        .legal-accordion-header:hover {
+            background-color: rgba(50, 53, 58, 0.5);
+        }
+        
+        .legal-accordion-header h3 {
             color: var(--primary);
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        
+        .legal-accordion-header i {
+            transition: transform 0.3s ease;
+        }
+        
+        .legal-accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .legal-accordion-content-inner {
+            padding: 0 2rem;
+        }
+        
+        .legal-accordion.active .legal-accordion-header i {
+            transform: rotate(180deg);
+        }
+        
+        .legal-accordion.active .legal-accordion-content {
+            max-height: 2000px;
+            transition: max-height 0.5s ease-in;
         }
         
         .legal-section p, .legal-section ul {
             margin-bottom: 1rem;
+            color: var(--text-secondary);
         }
         
         .legal-section ul {
             padding-left: 2rem;
         }
         
+        .legal-section li {
+            margin-bottom: 0.5rem;
+        }
+        
         footer {
             background-color: var(--dark);
-            color: white;
+            color: var(--text);
             padding: 3rem 0;
             text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         .footer-links {
@@ -188,10 +249,11 @@
             justify-content: center;
             gap: 2rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         
         .footer-links a {
-            color: white;
+            color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.3s ease;
         }
@@ -201,8 +263,17 @@
         }
         
         .copyright {
-            opacity: 0.8;
+            opacity: 0.6;
             font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        code {
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--accent);
         }
         
         @media (max-width: 768px) {
@@ -217,6 +288,14 @@
             .footer-links {
                 flex-direction: column;
                 gap: 1rem;
+            }
+            
+            .legal-accordion-header {
+                padding: 1rem 1.5rem;
+            }
+            
+            .legal-accordion-header h3 {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -307,7 +386,7 @@
                 <a href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&permissions=YOUR_PERMISSIONS&scope=bot" class="btn btn-accent" style="font-size: 1.2rem; padding: 15px 30px;">
                     <i class="fas fa-plus-circle"></i> Invite to Your Server
                 </a>
-                <p style="margin-top: 1rem; opacity: 0.8;">Requires manage server permission to add</p>
+                <p style="margin-top: 1rem; opacity: 0.8; color: var(--text-secondary);">Requires manage server permission to add</p>
             </div>
         </div>
     </section>
@@ -316,47 +395,128 @@
         <div class="container">
             <h2>Terms of Service</h2>
             <div class="legal-section">
-                <h3>1. Acceptance of Terms</h3>
-                <p>By using Fun.Bot ("the Bot"), you agree to be bound by these Terms of Service ("ToS"). If you do not agree to these terms, you must not use the Bot. We reserve the right to modify these terms at any time without prior notice.</p>
+                <div class="legal-accordion active">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>1. Acceptance of Terms</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content" style="max-height: 1000px;">
+                        <div class="legal-accordion-content-inner">
+                            <p>By using Fun.Bot ("the Bot"), you agree to be bound by these Terms of Service ("ToS"). If you do not agree to these terms, you must not use the Bot. We reserve the right to modify these terms at any time without prior notice.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>2. Proper Usage</h3>
-                <p>The Bot is provided for entertainment purposes only. You agree not to use the Bot:</p>
-                <ul>
-                    <li>For any illegal or unauthorized purpose</li>
-                    <li>To violate Discord's Terms of Service or Community Guidelines</li>
-                    <li>To exploit, harass, or harm others</li>
-                    <li>To attempt to reverse engineer, decompile, or discover the source code</li>
-                    <li>To create automated scripts or bots that interact with the Bot</li>
-                    <li>To engage in any form of cheating, exploiting bugs, or using unauthorized third-party software</li>
-                </ul>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>2. Proper Usage</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>The Bot is provided for entertainment purposes only. You agree not to use the Bot:</p>
+                            <ul>
+                                <li>For any illegal or unauthorized purpose</li>
+                                <li>To violate Discord's Terms of Service or Community Guidelines</li>
+                                <li>To exploit, harass, or harm others</li>
+                                <li>To attempt to reverse engineer, decompile, or discover the source code</li>
+                                <li>To create automated scripts or bots that interact with the Bot</li>
+                                <li>To engage in any form of cheating, exploiting bugs, or using unauthorized third-party software</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>3. Virtual Currency</h3>
-                <p>The Bot's virtual currency has no real-world value and cannot be exchanged for cash, goods, or services. All currency and items are provided "as is" and may be reset, modified, or removed at any time without notice.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>3. Virtual Currency</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>The Bot's virtual currency has no real-world value and cannot be exchanged for cash, goods, or services. All currency and items are provided "as is" and may be reset, modified, or removed at any time without notice.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>4. Prohibited Conduct</h3>
-                <p>You specifically agree not to:</p>
-                <ul>
-                    <li>Use macros, auto-clickers, or other automation tools to interact with the Bot</li>
-                    <li>Create multiple accounts to exploit referral or bonus systems</li>
-                    <li>Attempt to manipulate the economy through coordinated group actions</li>
-                    <li>Use exploits, bugs, or vulnerabilities to gain unfair advantages</li>
-                    <li>Impersonate the Bot or its developers</li>
-                </ul>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>4. Prohibited Conduct</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>You specifically agree not to:</p>
+                            <ul>
+                                <li>Use macros, auto-clickers, or other automation tools to interact with the Bot</li>
+                                <li>Create multiple accounts to exploit referral or bonus systems</li>
+                                <li>Attempt to manipulate the economy through coordinated group actions</li>
+                                <li>Use exploits, bugs, or vulnerabilities to gain unfair advantages</li>
+                                <li>Impersonate the Bot or its developers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>5. Termination</h3>
-                <p>We reserve the right to terminate access to the Bot for any user or server at any time, without notice, for conduct that we believe violates these Terms or is otherwise harmful to other users or the Bot.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>5. Termination</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>We reserve the right to terminate access to the Bot for any user or server at any time, without notice, for conduct that we believe violates these Terms or is otherwise harmful to other users or the Bot.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>6. Disclaimer of Warranties</h3>
-                <p>The Bot is provided "as is" without warranties of any kind, either express or implied. We do not guarantee that the Bot will be uninterrupted, error-free, or free from harmful components.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>6. Disclaimer of Warranties</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>The Bot is provided "as is" without warranties of any kind, either express or implied. We do not guarantee that the Bot will be uninterrupted, error-free, or free from harmful components.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>7. Limitation of Liability</h3>
-                <p>In no event shall the developers of Fun.Bot be liable for any damages arising from the use or inability to use the Bot, including but not limited to loss of data, virtual currency, or items.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>7. Limitation of Liability</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>In no event shall the developers of Fun.Bot be liable for any damages arising from the use or inability to use the Bot, including but not limited to loss of data, virtual currency, or items.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>8. Intellectual Property</h3>
-                <p>All rights, title, and interest in and to the Bot (including all software, text, graphics, and other content) are owned by the developers. You agree not to copy, modify, create derivative works, or attempt to extract the source code.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>8. Intellectual Property</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>All rights, title, and interest in and to the Bot (including all software, text, graphics, and other content) are owned by the developers. You agree not to copy, modify, create derivative works, or attempt to extract the source code.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>9. Governing Law</h3>
-                <p>These Terms shall be governed by the laws of [Your Country/State] without regard to its conflict of law provisions.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>9. Governing Law</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>These Terms shall be governed by the laws of [Your Country/State] without regard to its conflict of law provisions.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -365,51 +525,123 @@
         <div class="container">
             <h2>Privacy Policy</h2>
             <div class="legal-section">
-                <h3>1. Information Collected</h3>
-                <p>Fun.Bot collects and stores the following information:</p>
-                <ul>
-                    <li>Discord user IDs for account identification</li>
-                    <li>Server IDs for configuration purposes</li>
-                    <li>In-game economic data (currency balances, items, etc.)</li>
-                    <li>Command usage statistics</li>
-                    <li>Interaction timestamps</li>
-                </ul>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>1. Information Collected</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>Fun.Bot collects and stores the following information:</p>
+                            <ul>
+                                <li>Discord user IDs for account identification</li>
+                                <li>Server IDs for configuration purposes</li>
+                                <li>In-game economic data (currency balances, items, etc.)</li>
+                                <li>Command usage statistics</li>
+                                <li>Interaction timestamps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>2. Use of Information</h3>
-                <p>The collected information is used to:</p>
-                <ul>
-                    <li>Provide and maintain the Bot's services</li>
-                    <li>Prevent abuse and enforce these policies</li>
-                    <li>Improve the Bot's functionality</li>
-                    <li>Generate aggregate, non-identifying statistics</li>
-                </ul>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>2. Use of Information</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>The collected information is used to:</p>
+                            <ul>
+                                <li>Provide and maintain the Bot's services</li>
+                                <li>Prevent abuse and enforce these policies</li>
+                                <li>Improve the Bot's functionality</li>
+                                <li>Generate aggregate, non-identifying statistics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>3. Data Retention</h3>
-                <p>User data is retained indefinitely unless:</p>
-                <ul>
-                    <li>The user requests deletion (subject to verification)</li>
-                    <li>The data is purged as part of routine maintenance</li>
-                    <li>Required by law to delete the data</li>
-                </ul>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>3. Data Retention</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>User data is retained indefinitely unless:</p>
+                            <ul>
+                                <li>The user requests deletion (subject to verification)</li>
+                                <li>The data is purged as part of routine maintenance</li>
+                                <li>Required by law to delete the data</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>4. Data Security</h3>
-                <p>We implement reasonable security measures to protect against unauthorized access, alteration, or destruction of data. However, no method of electronic storage is 100% secure.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>4. Data Security</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>We implement reasonable security measures to protect against unauthorized access, alteration, or destruction of data. However, no method of electronic storage is 100% secure.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>5. Third-Party Disclosure</h3>
-                <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties except:</p>
-                <ul>
-                    <li>When required by law</li>
-                    <li>To trusted third parties who assist in operating the Bot, provided they agree to keep this information confidential</li>
-                </ul>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>5. Third-Party Disclosure</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties except:</p>
+                            <ul>
+                                <li>When required by law</li>
+                                <li>To trusted third parties who assist in operating the Bot, provided they agree to keep this information confidential</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>6. Children's Privacy</h3>
-                <p>The Bot is not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware of such collection, we will take steps to remove the information.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>6. Children's Privacy</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>The Bot is not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware of such collection, we will take steps to remove the information.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>7. Changes to This Policy</h3>
-                <p>We may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>7. Changes to This Policy</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>We may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.</p>
+                        </div>
+                    </div>
+                </div>
                 
-                <h3>8. Contact Information</h3>
-                <p>For questions about this Privacy Policy, contact us at [Your Contact Email].</p>
+                <div class="legal-accordion">
+                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
+                        <h3>8. Contact Information</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="legal-accordion-content">
+                        <div class="legal-accordion-content-inner">
+                            <p>For questions about this Privacy Policy, contact us at [Your Contact Email].</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -429,13 +661,83 @@
     <footer>
         <div class="container">
             <div class="footer-links">
-                <a href="#tos">Terms of Service</a>
-                <a href="#privacy">Privacy Policy</a>
+                <a href="#tos" onclick="expandTos()">Terms of Service</a>
+                <a href="#privacy" onclick="expandPrivacy()">Privacy Policy</a>
                 <a href="https://discord.gg/YOUR_SUPPORT_SERVER">Support Server</a>
                 <a href="mailto:your@email.com">Contact</a>
             </div>
             <p class="copyright">© 2023 Fun.Bot. All rights reserved. Not affiliated with Discord Inc.</p>
         </div>
     </footer>
+
+    <script>
+        // Smooth scrolling for all links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Accordion functionality
+        function toggleAccordion(accordion) {
+            const isActive = accordion.classList.contains('active');
+            
+            // Close all accordions first
+            document.querySelectorAll('.legal-accordion').forEach(item => {
+                item.classList.remove('active');
+                const content = item.querySelector('.legal-accordion-content');
+                content.style.maxHeight = '0';
+            });
+            
+            // If this wasn't active, open it
+            if(!isActive) {
+                accordion.classList.add('active');
+                const content = accordion.querySelector('.legal-accordion-content');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+        
+        // Open TOS when clicking TOS link
+        function expandTos() {
+            const tosSection = document.querySelector('#tos');
+            const firstAccordion = tosSection.querySelector('.legal-accordion');
+            
+            tosSection.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                toggleAccordion(firstAccordion);
+            }, 800);
+        }
+        
+        // Open Privacy when clicking Privacy link
+        function expandPrivacy() {
+            const privacySection = document.querySelector('#privacy');
+            const firstAccordion = privacySection.querySelector('.legal-accordion');
+            
+            privacySection.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+                toggleAccordion(firstAccordion);
+            }, 800);
+        }
+        
+        // Initialize first accordion as open
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstTosAccordion = document.querySelector('#tos .legal-accordion');
+            if(firstTosAccordion) {
+                firstTosAccordion.classList.add('active');
+                const content = firstTosAccordion.querySelector('.legal-accordion-content');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        });
+    </script>
 </body>
 </html>
