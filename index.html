@@ -1,228 +1,441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fun.Bot - Discord Bot</title>
-<style>
-/* === Base Styling === */
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#121212; color:#e0e0e0; overflow-x:hidden; scroll-behavior:smooth; }
-header { background: rgba(20,20,20,0.9); padding:15px; text-align:center; position: relative; z-index: 1000; }
-header h1 { font-size:2rem; color:#00bfff; margin-bottom:10px; }
-
-/* Hamburger Toggle */
-header .nav-toggle {
-    display:none;
-    font-size:1.8rem;
-    cursor:pointer;
-    position:fixed;
-    top:10px;
-    right:10px;
-    z-index:2000;
-    color:#00bfff;
-}
-
-/* Navigation */
-nav { display:flex; justify-content:center; flex-wrap:wrap; gap:15px; margin-top:10px; transition:0.3s; }
-nav a {
-    color:#fff;
-    text-decoration:none;
-    padding:8px 16px;
-    background:#1e1e1e;
-    border-radius:6px;
-    transition:0.3s, box-shadow 0.3s;
-}
-nav a:hover { background:#333; box-shadow: 0 0 15px #00bfff; }
-
-/* Invite & Support buttons pop */
-nav a#openInvite, nav a[href*="discord.gg"] {
-    background:#ff4500;
-    color:#fff;
-    font-weight:bold;
-}
-nav a#openInvite:hover, nav a[href*="discord.gg"]:hover {
-    box-shadow: 0 0 20px #ff4500;
-    background:#e03e00;
-}
-
-nav.active { display:flex; flex-direction:column; align-items:center; position:fixed; top:50px; left:0; width:100%; background:#121212; padding:10px 0; z-index:1500; }
-
-/* Sections */
-section { padding:50px 10%; text-align:center; opacity:0; transform: translateY(20px); transition:all 0.8s ease; }
-section.visible { opacity:1; transform: translateY(0); }
-h2 { margin-bottom:20px; color:#fff; }
-
-/* Features & Commands Grid */
-.features, .commands {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    justify-items: center;
-}
-.card { background:#1e1e1e; padding:20px; border-radius:10px; max-width:250px; flex:1 1 calc(50% - 20px); transition: transform 0.3s, box-shadow 0.3s, background 0.3s; }
-.card:hover { transform: translateY(-5px); box-shadow: 0 0 20px #00bfff; background:#272727; }
-
-/* Buttons */
-.btn { background:#0077ff; color:white; padding:12px 24px; border:none; border-radius:8px; cursor:pointer; text-decoration:none; display:inline-block; margin-top:10px; transition:0.3s; }
-.btn:hover { background:#005fcc; }
-
-/* Footer */
-footer { background:#0d0d0d; padding:20px; text-align:center; font-size:0.9em; }
-
-/* Particle Canvas */
-#particleCanvas { position:fixed; top:0; left:0; z-index:-1; }
-
-/* Accordion */
-.accordion { background:#222; color:#f0f0f0; cursor:pointer; padding:18px; width:100%; border:none; text-align:left; outline:none; transition:0.3s; font-size:1.1rem; margin-bottom:5px; border-radius:8px; }
-.active, .accordion:hover { background:#333; }
-.panel { padding:0 18px; display:none; background:rgba(28,28,28,0.9); overflow:hidden; border-radius:8px; margin-bottom:15px; }
-
-/* Mobile Styles */
-@media (max-width:768px) {
-    header h1 { font-size:1.6rem; }
-    nav { display:none; width:100%; flex-direction:column; gap:10px; margin-top:0; }
-    nav a { width:90%; text-align:center; }
-    header .nav-toggle { display:block; }
-    .features, .commands { flex-direction:column; align-items:center; }
-    .card { flex:1 1 100%; max-width:100%; }
-    section { padding:30px 5%; }
-    .btn { width:100%; padding:14px; font-size:1.1rem; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun.Bot - Advanced Discord Economy Bot</title>
+    <style>
+        :root {
+            --primary: #5865F2;
+            --secondary: #404EED;
+            --dark: #23272A;
+            --light: #FFFFFF;
+            --accent: #57F287;
+            --danger: #ED4245;
+            --warning: #FEE75C;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-accent {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+        
+        .btn-accent:hover {
+            background-color: #48d874;
+        }
+        
+        .features {
+            padding: 4rem 0;
+            background-color: white;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .feature-card p {
+            color: #666;
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        section {
+            padding: 4rem 0;
+        }
+        
+        section:nth-child(even) {
+            background-color: white;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            color: var(--dark);
+        }
+        
+        .legal-section {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .legal-section h3 {
+            margin: 2rem 0 1rem;
+            color: var(--primary);
+        }
+        
+        .legal-section p, .legal-section ul {
+            margin-bottom: 1rem;
+        }
+        
+        .legal-section ul {
+            padding-left: 2rem;
+        }
+        
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+        
+        .copyright {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-
-<!-- Particle Canvas -->
-<canvas id="particleCanvas"></canvas>
-
-<!-- Header -->
-<header>
-    <h1>Fun.Bot</h1>
-    <span class="nav-toggle">&#9776;</span>
-    <nav>
-        <a href="#features">Features</a>
-        <a href="#commands">Commands</a>
-        <a href="#tos">TOS</a>
-        <a href="#privacy">Privacy</a>
-        <a href="#" id="openInvite">Invite Bot</a>
-        <a href="https://discord.gg/Xbm9XEFfrf" target="_blank">Support Server</a>
-    </nav>
-</header>
-
-<!-- Features Section -->
-<section id="features">
-    <h2>🌟 Features</h2>
-    <div class="features">
-        <div class="card">🔹 Utilities – Server info, reminders, and handy tools to make your server life easier.</div>
-        <div class="card">🎉 Fun & Games – Trivia, memes, jokes, and interactive games to entertain your members.</div>
-        <div class="card">💰 Economy – Earn, trade, and climb leaderboards for a fun server economy experience.</div>
-        <div class="card">📊 Information – Quick lookups like weather, statistics, and other utilities.</div>
-        <div class="card">🤝 Social – Leveling, profiles, and community engagement features.</div>
-    </div>
-</section>
-
-<!-- Commands Section -->
-<section id="commands">
-    <h2>💻 Example Slash Commands</h2>
-    <div class="commands">
-        <div class="card">/trivia – Play trivia games</div>
-        <div class="card">/meme – Get random memes</div>
-        <div class="card">/weather – Check the weather</div>
-        <div class="card">/profile – View your profile</div>
-        <div class="card">/balance – Check your currency</div>
-    </div>
-</section>
-
-<!-- TOS Section -->
-<section id="tos">
-    <h2>📜 Terms of Service</h2>
-    <button class="accordion">General Terms</button>
-    <div class="panel"><p>By accessing or using Fun.Bot, you agree to comply with all applicable laws and regulations. You may not reproduce, distribute, or reverse-engineer any part of Fun.Bot’s code, services, or content without express permission. Any unauthorized use may result in termination of access and potential legal action.</p></div>
-    <button class="accordion">User Responsibilities</button>
-    <div class="panel"><p>Users are responsible for using Fun.Bot in a manner that respects the community and the law. Activities including spam, harassment, automation abuse, or engaging in illegal activities are strictly prohibited. Fun.Bot reserves the right to restrict or remove access for violations.</p></div>
-</section>
-
-<!-- Privacy Section -->
-<section id="privacy">
-    <h2>🔒 Privacy Policy</h2>
-    <button class="accordion">Data Collection</button>
-    <div class="panel"><p>Fun.Bot collects minimal information strictly necessary to operate its features, including basic command usage and temporary session data. We do not sell or share personal user data with third parties.</p></div>
-    <button class="accordion">Data Retention</button>
-    <div class="panel"><p>Collected data is stored only for as long as necessary to provide bot functionality. Users may request deletion of any retained data at any time. Fun.Bot takes reasonable security measures to protect user information.</p></div>
-</section>
-
-<!-- Footer -->
-<footer>
-    © 2025 Fun.Bot. All rights reserved.
-</footer>
-
-<!-- Invite Modal -->
-<div id="inviteModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;">
-    <div style="background:#1c1c1c;margin:10% auto;padding:30px;border-radius:12px;width:90%;max-width:400px;text-align:center;position:relative;color:#fff;">
-        <span id="closeModal" style="position:absolute;top:10px;right:15px;cursor:pointer;font-size:24px;color:#00bfff;">&times;</span>
-        <h2>Invite Fun.Bot</h2>
-        <p>Click below to add Fun.Bot to your Discord server.</p>
-        <a href="https://discord.com/oauth2/authorize?client_id=1405748450125021355&permissions=2151017536&integration_type=0&scope=bot+applications.commands" target="_blank" class="btn">Invite Bot</a>
-    </div>
-</div>
-
-<script>
-// Hamburger Toggle
-const navToggle = document.querySelector('.nav-toggle');
-const nav = document.querySelector('nav');
-navToggle.addEventListener('click', () => { nav.classList.toggle('active'); });
-
-// Accordion
-document.querySelectorAll('.accordion').forEach(acc => {
-    acc.addEventListener('click', () => {
-        acc.classList.toggle('active');
-        const panel = acc.nextElementSibling;
-        panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-    });
-});
-
-// Invite Modal
-const modal = document.getElementById('inviteModal');
-const openInvite = document.getElementById('openInvite');
-const closeModal = document.getElementById('closeModal');
-openInvite.addEventListener('click', e => { e.preventDefault(); modal.style.display='block'; });
-closeModal.addEventListener('click', () => { modal.style.display='none'; });
-window.addEventListener('click', e => { if(e.target === modal) modal.style.display='none'; });
-
-// Particle Background
-const canvas = document.getElementById('particleCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-let particles = [];
-const numParticles = 80;
-let mouse = { x:null, y:null };
-
-window.addEventListener('mousemove', e => { mouse.x=e.x; mouse.y=e.y; });
-window.addEventListener('mouseleave', e => { mouse.x=null; mouse.y=null; });
-
-class Particle {
-    constructor(){ this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.size = Math.random()*2+1; this.vx = Math.random()*1-0.5; this.vy = Math.random()*1-0.5; }
-    update(){
-        this.x += this.vx; this.y += this.vy;
-        if(this.x<0||this.x>canvas.width) this.vx*=-1;
-        if(this.y<0||this.y>canvas.height) this.vy*=-1;
-        if(mouse.x && mouse.y){ let dx=mouse.x-this.x; let dy=mouse.y-this.y; let dist=Math.sqrt(dx*dx+dy*dy); if(dist<100){ this.x+=dx*0.01; this.y+=dy*0.01; } }
-    }
-    draw(){ ctx.fillStyle='#00bfff'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); }
-}
-function initParticles(){ particles=[]; for(let i=0;i<numParticles;i++) particles.push(new Particle()); }
-function connectParticles(){ for(let a=0;a<particles.length;a++){ for(let b=a;b<particles.length;b++){ let dx=particles[a].x-particles[b].x; let dy=particles[a].y-particles[b].y; let dist=Math.sqrt(dx*dx+dy*dy); if(dist<100){ ctx.strokeStyle='rgba(0,191,255,'+(1-dist/100)+')'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(particles[a].x,particles[a].y); ctx.lineTo(particles[b].x,particles[b].y); ctx.stroke(); } } } }
-function animateParticles(){ ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); connectParticles(); requestAnimationFrame(animateParticles);}
-window.addEventListener('resize',()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; initParticles(); });
-initParticles(); animateParticles();
-
-// Fade-in sections
-const sections = document.querySelectorAll('section');
-const observer = new IntersectionObserver(entries => { entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('visible'); } }); },{ threshold:0.1 });
-sections.forEach(section => observer.observe(section));
-</script>
+    <header>
+        <div class="container">
+            <h1>Fun.Bot</h1>
+            <p>The ultimate economy and entertainment bot for Discord</p>
+            <div>
+                <a href="#invite" class="btn btn-accent"><i class="fas fa-robot"></i> Invite to Server</a>
+                <a href="#features" class="btn"><i class="fas fa-star"></i> Features</a>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>Your Server's Economy System</h1>
+            <p>Fun.Bot brings a complete virtual economy to your Discord server with jobs, gambling, fishing, lottery, and more. Engage your community with a fun, interactive currency system.</p>
+            <div>
+                <a href="#invite" class="btn btn-accent"><i class="fas fa-plus"></i> Add to Discord</a>
+                <a href="#commands" class="btn"><i class="fas fa-terminal"></i> View Commands</a>
+            </div>
+        </div>
+    </section>
+    
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Amazing Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>Virtual Economy</h3>
+                    <p>Complete currency system with earning, spending, and trading capabilities. Users can accumulate wealth through various activities.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Jobs System</h3>
+                    <p>Users can work different jobs with varying pay rates and cooldowns to earn currency regularly.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dice"></i>
+                    </div>
+                    <h3>Gambling Games</h3>
+                    <p>Multiple gambling options including slots, roulette, blackjack, and coin flips with configurable odds.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-fish"></i>
+                    </div>
+                    <h3>Fishing Mini-Game</h3>
+                    <p>Interactive fishing with rare catches, upgrades, and a leaderboard system to track top anglers.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    <h3>Lottery System</h3>
+                    <p>Regular lottery draws with configurable ticket prices and jackpot accumulation for big wins.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Item Shop</h3>
+                    <p>Purchase items, roles, or special privileges using your earned currency with server-specific inventories.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="invite">
+        <div class="container">
+            <h2>Ready to Add Fun.Bot?</h2>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&permissions=YOUR_PERMISSIONS&scope=bot" class="btn btn-accent" style="font-size: 1.2rem; padding: 15px 30px;">
+                    <i class="fas fa-plus-circle"></i> Invite to Your Server
+                </a>
+                <p style="margin-top: 1rem; opacity: 0.8;">Requires manage server permission to add</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="tos">
+        <div class="container">
+            <h2>Terms of Service</h2>
+            <div class="legal-section">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By using Fun.Bot ("the Bot"), you agree to be bound by these Terms of Service ("ToS"). If you do not agree to these terms, you must not use the Bot. We reserve the right to modify these terms at any time without prior notice.</p>
+                
+                <h3>2. Proper Usage</h3>
+                <p>The Bot is provided for entertainment purposes only. You agree not to use the Bot:</p>
+                <ul>
+                    <li>For any illegal or unauthorized purpose</li>
+                    <li>To violate Discord's Terms of Service or Community Guidelines</li>
+                    <li>To exploit, harass, or harm others</li>
+                    <li>To attempt to reverse engineer, decompile, or discover the source code</li>
+                    <li>To create automated scripts or bots that interact with the Bot</li>
+                    <li>To engage in any form of cheating, exploiting bugs, or using unauthorized third-party software</li>
+                </ul>
+                
+                <h3>3. Virtual Currency</h3>
+                <p>The Bot's virtual currency has no real-world value and cannot be exchanged for cash, goods, or services. All currency and items are provided "as is" and may be reset, modified, or removed at any time without notice.</p>
+                
+                <h3>4. Prohibited Conduct</h3>
+                <p>You specifically agree not to:</p>
+                <ul>
+                    <li>Use macros, auto-clickers, or other automation tools to interact with the Bot</li>
+                    <li>Create multiple accounts to exploit referral or bonus systems</li>
+                    <li>Attempt to manipulate the economy through coordinated group actions</li>
+                    <li>Use exploits, bugs, or vulnerabilities to gain unfair advantages</li>
+                    <li>Impersonate the Bot or its developers</li>
+                </ul>
+                
+                <h3>5. Termination</h3>
+                <p>We reserve the right to terminate access to the Bot for any user or server at any time, without notice, for conduct that we believe violates these Terms or is otherwise harmful to other users or the Bot.</p>
+                
+                <h3>6. Disclaimer of Warranties</h3>
+                <p>The Bot is provided "as is" without warranties of any kind, either express or implied. We do not guarantee that the Bot will be uninterrupted, error-free, or free from harmful components.</p>
+                
+                <h3>7. Limitation of Liability</h3>
+                <p>In no event shall the developers of Fun.Bot be liable for any damages arising from the use or inability to use the Bot, including but not limited to loss of data, virtual currency, or items.</p>
+                
+                <h3>8. Intellectual Property</h3>
+                <p>All rights, title, and interest in and to the Bot (including all software, text, graphics, and other content) are owned by the developers. You agree not to copy, modify, create derivative works, or attempt to extract the source code.</p>
+                
+                <h3>9. Governing Law</h3>
+                <p>These Terms shall be governed by the laws of [Your Country/State] without regard to its conflict of law provisions.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="privacy">
+        <div class="container">
+            <h2>Privacy Policy</h2>
+            <div class="legal-section">
+                <h3>1. Information Collected</h3>
+                <p>Fun.Bot collects and stores the following information:</p>
+                <ul>
+                    <li>Discord user IDs for account identification</li>
+                    <li>Server IDs for configuration purposes</li>
+                    <li>In-game economic data (currency balances, items, etc.)</li>
+                    <li>Command usage statistics</li>
+                    <li>Interaction timestamps</li>
+                </ul>
+                
+                <h3>2. Use of Information</h3>
+                <p>The collected information is used to:</p>
+                <ul>
+                    <li>Provide and maintain the Bot's services</li>
+                    <li>Prevent abuse and enforce these policies</li>
+                    <li>Improve the Bot's functionality</li>
+                    <li>Generate aggregate, non-identifying statistics</li>
+                </ul>
+                
+                <h3>3. Data Retention</h3>
+                <p>User data is retained indefinitely unless:</p>
+                <ul>
+                    <li>The user requests deletion (subject to verification)</li>
+                    <li>The data is purged as part of routine maintenance</li>
+                    <li>Required by law to delete the data</li>
+                </ul>
+                
+                <h3>4. Data Security</h3>
+                <p>We implement reasonable security measures to protect against unauthorized access, alteration, or destruction of data. However, no method of electronic storage is 100% secure.</p>
+                
+                <h3>5. Third-Party Disclosure</h3>
+                <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties except:</p>
+                <ul>
+                    <li>When required by law</li>
+                    <li>To trusted third parties who assist in operating the Bot, provided they agree to keep this information confidential</li>
+                </ul>
+                
+                <h3>6. Children's Privacy</h3>
+                <p>The Bot is not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware of such collection, we will take steps to remove the information.</p>
+                
+                <h3>7. Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.</p>
+                
+                <h3>8. Contact Information</h3>
+                <p>For questions about this Privacy Policy, contact us at [Your Contact Email].</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="commands">
+        <div class="container">
+            <h2>Command List</h2>
+            <div style="text-align: center; margin-top: 2rem;">
+                <p>For a complete list of commands, use <code>/help</code> in your Discord server after adding Fun.Bot.</p>
+                <a href="#invite" class="btn btn-accent" style="margin-top: 1rem;">
+                    <i class="fas fa-robot"></i> Add Bot to See Commands
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="#tos">Terms of Service</a>
+                <a href="#privacy">Privacy Policy</a>
+                <a href="https://discord.gg/YOUR_SUPPORT_SERVER">Support Server</a>
+                <a href="mailto:your@email.com">Contact</a>
+            </div>
+            <p class="copyright">© 2023 Fun.Bot. All rights reserved. Not affiliated with Discord Inc.</p>
+        </div>
+    </footer>
 </body>
 </html>
