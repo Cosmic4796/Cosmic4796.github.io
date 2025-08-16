@@ -1,1821 +1,1680 @@
-# =============================================
-#             INFORMATION COMMANDS
-# =============================================
-
-@bot.tree.command(name="lottery", description="🎫 Check current lottery information")
-async def lottery(interaction: discord.Interaction):
-    embed = create_embed("🎫 Lottery Information", color=discord.Color.gold())
-    
-    embed.add_field(
-        name="💰 Current Jackpot",
-        value=f"{CURRENCY}{CURRENT_LOTTERY_PRIZE:,}",
-        inline=True
-    )
-    
-    embed.add_field(
-        name="🎯 Win Chance",
-        value=f"1 in {LOTTERY_WIN_CHANCE}",
-        inline=True
-    )
-    
-    embed.add_field(
-        name="🎫 Ticket Price",
-        value=f"{CURRENCY}{LOTTERY_TICKET_PRICE:,}",
-        inline=True
-    )
-    
-    # Show recent winners
-    if lottery_winners:
-        recent_winners = lottery_winners[-5:]  # Last 5 winners
-        winner_text = []
-        
-        for winner_data in recent_winners:
-            time_ago = datetime.now() - winner_data["time"]
-            if time_ago.days > 0:
-                time_str = f"{time_ago.days}d ago"
-            elif time_ago.seconds > 3600:
-                time_str = f"{time_ago.seconds//3600}h ago"
-            else:
-                time_str = f"{time_ago.seconds//60}m ago"
-            
-            winner_text.append(f"**{winner_data['user'].display_name}** - {CURRENCY}{winner_data['amount']:,} ({time_str})")
-        
-        embed.add_field(
-            name="🏆 Recent Winners",
-            value="\n".join(winner_text) if winner_text else "No recent winners",
-            inline=False
-        )
-    else:
-        embed.add_field(
-            name="🏆 Recent Winners",
-            value="No winners yet - could you be the first?",
-            inline=False
-        )
-    
-    embed.add_field(
-        name="ℹ️ How to Play",
-        value="Buy lottery tickets from the shop, then use `/scratch` to see if you won!",
-        inline=False
-    )
-    
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="baltop", description="🏆 View the richest users")
-async def baltop(interaction: discord.Interaction):
-    users = []
-    
-    for user_id_str, data in economy_data.items():
-        try:
-            user_id = int(user_id_str)
-            user = await bot.fetch_user(user_id)
-            if not user.bot:  # Exclude bots
-                users.append((user.display_name, data["balance"], user))
-        except:
-            continue
-    
-    # Sort by balance (descending)
-    users.sort(key=lambda x: x[1], reverse=True)
-    
-    embed = create_embed("🏆 Richest Users Leaderboard", color=discord.Color.gold())
-    
-    # Add top 10 users with medals
-    medals = ["🥇", "🥈", "🥉"] + ["🏅"] * 7
-    
-    for i, (name, balance, user_obj) in enumerate(users[:10], 1):
-        medal = medals[i-1] if i <= 10 else "🔸"
-        embed.add_field(
-            name=f"{medal} #{i} {name}",
-            value=f"{CURRENCY}{balance:,}",
-            inline=False
-        )
-    
-    # Add current user's position if not in top 10
-    current_user_id = interaction.user.id
-    current_balance = get_balance(current_user_id)
-    current_position = next((i+1 for i, (_, bal, _) in enumerate(users) if bal <= current_balance), len(users)+1)
-    
-    if current_position > 10:
-        embed.add_field(
-            name="📊 Your Position",
-            value=f"#{current_position} with {CURRENCY}{current_balance:,}",
-            inline=False
-        )
-    
-    embed.set_footer(text=f"Total users tracked: {len(users)}")
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="stats", description="📊 View your or someone else's statistics")
-async def stats(interaction: discord.Interaction, user: Optional[discord.User] = None):
-    target = user or interaction.user
-    user_data = get_user_data(target.id)
-    stats = user_data.get("stats", {})
-    
-    embed = create_embed(f"📊 {target.display_name}'s Statistics", color=discord.Color.purple())
-    embed.set_thumbnail(url=target.display_avatar.url)
-    
-    # Economy stats
-    embed.add_field(name="💼 Times Worked", value=f"{stats.get('times_worked', 0):,}", inline=True)
-    embed.add_field(name="🎰 Times Gambled", value=f"{stats.get('times_gambled', 0):,}", inline=True)
-    embed.add_field(name="🎣 Times Fished", value=f"{stats.get('times_fished', 0):,}", inline=True)
-    
-    # Money stats
-    embed.add_field(name="💰 Total Earned", value=f"{CURRENCY}{stats.get('total_earned', 0):,}", inline=True)
-    embed.add_field(name="💸 Total Spent", value=f"{CURRENCY}{stats.get('total_spent', 0):,}", inline=True)
-    embed.add_field(name="🏆 Lottery Wins", value=f"{stats.get('lottery_wins', 0):,}", inline=True)
-    
-    # Additional stats
-    embed.add_field(name="🐟 Fish Caught", value=f"{stats.get('fish_caught', 0):,}", inline=True)
-    embed.add_field(name="🔥 Daily Streak", value=f"{user_data.get('daily_streak', 0)} days", inline=True)
-    embed.add_field(name="💳 Current Balance", value=f"{CURRENCY}{user_data.get('balance', 0):,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="cooldowns", description="⏰ Check your current cooldowns")
-async def cooldowns(interaction: discord.Interaction):
-    user_id = interaction.user.id
-    user_data = get_user_data(user_id)
-    
-    cooldown_types = {
-        "work": "💼 Work",
-        "daily": "🎁 Daily Reward",
-        "fish": "🎣 Fishing"
-    }
-    
-    embed = create_embed("⏰ Your Cooldowns", color=discord.Color.blue())
-    
-    has_cooldowns = False
-    for cooldown_type, display_name in cooldown_types.items():
-        remaining = check_cooldown(user_id, cooldown_type)
-        if remaining > 0:
-            embed.add_field(
-                name=display_name,
-                value=f"Ready in {format_time(remaining)}",
-                inline=True
-            )
-            has_cooldowns = True
-        else:
-            embed.add_field(
-                name=display_name,
-                value="✅ Ready!",
-                inline=True
-            )
-    
-    # Check multipliers
-    if is_multiplier_active(user_id):
-        multiplier_end = user_data.get("multipliers", {}).get("2x_end", 0)
-        time_left = int(multiplier_end - datetime.now().timestamp())
-        embed.add_field(
-            name="✨ 2x Multiplier",
-            value=f"Active for {format_time(time_left)}",
-            inline=True
-        )
-    
-    # Check work boost
-    workboost_end = user_data.get("cooldowns", {}).get("workboost", 0)
-    if workboost_end > datetime.now().timestamp():
-        time_left = int(workboost_end - datetime.now().timestamp())
-        embed.add_field(
-            name="⚡ Work Boost",
-            value=f"Active for {format_time(time_left)}",
-            inline=True
-        )
-    
-    if not has_cooldowns and not is_multiplier_active(user_id) and workboost_end <= datetime.now().timestamp():
-        embed.add_field(
-            name="🎉 All Clear!",
-            value="No active cooldowns or effects!",
-            inline=False
-        )
-    
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="leaderboard", description="🏅 View various leaderboards")
-@app_commands.describe(category="Choose which leaderboard to view")
-@app_commands.choices(category=[
-    app_commands.Choice(name="💰 Richest Users", value="balance"),
-    app_commands.Choice(name="💼 Most Work Done", value="work"),
-    app_commands.Choice(name="🎰 Biggest Gamblers", value="gambling"),
-    app_commands.Choice(name="🎣 Best Fishers", value="fishing"),
-    app_commands.Choice(name="🏆 Lottery Winners", value="lottery")
-])
-async def leaderboard(interaction: discord.Interaction, category: str):
-    users_data = []
-    
-    for user_id_str, data in economy_data.items():
-        try:
-            user_id = int(user_id_str)
-            user = await bot.fetch_user(user_id)
-            if not user.bot:
-                users_data.append((user.display_name, data, user))
-        except:
-            continue
-    
-    if category == "balance":
-        users_data.sort(key=lambda x: x[1]["balance"], reverse=True)
-        title = "🏆 Richest Users"
-        value_func = lambda data: f"{CURRENCY}{data['balance']:,}"
-        
-    elif category == "work":
-        users_data.sort(key=lambda x: x[1]["stats"].get("times_worked", 0), reverse=True)
-        title = "💼 Hardest Workers"
-        value_func = lambda data: f"{data['stats'].get('times_worked', 0):,} times"
-        
-    elif category == "gambling":
-        users_data.sort(key=lambda x: x[1]["stats"].get("times_gambled", 0), reverse=True)
-        title = "🎰 Biggest Gamblers"
-        value_func = lambda data: f"{data['stats'].get('times_gambled', 0):,} times"
-        
-    elif category == "fishing":
-        users_data.sort(key=lambda x: x[1]["stats"].get("fish_caught", 0), reverse=True)
-        title = "🎣 Master Fishers"
-        value_func = lambda data: f"{data['stats'].get('fish_caught', 0):,} fish"
-        
-    elif category == "lottery":
-        users_data.sort(key=lambda x: x[1]["stats"].get("lottery_wins", 0), reverse=True)
-        title = "🏆 Lucky Lottery Winners"
-        value_func = lambda data: f"{data['stats'].get('lottery_wins', 0):,} wins"
-    
-    embed = create_embed(title, color=discord.Color.gold())
-    
-    medals = ["🥇", "🥈", "🥉"] + ["🏅"] * 7
-    
-    for i, (name, data, user_obj) in enumerate(users_data[:10], 1):
-        medal = medals[i-1] if i <= 10 else "🔸"
-        embed.add_field(
-            name=f"{medal} #{i} {name}",
-            value=value_func(data),
-            inline=False
-        )
-    
-    if not users_data:
-        embed.add_field(name="No Data", value="No users found for this category!", inline=False)
-    
-    await interaction.response.send_message(embed=embed)
-
-# =============================================
-#             OWNER COMMANDS
-# =============================================
-
-def is_owner():
-    def predicate(interaction: discord.Interaction):
-        return interaction.user.id == OWNER_ID
-    return app_commands.check(predicate)
-
-@bot.tree.command(name="give", description="[Owner] Give money to a user")
-@is_owner()
-async def give(interaction: discord.Interaction, user: discord.User, amount: int):
-    if amount <= 0:
-        embed = create_embed("❌ Invalid Amount", "Amount must be positive!", discord.Color.red())
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        return
-    
-    new_balance = update_balance(user.id, amount, apply_multiplier=False)
-    
-    embed = create_embed("💰 Money Given", color=discord.Color.green())
-    embed.add_field(name="Recipient", value=user.display_name, inline=True)
-    embed.add_field(name="Amount", value=f"{CURRENCY}{amount:,}", inline=True)
-    embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed, ephemeral=True)
-
-@bot.tree.command(name="take", description="[Owner] Take money from a user")
-@is_owner()
-async def take(interaction: discord.Interaction, user: discord.User, amount: int):
-    current_balance = get_balance(user.id)
-    
-    if amount <= 0:
-        embed = create_embed("❌ Invalid Amount", "Amount must be positive!", discord.Color.red())
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        return
-    
-    if amount > current_balance:
-        amount = current_balance
-    
-    new_balance = update_balance(user.id, -amount, apply_multiplier=False)
-    
-    embed = create_embed("💸 Money Taken", color=discord.Color.orange())
-    embed.add_field(name="Target", value=user.display_name, inline=True)
-    embed.add_field(name="Amount Taken", value=f"{CURRENCY}{amount:,}", inline=True)
-    embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed, ephemeral=True)
-
-@bot.tree.command(name="give_all", description="[Owner] Give money to everyone in this server")
-@is_owner()
-async def give_all(interaction: discord.Interaction, amount: int):
-    if amount <= 0:
-        embed = create_embed("❌ Invalid Amount", "Amount must be positive!", discord.Color.red())
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        return
-    
-    members = interaction.guild.members
-    count = 0
-    
-    for member in members:
-        if not member.bot:
-            update_balance(member.id, amount, apply_multiplier=False)
-            count += 1
-    
-    embed = create_embed("🎉 Money Distributed", color=discord.Color.green())
-    embed.add_field(name="Amount Per User", value=f"{CURRENCY}{amount:,}", inline=True)
-    embed.add_field(name="Recipients", value=f"{count} members", inline=True)
-    embed.add_field(name="Total Given", value=f"{CURRENCY}{amount * count:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="set_lottery", description="[Owner] Set the lottery jackpot")
-@is_owner()
-async def set_lottery(interaction: discord.Interaction, amount: int):
-    global CURRENT_LOTTERY_PRIZE
-    if amount < LOTTERY_MIN_PRIZE:
-        embed = create_embed("❌ Too Low", f"Minimum lottery prize is {CURRENCY}{LOTTERY_MIN_PRIZE:,}!", discord.Color.red())
-        await interaction.response.send_message(embed=embed, ephemeral=True)
-        return
-    
-    old_prize = CURRENT_LOTTERY_PRIZE
-    CURRENT_LOTTERY_PRIZE = amount
-    update_lottery_description()
-    save_data()
-    
-    embed = create_embed("🎫 Lottery Prize Updated", color=discord.Color.gold())
-    embed.add_field(name="Old Prize", value=f"{CURRENCY}{old_prize:,}", inline=True)
-    embed.add_field(name="New Prize", value=f"{CURRENCY}{amount:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed, ephemeral=True)
-
-@bot.tree.command(name="reset_economy", description="[Owner] Reset all economy data")
-@is_owner()
-async def reset_economy(interaction: discord.Interaction):
-    # Create confirmation view
-    class ConfirmReset(discord.ui.View):
-        def __init__(self):
-            super().__init__(timeout=30)
-        
-        @discord.ui.button(label="Confirm Reset", style=discord.ButtonStyle.danger)
-        async def confirm(self, button_interaction: discord.Interaction, button: discord.ui.Button):
-            global economy_data, server_shops, CURRENT_LOTTERY_PRIZE
-            economy_data = {}
-            server_shops = {}
-            CURRENT_LOTTERY_PRIZE = LOTTERY_START_PRIZE
-            update_lottery_description()
-            save_data()
-            
-            embed = create_embed("✅ Economy Reset Complete", "All economy data has been wiped clean!", discord.Color.green())
-            await button_interaction.response.edit_message(embed=embed, view=None)
-        
-        @discord.ui.button(label="Cancel", style=discord.ButtonStyle.secondary)
-        async def cancel(self, button_interaction: discord.Interaction, button: discord.ui.Button):
-            embed = create_embed("❌ Reset Cancelled", "Economy data is safe!", discord.Color.blue())
-            await button_interaction.response.edit_message(embed=embed, view=None)
-    
-    embed = create_embed(
-        "⚠️ Economy Reset Confirmation",
-        "This will permanently delete ALL economy data including:\n"
-        "• All user balances and inventories\n"
-        "• All shop data\n"
-        "• All statistics\n"
-        "• Lottery winners history\n\n"
-        "**This action cannot be undone!**",
-        discord.Color.red()
-    )
-    
-    await interaction.response.send_message(embed=embed, view=ConfirmReset(), ephemeral=True)
-
-@bot.tree.command(name="global_announcement", description="[Owner] Send announcement to all servers")
-@is_owner()
-async def global_announcement(interaction: discord.Interaction, message: str):
-    await interaction.response.defer(ephemeral=True)
-    
-    total_sent = 0
-    failed = 0
-    
-    for guild in bot.guilds:
-        sent_to_guild = False
-        for channel in guild.text_channels:
-            if channel.permissions_for(guild.me).send_messages:
-                try:
-                    embed = create_embed(
-                        "📢 Global Announcement",
-                        message,
-                        discord.Color.gold()
-                    )
-                    embed.set_footer(text=f"Announcement from {interaction.user.display_name}")
-                    await channel.send(embed=embed)
-                    total_sent += 1
-                    sent_to_guild = True
-                    break
-                except:
-                    continue
-        
-        if not sent_to_guild:
-            failed += 1
-    
-    embed = create_embed("📢 Announcement Sent", color=discord.Color.green())
-    embed.add_field(name="Servers Reached", value=str(total_sent), inline=True)
-    embed.add_field(name="Failed", value=str(failed), inline=True)
-    embed.add_field(name="Total Servers", value=str(len(bot.guilds)), inline=True)
-    
-    await interaction.followup.send(embed=embed)
-
-@bot.tree.command(name="bot_stats", description="[Owner] View bot statistics")
-@is_owner()
-async def bot_stats(interaction: discord.Interaction):
-    total_users = len(economy_data)
-    total_servers = len(bot.guilds)
-    total_balance = sum(data["balance"] for data in economy_data.values())
-    total_lottery_wins = len(lottery_winners)
-    
-    embed = create_embed("🤖 Bot Statistics", color=discord.Color.blue())
-    embed.add_field(name="👥 Total Users", value=f"{total_users:,}", inline=True)
-    embed.add_field(name="🏠 Total Servers", value=f"{total_servers:,}", inline=True)
-    embed.add_field(name="💰 Total Economy", value=f"{CURRENCY}{total_balance:,}", inline=True)
-    embed.add_field(name="🎫 Lottery Winners", value=f"{total_lottery_wins:,}", inline=True)
-    embed.add_field(name="🏆 Current Jackpot", value=f"{CURRENCY}{CURRENT_LOTTERY_PRIZE:,}", inline=True)
-    embed.add_field(name="📊 Active Shops", value=f"{len(server_shops):,}", inline=True)
-    
-    # Memory usage and uptime could be added here
-    
-    await interaction.response.send_message(embed=embed, ephemeral=True)
-
-# =============================================
-#             HELP COMMAND
-# =============================================
-
-@bot.tree.command(name="help", description="📋 Show all available commands")
-async def help_command(interaction: discord.Interaction):
-    embed = create_embed(f"{BOT_NAME} Command Guide", "Here are all the available commands organized by category!", discord.Color.blue())
-    
-    # Economy commands
-    embed.add_field(
-        name="💰 Economy Commands",
-        value=(
-            "`/balance` - Check balance\n"
-            "`/work` - Work for money\n"
-            "`/daily` - Daily reward\n"
-            "`/beg` - Beg for money\n"
-            "`/fish` - Go fishing\n"
-            "`/pay` - Pay another user"
-        ),
-        inline=True
-    )
-    
-    # Gambling commands
-    embed.add_field(
-        name="🎰 Gambling Commands",
-        value=(
-            "`/gamble` - Gamble money\n"
-            "`/slots` - Slot machine\n"
-            "`/scratch` - Scratch lottery tickets\n"
-            "`/lottery` - Lottery info"
-        ),
-        inline=True
-    )
-    
-    # Shop commands
-    embed.add_field(
-        name="🛒 Shop Commands",
-        value=(
-            "`/shop` - View shop\n"
-            "`/buy` - Buy items\n"
-            "`/inventory` - View inventory\n"
-            "`/use` - Use items"
-        ),
-        inline=True
-    )
-    
-    # Social commands
-    embed.add_field(
-        name="👥 Social Commands",
-        value=(
-            "`/rob` - Rob another user\n"
-            "`/baltop` - Richest users\n"
-            "`/stats` - View statistics\n"
-            "`/leaderboard` - Various leaderboards"
-        ),
-        inline=True
-    )
-    
-    # Utility commands
-    embed.add_field(
-        name="🔧 Utility Commands",
-        value=(
-            "`/cooldowns` - Check cooldowns\n"
-            "`/help` - Show this help"
-        ),
-        inline=True
-    )
-    
-    # Owner commands (only show to owner)
-    if interaction.user.id == OWNER_ID:
-        embed.add_field(
-            name="👑 Owner Commands",
-            value=(
-                "`/give` - Give money\n"
-                "`/take` - Take money\n"
-                "`/give_all` - Give to everyone\n"
-                "`/set_lottery` - Set lottery prize\n"
-                "`/global_announcement` - Global announce\n"
-                "`/bot_stats` - Bot statistics\n"
-                "`/reset_economy` - Reset all data"
-            ),
-            inline=True
-        )
-    
-    embed.add_field(
-        name="💡 Pro Tips",
-        value=(
-            "• Buy items from the shop to boost your earnings\n"
-            "• Prices fluctuate - buy low, sell high!\n"
-            "• Keep your daily streak for bigger rewards\n"
-            "• Use `/cooldowns` to track when you can earn again"
-        ),
-        inline=False
-    )
-    
-    await interaction.response.send_message(embed=embed)
-
-# =============================================
-#             BOT STARTUP
-# =============================================
-
-if __name__ == "__main__":
-    print("🔄 Loading Fun.Bot...")
-    load_data()
-    
-    bot_token = os.getenv("DISCORD_TOKEN")
-    if not bot_token:
-        print("❌ No DISCORD_TOKEN environment variable found!")
-        print("Please set your bot token in the environment variables.")
-        exit(1)
-    
-    print("🚀 Starting Fun.Bot...")
-    try:
-        bot.run(bot_token)
-    except Exception as e:
-        print(f"❌ Failed to start bot: {e}")
-        exit(1)# =============================================
-#             CONFIGURATION SECTION
-# =============================================
-# All customizable settings are in this section
-
-# Bot Identity
-BOT_NAME = "Fun.Bot"
-OWNER_ID = 928108286916583474  # Your Discord user ID
-COMMAND_PREFIX = "/"           # Not used for slash commands
-CURRENCY = "$"                 # Currency symbol
-
-# Economy Settings
-STARTING_BALANCE = 1000        # New users start with this
-WORK_MIN_EARNINGS = 50         # Minimum from /work
-WORK_MAX_EARNINGS = 150        # Maximum from /work
-WORK_COOLDOWN = 3600           # 1 hour cooldown (seconds)
-DAILY_REWARD = 500             # Base daily amount
-BEG_MIN = 1                    # Minimum from /beg
-BEG_MAX = 100                  # Maximum from /beg
-BEG_CHANCE = 0.7               # 70% success chance
-ROB_MIN_FINE = 50              # Minimum robbery fine
-ROB_MAX_FINE = 200             # Maximum robbery fine
-ROB_CHANCE = 0.3               # 30% robbery success chance
-
-# Lottery Settings
-LOTTERY_WIN_CHANCE = 650       # 1 in 650 chance
-LOTTERY_MIN_PRIZE = 10000      # Minimum jackpot
-LOTTERY_MAX_PRIZE = 100000     # Maximum jackpot
-LOTTERY_START_PRIZE = 50000    # Starting jackpot
-LOTTERY_TICKET_PRICE = 500     # Price per ticket
-LOTTERY_MAX_STOCK = 15         # Max tickets per server
-
-# Shop Settings
-SHOP_RESET_MINUTES = 10        # How often shop restocks
-NEWS_CHANCE = 0.2              # 20% chance for news
-PRICE_CHANGE_RANGE = (-0.3, 0.2)  # Min/max price changes
-STOCK_CHANGE_RANGE = (-2, 3)   # Stock fluctuation range
-
-# Fishing Settings
-FISH_COOLDOWN = 900            # 15 minutes
-FISHING_ROD_USES = 10          # Uses before breaking
-
-# Data Management
-DATA_FILE = "economy_data.json" # Save file location
-DATA_BACKUP_MINUTES = 30       # Auto-save interval
-
-# =============================================
-#             GLOBAL VARIABLES
-# =============================================
-
-CURRENT_LOTTERY_PRIZE = LOTTERY_START_PRIZE
-economy_data = {}
-server_shops = {}
-active_news = {}
-lottery_winners = []
-
-# Base shop items with enhanced descriptions
-BASE_SHOP_ITEMS = {
-    "padlock": {
-        "name": "🔒 Padlock",
-        "base_price": 800,
-        "description": "Protects against one robbery attempt",
-        "emoji": "🔒",
-        "usable": True,
-        "max_stock": 10
-    },
-    "fishingrod": {
-        "name": "🎣 Fishing Rod",
-        "base_price": 1200,
-        "description": f"Catch fish for money! ({FISHING_ROD_USES} uses)",
-        "emoji": "🎣",
-        "usable": False,
-        "max_stock": 8
-    },
-    "luckycoin": {
-        "name": "🍀 Lucky Coin",
-        "base_price": 1500,
-        "description": "+10% gambling win chance (permanent)",
-        "emoji": "🍀",
-        "usable": True,
-        "max_stock": 5
-    },
-    "workboost": {
-        "name": "⚡ Work Boost",
-        "base_price": 1000,
-        "description": "+50% work earnings for 24 hours",
-        "emoji": "⚡",
-        "usable": True,
-        "max_stock": 7
-    },
-    "lotteryticket": {
-        "name": "🎫 Lottery Ticket",
-        "base_price": LOTTERY_TICKET_PRICE,
-        "description": f"Scratch to win! Current jackpot: {CURRENCY}{LOTTERY_START_PRIZE:,}",
-        "emoji": "🎫",
-        "usable": True,
-        "max_stock": LOTTERY_MAX_STOCK
-    },
-    "diamondring": {
-        "name": "💎 Diamond Ring",
-        "base_price": 3000,
-        "description": "+20% begging success rate (permanent)",
-        "emoji": "💎",
-        "usable": True,
-        "max_stock": 3
-    },
-    "energydrink": {
-        "name": "⚡ Energy Drink",
-        "base_price": 250,
-        "description": "Reduces all cooldowns by 30 minutes",
-        "emoji": "⚡",
-        "usable": True,
-        "max_stock": 12
-    },
-    "multiplier": {
-        "name": "✨ 2x Multiplier",
-        "base_price": 2500,
-        "description": "Double all earnings for 1 hour",
-        "emoji": "✨",
-        "usable": True,
-        "max_stock": 4
-    }
-}
-
-# Fish types for fishing system
-FISH_TYPES = {
-    "common": {
-        "fish": ["🐟 Sardine", "🐠 Goldfish", "🦐 Shrimp"],
-        "value_range": (20, 80),
-        "chance": 0.6
-    },
-    "rare": {
-        "fish": ["🐡 Pufferfish", "🦞 Lobster", "🐙 Octopus"],
-        "value_range": (100, 300),
-        "chance": 0.25
-    },
-    "legendary": {
-        "fish": ["🦈 Shark", "🐳 Whale", "🐉 Sea Dragon"],
-        "value_range": (500, 1500),
-        "chance": 0.1
-    },
-    "mythic": {
-        "fish": ["👑 Golden Fish", "💎 Diamond Fish", "🌟 Cosmic Fish"],
-        "value_range": (2000, 5000),
-        "chance": 0.05
-    }
-}
-
-# =============================================
-#             BOT IMPLEMENTATION
-# =============================================
-
-import discord
-from discord.ext import commands, tasks
-from discord import app_commands
-import random
-import json
-import os
-from datetime import datetime, timedelta
-import asyncio
-from typing import Optional
-
-# Initialize bot with enhanced intents
-intents = discord.Intents.default()
-intents.members = True
-intents.message_content = True
-bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents)
-
-# =============================================
-#             UTILITY FUNCTIONS
-# =============================================
-
-def load_data():
-    """Load all bot data from JSON file"""
-    global economy_data, server_shops, CURRENT_LOTTERY_PRIZE
-    if os.path.exists(DATA_FILE):
-        try:
-            with open(DATA_FILE, "r") as f:
-                data = json.load(f)
-                economy_data = data.get("economy", {})
-                server_shops = data.get("shops", {})
-                CURRENT_LOTTERY_PRIZE = data.get("lottery_prize", LOTTERY_START_PRIZE)
-        except Exception as e:
-            print(f"Error loading data: {e}")
-    update_lottery_description()
-
-def save_data():
-    """Save all bot data to JSON file"""
-    try:
-        with open(DATA_FILE, "w") as f:
-            json.dump({
-                "economy": economy_data,
-                "shops": server_shops,
-                "lottery_prize": CURRENT_LOTTERY_PRIZE
-            }, f, indent=2)
-    except Exception as e:
-        print(f"Error saving data: {e}")
-
-def update_lottery_description():
-    """Update lottery ticket description with current jackpot"""
-    BASE_SHOP_ITEMS["lotteryticket"]["description"] = (
-        f"Scratch to win! Current jackpot: {CURRENCY}{CURRENT_LOTTERY_PRIZE:,}"
-    )
-
-def get_user_data(user_id: int) -> dict:
-    """Get or create user data"""
-    user_id_str = str(user_id)
-    if user_id_str not in economy_data:
-        economy_data[user_id_str] = {
-            "balance": STARTING_BALANCE,
-            "inventory": {},
-            "stats": {
-                "times_worked": 0,
-                "times_gambled": 0,
-                "times_fished": 0,
-                "total_earned": 0,
-                "total_spent": 0,
-                "lottery_wins": 0,
-                "fish_caught": 0
-            },
-            "cooldowns": {},
-            "multipliers": {},
-            "daily_streak": 0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Fun.Bot - The Ultimate Discord Economy Bot with gambling, shopping, fishing, and more! Add to your server today.">
+    <meta name="keywords" content="Discord bot, economy bot, gambling bot, Discord economy, Fun Bot">
+    <meta name="author" content="Fun.Bot Team">
+    <meta property="og:title" content="Fun.Bot - Discord Economy Bot">
+    <meta property="og:description" content="The Ultimate Discord Economy Bot with Advanced Features, Gambling, Shopping, and More!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yourusername.github.io/funbot">
+    <meta property="og:image" content="https://yourusername.github.io/funbot/og-image.png">
+    <title>Fun.Bot - Discord Economy Bot</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    return economy_data[user_id_str]
 
-def get_server_shop(guild_id: int) -> dict:
-    """Get or create server shop data"""
-    guild_id_str = str(guild_id)
-    if guild_id_str not in server_shops:
-        server_shops[guild_id_str] = {
-            "items": {},
-            "last_reset": datetime.now().timestamp()
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
-        # Initialize shop items
-        for item_id, item_data in BASE_SHOP_ITEMS.items():
-            server_shops[guild_id_str]["items"][item_id] = {
-                "price": item_data["base_price"],
-                "stock": random.randint(1, item_data["max_stock"] // 2)
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460, #533483);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 107, 107, 0.3)); }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 2rem;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
             }
-    return server_shops[guild_id_str]
-
-def update_server_shop(guild_id: int):
-    """Update server shop prices and stock"""
-    shop = get_server_shop(guild_id)
-    
-    for item_id, item_data in BASE_SHOP_ITEMS.items():
-        if item_id not in shop["items"]:
-            shop["items"][item_id] = {
-                "price": item_data["base_price"],
-                "stock": random.randint(1, item_data["max_stock"] // 2)
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
-        else:
-            # Update stock
-            stock_change = random.randint(*STOCK_CHANGE_RANGE)
-            new_stock = shop["items"][item_id]["stock"] + stock_change
-            shop["items"][item_id]["stock"] = max(1, min(new_stock, item_data["max_stock"]))
-            
-            # Update price
-            price_change = random.uniform(*PRICE_CHANGE_RANGE)
-            new_price = int(shop["items"][item_id]["price"] * (1 + price_change))
-            shop["items"][item_id]["price"] = max(
-                item_data["base_price"] // 2,
-                min(item_data["base_price"] * 2, new_price)
-            )
-    
-    shop["last_reset"] = datetime.now().timestamp()
-    save_data()
-
-def get_balance(user_id: int) -> int:
-    """Get user's current balance"""
-    return get_user_data(user_id)["balance"]
-
-def update_balance(user_id: int, amount: int, apply_multiplier: bool = True) -> int:
-    """Update user balance and apply multipliers if applicable"""
-    user_data = get_user_data(user_id)
-    
-    # Apply 2x multiplier if active and earning money
-    if apply_multiplier and amount > 0 and is_multiplier_active(user_id):
-        amount *= 2
-    
-    user_data["balance"] += amount
-    
-    # Update stats
-    if amount > 0:
-        user_data["stats"]["total_earned"] += amount
-    else:
-        user_data["stats"]["total_spent"] += abs(amount)
-    
-    save_data()
-    return user_data["balance"]
-
-def add_item_to_inventory(user_id: int, item_name: str, quantity: int = 1, data: dict = None):
-    """Add item to user inventory"""
-    user_data = get_user_data(user_id)
-    inventory = user_data["inventory"]
-    
-    if item_name in inventory:
-        inventory[item_name]["quantity"] += quantity
-        if data and "durability" in data:
-            inventory[item_name]["data"] = data
-    else:
-        inventory[item_name] = {
-            "quantity": quantity,
-            "data": data or {}
         }
-    save_data()
 
-def remove_item_from_inventory(user_id: int, item_name: str, quantity: int = 1) -> bool:
-    """Remove item from user inventory"""
-    user_data = get_user_data(user_id)
-    inventory = user_data["inventory"]
-    
-    if item_name in inventory and inventory[item_name]["quantity"] >= quantity:
-        if inventory[item_name]["quantity"] <= quantity:
-            del inventory[item_name]
-        else:
-            inventory[item_name]["quantity"] -= quantity
-        save_data()
-        return True
-    return False
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: textShimmer 3s ease-in-out infinite;
+        }
 
-def has_item(user_id: int, item_name: str) -> bool:
-    """Check if user has item"""
-    inventory = get_user_data(user_id).get("inventory", {})
-    return item_name in inventory and inventory[item_name]["quantity"] > 0
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
 
-def check_cooldown(user_id: int, cooldown_type: str) -> int:
-    """Check remaining cooldown time"""
-    last_used = get_user_data(user_id).get("cooldowns", {}).get(cooldown_type, 0)
-    current_time = int(datetime.now().timestamp())
-    return max(0, last_used - current_time)
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #cccccc;
+        }
 
-def set_cooldown(user_id: int, cooldown_type: str, duration_seconds: int):
-    """Set cooldown for user"""
-    user_data = get_user_data(user_id)
-    if "cooldowns" not in user_data:
-        user_data["cooldowns"] = {}
-    user_data["cooldowns"][cooldown_type] = int(datetime.now().timestamp()) + duration_seconds
-    save_data()
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-def reduce_cooldowns(user_id: int, reduction_seconds: int):
-    """Reduce all cooldowns by specified amount"""
-    user_data = get_user_data(user_id)
-    cooldowns = user_data.get("cooldowns", {})
-    current_time = int(datetime.now().timestamp())
-    
-    for cooldown_type in cooldowns:
-        if cooldowns[cooldown_type] > current_time:
-            cooldowns[cooldown_type] = max(current_time, cooldowns[cooldown_type] - reduction_seconds)
-    
-    save_data()
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
 
-def is_multiplier_active(user_id: int) -> bool:
-    """Check if 2x multiplier is active"""
-    user_data = get_user_data(user_id)
-    multiplier_end = user_data.get("multipliers", {}).get("2x_end", 0)
-    return multiplier_end > datetime.now().timestamp()
+        .btn-primary {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
 
-def format_time(seconds: int) -> str:
-    """Format seconds into readable time"""
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    seconds = seconds % 60
-    
-    if hours > 0:
-        return f"{hours}h {minutes}m {seconds}s"
-    elif minutes > 0:
-        return f"{minutes}m {seconds}s"
-    else:
-        return f"{seconds}s"
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
 
-def create_embed(title: str, description: str = "", color = discord.Color.blue()) -> discord.Embed:
-    """Create a standardized embed"""
-    embed = discord.Embed(title=title, description=description, color=color)
-    embed.set_footer(text=f"{BOT_NAME} • Economy Bot")
-    embed.timestamp = datetime.now()
-    return embed
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
 
-# =============================================
-#             BACKGROUND TASKS
-# =============================================
+        .btn-primary:hover {
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
 
-@tasks.loop(minutes=SHOP_RESET_MINUTES)
-async def shop_reset_task():
-    """Reset shop prices and stock periodically"""
-    for guild_id_str in server_shops:
-        update_server_shop(int(guild_id_str))
-    
-    # Random news events
-    if random.random() < NEWS_CHANCE:
-        await trigger_news_event()
+        /* Features Section */
+        .section {
+            padding: 5rem 0;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-@tasks.loop(minutes=DATA_BACKUP_MINUTES)
-async def data_backup_task():
-    """Auto-save data periodically"""
-    save_data()
+        .section h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
 
-async def trigger_news_event():
-    """Trigger a random news event affecting prices"""
-    item_id = random.choice(list(BASE_SHOP_ITEMS.keys()))
-    price_change = random.choice([-30, -20, -15, 10, 15, 20])
-    duration = random.randint(2, 8)  # 2-8 minutes
-    
-    # Apply to all servers
-    for guild_id_str in server_shops:
-        if item_id in server_shops[guild_id_str]["items"]:
-            current_price = server_shops[guild_id_str]["items"][item_id]["price"]
-            new_price = max(
-                BASE_SHOP_ITEMS[item_id]["base_price"] // 2,
-                int(current_price * (1 + price_change / 100))
-            )
-            server_shops[guild_id_str]["items"][item_id]["price"] = new_price
-    
-    # Announce to all servers
-    item_data = BASE_SHOP_ITEMS[item_id]
-    embed = create_embed(
-        "📰 BREAKING NEWS",
-        f"**{item_data['name']} prices {'surged' if price_change > 0 else 'crashed'} by {abs(price_change)}%!**\n"
-        f"This effect will last for {duration} minutes.",
-        discord.Color.red() if price_change > 0 else discord.Color.green()
-    )
-    
-    for guild in bot.guilds:
-        for channel in guild.text_channels:
-            if channel.permissions_for(guild.me).send_messages:
-                try:
-                    await channel.send(embed=embed)
-                    break
-                except:
-                    continue
-    
-    # Reset after duration
-    await asyncio.sleep(duration * 60)
-    for guild_id_str in server_shops:
-        update_server_shop(int(guild_id_str))
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+        }
 
-# =============================================
-#             BOT EVENTS
-# =============================================
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-@bot.event
-async def on_ready():
-    """Bot startup event"""
-    print(f'🚀 {BOT_NAME} has connected to Discord!')
-    print(f'📊 Loaded {len(economy_data)} users and {len(server_shops)} server shops')
-    
-    try:
-        synced = await bot.tree.sync()
-        print(f"⚡ Synced {len(synced)} slash commands")
-    except Exception as e:
-        print(f"❌ Error syncing commands: {e}")
-    
-    # Start background tasks
-    if not shop_reset_task.is_running():
-        shop_reset_task.start()
-    if not data_backup_task.is_running():
-        data_backup_task.start()
-    
-    print("✅ Bot is ready!")
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
 
-# =============================================
-#             ECONOMY COMMANDS
-# =============================================
+        .feature-card:hover::before {
+            left: 100%;
+        }
 
-@bot.tree.command(name="balance", description="💰 Check your or someone else's balance")
-async def balance(interaction: discord.Interaction, user: Optional[discord.User] = None):
-    target = user or interaction.user
-    bal = get_balance(target.id)
-    user_data = get_user_data(target.id)
-    
-    embed = create_embed(f"💰 {target.display_name}'s Balance", color=discord.Color.gold())
-    embed.add_field(name="Balance", value=f"{CURRENCY}{bal:,}", inline=True)
-    
-    # Show multiplier status
-    if is_multiplier_active(target.id):
-        multiplier_end = user_data.get("multipliers", {}).get("2x_end", 0)
-        time_left = int(multiplier_end - datetime.now().timestamp())
-        embed.add_field(name="✨ Active Multiplier", value=f"2x for {format_time(time_left)}", inline=True)
-    
-    embed.set_thumbnail(url=target.display_avatar.url)
-    await interaction.response.send_message(embed=embed)
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
 
-@bot.tree.command(name="work", description="⚡ Work to earn money")
-async def work(interaction: discord.Interaction):
-    user_id = interaction.user.id
-    user_data = get_user_data(user_id)
-    
-    # Check cooldown
-    cooldown_left = check_cooldown(user_id, "work")
-    if cooldown_left > 0:
-        embed = create_embed(
-            "😴 Too Tired to Work",
-            f"You need to rest! Try again in **{format_time(cooldown_left)}**",
-            discord.Color.orange()
-        )
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Calculate earnings with boosts
-    base_amount = random.randint(WORK_MIN_EARNINGS, WORK_MAX_EARNINGS)
-    multiplier = 1.0
-    boost_msg = ""
-    
-    # Work boost check
-    if has_item(user_id, "workboost"):
-        boost_end = user_data.get("cooldowns", {}).get("workboost", 0)
-        if boost_end > datetime.now().timestamp():
-            multiplier *= 1.5
-            boost_msg += " (Work Boost Active!)"
-    
-    amount = int(base_amount * multiplier)
-    new_balance = update_balance(user_id, amount)
-    
-    # Update stats and cooldown
-    user_data["stats"]["times_worked"] += 1
-    set_cooldown(user_id, "work", WORK_COOLDOWN)
-    
-    jobs = [
-        ("💻 Programming", "You coded a web application"),
-        ("🚚 Delivery", "You delivered packages across town"),
-        ("☕ Barista", "You served coffee and pastries"),
-        ("🔨 Construction", "You helped build a house"),
-        ("📝 Freelancing", "You completed a writing project"),
-        ("🎨 Graphic Design", "You created stunning visuals"),
-        ("🏪 Retail", "You helped customers at the store"),
-        ("🚗 Rideshare", "You drove passengers around the city")
-    ]
-    
-    job_emoji, job_desc = random.choice(jobs)
-    
-    embed = create_embed(f"{job_emoji} Work Complete!", color=discord.Color.green())
-    embed.add_field(name="Job", value=job_desc, inline=False)
-    embed.add_field(name="Earnings", value=f"{CURRENCY}{amount:,}{boost_msg}", inline=True)
-    embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
 
-@bot.tree.command(name="daily", description="🎁 Claim your daily reward")
-async def daily(interaction: discord.Interaction):
-    user_id = interaction.user.id
-    user_data = get_user_data(user_id)
-    
-    # Check cooldown
-    cooldown_left = check_cooldown(user_id, "daily")
-    if cooldown_left > 0:
-        embed = create_embed(
-            "⏰ Daily Already Claimed",
-            f"Come back in **{format_time(cooldown_left)}** for your next daily!",
-            discord.Color.orange()
-        )
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Calculate daily amount with streak bonus
-    streak = user_data.get("daily_streak", 0) + 1
-    bonus_amount = min(1000, streak * 25)  # Max 1000 bonus
-    total_amount = DAILY_REWARD + bonus_amount
-    
-    # Update balance and streak
-    new_balance = update_balance(user_id, total_amount)
-    set_cooldown(user_id, "daily", 86400)  # 24 hours
-    user_data["daily_streak"] = streak
-    save_data()
-    
-    embed = create_embed("🎁 Daily Reward Claimed!", color=discord.Color.gold())
-    embed.add_field(name="Base Reward", value=f"{CURRENCY}{DAILY_REWARD:,}", inline=True)
-    embed.add_field(name="Streak Bonus", value=f"{CURRENCY}{bonus_amount:,}", inline=True)
-    embed.add_field(name="Total Earned", value=f"{CURRENCY}{total_amount:,}", inline=True)
-    embed.add_field(name="Current Streak", value=f"{streak} days", inline=True)
-    embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
 
-@bot.tree.command(name="beg", description="🤲 Beg for money from strangers")
-async def beg(interaction: discord.Interaction):
-    user_id = interaction.user.id
-    
-    # Check for diamond ring boost
-    success_chance = BEG_CHANCE
-    if has_item(user_id, "diamondring"):
-        success_chance += 0.2  # +20% success rate
-    
-    if random.random() < success_chance:
-        amount = random.randint(BEG_MIN, BEG_MAX)
-        new_balance = update_balance(user_id, amount)
-        
-        success_messages = [
-            ("💝", "A kind stranger took pity on you"),
-            ("💰", "You found money someone dropped"),
-            ("🎩", "A generous person gave you a tip"),
-            ("✨", "Lady luck smiled upon you"),
-            ("💎", "Someone appreciated your honesty")
-        ]
-        
-        emoji, message = random.choice(success_messages)
-        embed = create_embed(f"{emoji} Begging Success!", color=discord.Color.green())
-        embed.add_field(name="Result", value=f"{message} and gave you {CURRENCY}{amount:,}!", inline=False)
-        embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    else:
-        failure_messages = [
-            ("😔", "Everyone ignored you completely"),
-            ("🚶", "People walked past without noticing"),
-            ("😤", "Someone told you to get a job"),
-            ("🙄", "You were shooed away by security"),
-            ("😕", "Not a single person stopped to help")
-        ]
-        
-        emoji, message = random.choice(failure_messages)
-        embed = create_embed(f"{emoji} No Luck Today", color=discord.Color.red())
-        embed.add_field(name="Result", value=message, inline=False)
-    
-    await interaction.response.send_message(embed=embed)
+        .feature-card p {
+            color: #cccccc;
+        }
 
-@bot.tree.command(name="fish", description="🎣 Go fishing to catch valuable fish")
-async def fish(interaction: discord.Interaction):
-    user_id = interaction.user.id
-    
-    # Check for fishing rod
-    if not has_item(user_id, "fishingrod"):
-        embed = create_embed(
-            "🎣 No Fishing Rod",
-            "You need a fishing rod to go fishing! Buy one from the shop.",
-            discord.Color.red()
-        )
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Check cooldown
-    cooldown_left = check_cooldown(user_id, "fish")
-    if cooldown_left > 0:
-        embed = create_embed(
-            "🐟 Fishing Cooldown",
-            f"The fish need time to return! Try again in **{format_time(cooldown_left)}**",
-            discord.Color.orange()
-        )
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Determine fish rarity
-    rand = random.random()
-    if rand < FISH_TYPES["common"]["chance"]:
-        rarity = "common"
-        color = discord.Color.green()
-    elif rand < FISH_TYPES["common"]["chance"] + FISH_TYPES["rare"]["chance"]:
-        rarity = "rare"
-        color = discord.Color.blue()
-    elif rand < (FISH_TYPES["common"]["chance"] + FISH_TYPES["rare"]["chance"] + 
-                FISH_TYPES["legendary"]["chance"]):
-        rarity = "legendary"
-        color = discord.Color.purple()
-    else:
-        rarity = "mythic"
-        color = discord.Color.gold()
-    
-    # Get random fish and value
-    fish_data = FISH_TYPES[rarity]
-    fish_name = random.choice(fish_data["fish"])
-    fish_value = random.randint(*fish_data["value_range"])
-    
-    # Update balance and stats
-    new_balance = update_balance(user_id, fish_value)
-    user_data = get_user_data(user_id)
-    user_data["stats"]["times_fished"] += 1
-    user_data["stats"]["fish_caught"] += 1
-    
-    # Use fishing rod durability
-    inventory = user_data["inventory"]["fishingrod"]
-    if "durability" not in inventory["data"]:
-        inventory["data"]["durability"] = FISHING_ROD_USES
-    
-    inventory["data"]["durability"] -= 1
-    durability_msg = ""
-    
-    if inventory["data"]["durability"] <= 0:
-        remove_item_from_inventory(user_id, "fishingrod")
-        durability_msg = "\n🔥 Your fishing rod broke!"
-    
-    # Set cooldown
-    set_cooldown(user_id, "fish", FISH_COOLDOWN)
-    save_data()
-    
-    embed = create_embed(f"🎣 Fishing Success!", color=color)
-    embed.add_field(name="Catch", value=f"{fish_name} ({rarity.title()})", inline=True)
-    embed.add_field(name="Value", value=f"{CURRENCY}{fish_value:,}", inline=True)
-    embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    if durability_msg:
-        embed.add_field(name="⚠️ Notice", value=durability_msg, inline=False)
-    
-    await interaction.response.send_message(embed=embed)
+        /* Commands Section */
+        .commands-container {
+            padding: 0 2rem;
+        }
 
-# =============================================
-#             GAMBLING COMMANDS
-# =============================================
+        .command-category {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-@bot.tree.command(name="gamble", description="🎰 Gamble your money for a chance to double it")
-async def gamble(interaction: discord.Interaction, amount: int):
-    user_id = interaction.user.id
-    current_balance = get_balance(user_id)
-    
-    if amount <= 0:
-        embed = create_embed("❌ Invalid Amount", "Amount must be positive!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if amount > current_balance:
-        embed = create_embed("💸 Insufficient Funds", "You don't have enough money!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Calculate win chance
-    win_chance = 0.45  # 45% base
-    if has_item(user_id, "luckycoin"):
-        win_chance = 0.55  # 55% with lucky coin
-    
-    # Update stats
-    get_user_data(user_id)["stats"]["times_gambled"] += 1
-    save_data()
-    
-    if random.random() < win_chance:
-        win_amount = amount * 2
-        new_balance = update_balance(user_id, win_amount)
-        
-        embed = create_embed("🎉 Gambling Win!", color=discord.Color.green())
-        embed.add_field(name="Bet", value=f"{CURRENCY}{amount:,}", inline=True)
-        embed.add_field(name="Won", value=f"{CURRENCY}{win_amount:,}", inline=True)
-        embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    else:
-        new_balance = update_balance(user_id, -amount)
-        
-        embed = create_embed("😢 Gambling Loss", color=discord.Color.red())
-        embed.add_field(name="Lost", value=f"{CURRENCY}{amount:,}", inline=True)
-        embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
+        .command-category h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #ff6b6b;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-@bot.tree.command(name="slots", description="🎰 Play the slot machine")
-async def slots(interaction: discord.Interaction, bet: int):
-    user_id = interaction.user.id
-    current_balance = get_balance(user_id)
-    
-    if bet <= 0:
-        embed = create_embed("❌ Invalid Bet", "Bet must be positive!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if bet > current_balance:
-        embed = create_embed("💸 Insufficient Funds", "You don't have enough money!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Slot machine logic
-    emojis = ["🍒", "🍋", "🍊", "🍇", "🍉", "7️⃣", "💎"]
-    slots = [random.choice(emojis) for _ in range(3)]
-    result = " | ".join(slots)
-    
-    # Check for wins
-    win_amount = 0
-    outcome = ""
-    
-    if slots[0] == slots[1] == slots[2]:
-        if slots[0] == "7️⃣":
-            win_amount = bet * 15
-            outcome = "🎰 MEGA JACKPOT!"
-        elif slots[0] == "💎":
-            win_amount = bet * 12
-            outcome = "💎 DIAMOND JACKPOT!"
-        else:
-            win_amount = bet * 6
-            outcome = "🎉 TRIPLE MATCH!"
-    elif slots[0] == slots[1] or slots[1] == slots[2] or slots[0] == slots[2]:
-        win_amount = bet * 2
-        outcome = "✨ PAIR MATCH!"
-    else:
-        win_amount = -bet
-        outcome = "😔 No Match"
-    
-    new_balance = update_balance(user_id, win_amount)
-    color = discord.Color.gold() if win_amount > bet * 5 else (discord.Color.green() if win_amount > 0 else discord.Color.red())
-    
-    embed = create_embed("🎰 Slot Machine", color=color)
-    embed.add_field(name="Result", value=f"```{result}```", inline=False)
-    embed.add_field(name="Outcome", value=outcome, inline=True)
-    
-    if win_amount > 0:
-        embed.add_field(name="Won", value=f"{CURRENCY}{win_amount:,}", inline=True)
-    else:
-        embed.add_field(name="Lost", value=f"{CURRENCY}{bet:,}", inline=True)
-    
-    embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
 
-@bot.tree.command(name="scratch", description="🎫 Scratch your lottery tickets")
-async def scratch(interaction: discord.Interaction):
-    global CURRENT_LOTTERY_PRIZE
-    user_id = interaction.user.id
-    
-    if not has_item(user_id, "lotteryticket"):
-        embed = create_embed(
-            "🎫 No Lottery Tickets",
-            "You don't have any lottery tickets! Buy some from the shop.",
-            discord.Color.red()
-        )
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Use one ticket
-    remove_item_from_inventory(user_id, "lotteryticket", 1)
-    
-    # Create scratch animation
-    embed = create_embed("🎫 Scratching Lottery Ticket...", "✨ Scratching... ✨", discord.Color.yellow())
-    await interaction.response.send_message(embed=embed)
-    
-    await asyncio.sleep(2)  # Build suspense
-    
-    # Check for win
-    if random.randint(1, LOTTERY_WIN_CHANCE) == 1:
-        # WINNER!
-        win_amount = CURRENT_LOTTERY_PRIZE
-        new_balance = update_balance(user_id, win_amount, apply_multiplier=False)  # Lottery wins don't get multiplied
-        
-        # Update stats
-        user_data = get_user_data(user_id)
-        user_data["stats"]["lottery_wins"] += 1
-        save_data()
-        
-        # Add to winners list
-        lottery_winners.append({
-            "user": interaction.user,
-            "amount": win_amount,
-            "time": datetime.now()
-        })
-        
-        # Create winner embed
-        embed = create_embed("🎉 LOTTERY WINNER! 🎉", color=discord.Color.gold())
-        embed.add_field(name="🏆 JACKPOT WINNER!", value=f"**{interaction.user.display_name}**", inline=False)
-        embed.add_field(name="💰 Prize Won", value=f"{CURRENCY}{win_amount:,}", inline=True)
-        embed.add_field(name="💳 New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-        embed.set_thumbnail(url=interaction.user.display_avatar.url)
-        
-        # Reset lottery prize
-        CURRENT_LOTTERY_PRIZE = random.randint(LOTTERY_MIN_PRIZE, LOTTERY_START_PRIZE)
-        update_lottery_description()
-        save_data()
-        
-        # Announce globally
-        await interaction.edit_original_response(embed=embed)
-        
-        # Send announcement to all servers
-        announcement_embed = create_embed(
-            "🎉 LOTTERY WINNER ANNOUNCEMENT! 🎉",
-            f"**{interaction.user.display_name}** just won {CURRENCY}{win_amount:,} from a lottery ticket!",
-            discord.Color.gold()
-        )
-        
-        for guild in bot.guilds:
-            if guild.id != interaction.guild_id:  # Don't spam the same server
-                for channel in guild.text_channels:
-                    if channel.permissions_for(guild.me).send_messages:
-                        try:
-                            await channel.send(embed=announcement_embed)
-                            break
-                        except:
-                            continue
-    else:
-        # No win
-        losing_messages = [
-            ("🍀", "Better luck next time!"),
-            ("🎲", "The odds weren't in your favor today."),
-            ("⭐", "Keep trying - someone has to win!"),
-            ("🎯", "So close! Try another ticket."),
-            ("🔮", "Fortune favors the persistent!")
-        ]
-        
-        emoji, message = random.choice(losing_messages)
-        embed = create_embed(f"{emoji} No Win This Time", color=discord.Color.orange())
-        embed.add_field(name="Result", value=message, inline=False)
-        embed.add_field(name="Current Jackpot", value=f"{CURRENCY}{CURRENT_LOTTERY_PRIZE:,}", inline=True)
-        
-        remaining_tickets = get_user_data(user_id)["inventory"].get("lotteryticket", {}).get("quantity", 0)
-        if remaining_tickets > 0:
-            embed.add_field(name="Remaining Tickets", value=str(remaining_tickets), inline=True)
-        
-        await interaction.edit_original_response(embed=embed)
+        .command-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
 
-# =============================================
-#             SOCIAL COMMANDS
-# =============================================
+        .command-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
 
-@bot.tree.command(name="rob", description="🦹 Attempt to rob another user")
-async def rob(interaction: discord.Interaction, user: discord.User):
-    robber_id = interaction.user.id
-    victim_id = user.id
-    
-    if robber_id == victim_id:
-        embed = create_embed("🤷 Can't Rob Yourself", "Nice try, but you can't rob yourself!", discord.Color.orange())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if user.bot:
-        embed = create_embed("🤖 Can't Rob Bots", "Bots don't carry money!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    robber_balance = get_balance(robber_id)
-    victim_balance = get_balance(victim_id)
-    victim_data = get_user_data(victim_id)
-    
-    # Check if victim has padlock protection
-    if has_item(victim_id, "padlock"):
-        remove_item_from_inventory(victim_id, "padlock")
-        embed = create_embed("🔒 Robbery Blocked!", color=discord.Color.blue())
-        embed.add_field(name="Protected", value=f"{user.display_name}'s wallet was protected by a padlock!", inline=False)
-        embed.add_field(name="Result", value="The padlock broke, but they're safe!", inline=False)
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if victim_balance < 100:
-        embed = create_embed("💸 Target Too Poor", f"{user.display_name} doesn't have enough money to rob!", discord.Color.orange())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Robbery attempt
-    if random.random() < ROB_CHANCE:
-        # Success
-        max_steal = min(1000, victim_balance // 2)  # Can steal up to half, max 1000
-        amount = random.randint(100, max_steal)
-        
-        update_balance(victim_id, -amount, apply_multiplier=False)
-        new_balance = update_balance(robber_id, amount)
-        
-        success_scenarios = [
-            ("🥷", "You successfully mugged", "and escaped into the shadows!"),
-            ("🎭", "You disguised yourself and robbed", "without being recognized!"),
-            ("⚡", "You performed a lightning-fast heist on", "and got away clean!"),
-            ("🔓", "You picked the pocket of", "like a master thief!"),
-        ]
-        
-        emoji, action1, action2 = random.choice(success_scenarios)
-        
-        embed = create_embed(f"{emoji} Robbery Success!", color=discord.Color.green())
-        embed.add_field(name="Heist Complete", value=f"{action1} {user.display_name} {action2}", inline=False)
-        embed.add_field(name="Stolen", value=f"{CURRENCY}{amount:,}", inline=True)
-        embed.add_field(name="Your Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-        
-    else:
-        # Failed robbery
-        fine = random.randint(ROB_MIN_FINE, min(ROB_MAX_FINE, robber_balance))
-        new_balance = update_balance(robber_id, -fine, apply_multiplier=False)
-        
-        failure_scenarios = [
-            ("🚨", "You got caught red-handed", "and had to pay a fine!"),
-            ("👮", "The police caught you", "and fined you for attempted theft!"),
-            ("🥊", "Your target fought back", "and you had to pay for damages!"),
-            ("📸", "Security cameras caught you", "and you were fined!"),
-        ]
-        
-        emoji, failure1, failure2 = random.choice(failure_scenarios)
-        
-        embed = create_embed(f"{emoji} Robbery Failed!", color=discord.Color.red())
-        embed.add_field(name="Caught!", value=f"{failure1} trying to rob {user.display_name} {failure2}", inline=False)
-        embed.add_field(name="Fine Paid", value=f"{CURRENCY}{fine:,}", inline=True)
-        embed.add_field(name="Your Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-    
-    await interaction.response.send_message(embed=embed)
+        .command-name {
+            font-weight: bold;
+            color: #4ecdc4;
+            margin-bottom: 0.5rem;
+        }
 
-@bot.tree.command(name="pay", description="💸 Pay money to another user")
-async def pay(interaction: discord.Interaction, user: discord.User, amount: int):
-    sender_id = interaction.user.id
-    receiver_id = user.id
-    
-    if sender_id == receiver_id:
-        embed = create_embed("🤷 Can't Pay Yourself", "You can't pay money to yourself!", discord.Color.orange())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if user.bot:
-        embed = create_embed("🤖 Can't Pay Bots", "Bots don't need money!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if amount <= 0:
-        embed = create_embed("❌ Invalid Amount", "Amount must be positive!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    sender_balance = get_balance(sender_id)
-    if amount > sender_balance:
-        embed = create_embed("💸 Insufficient Funds", "You don't have enough money!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Process payment
-    update_balance(sender_id, -amount, apply_multiplier=False)
-    update_balance(receiver_id, amount, apply_multiplier=False)
-    
-    embed = create_embed("💸 Payment Sent!", color=discord.Color.green())
-    embed.add_field(name="From", value=interaction.user.display_name, inline=True)
-    embed.add_field(name="To", value=user.display_name, inline=True)
-    embed.add_field(name="Amount", value=f"{CURRENCY}{amount:,}", inline=True)
-    embed.set_thumbnail(url=user.display_avatar.url)
-    
-    await interaction.response.send_message(embed=embed)
+        .command-desc {
+            color: #cccccc;
+            font-size: 0.9rem;
+        }
 
-# =============================================
-#             SHOP COMMANDS
-# =============================================
+        /* Statistics Section */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 0 2rem;
+        }
 
-@bot.tree.command(name="shop", description="🛒 Browse the shop and buy items")
-async def shop(interaction: discord.Interaction):
-    shop_data = get_server_shop(interaction.guild.id)
-    
-    embed = create_embed("🛒 Fun.Bot Shop", "Buy items to enhance your experience!", discord.Color.blue())
-    
-    for item_id, item_data in BASE_SHOP_ITEMS.items():
-        if item_id in shop_data["items"]:
-            shop_item = shop_data["items"][item_id]
-            stock_indicator = "🔴 Out of Stock" if shop_item['stock'] <= 0 else f"📦 Stock: {shop_item['stock']}"
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #cccccc;
+            font-size: 1.1rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(10, 10, 10, 0.9);
+            padding: 3rem 0 1rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4ecdc4;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #cccccc;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal h2 {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+        }
+
+        .modal h3 {
+            color: #4ecdc4;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .modal p {
+            color: #cccccc;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Additional eye-catching elements */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-coin {
+            position: absolute;
+            font-size: 2rem;
+            color: #ffd700;
+            animation: float-coin 8s infinite ease-in-out;
+            opacity: 0.7;
+        }
+
+        @keyframes float-coin {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+            25% { transform: translateY(-20px) rotate(90deg); opacity: 1; }
+            50% { transform: translateY(-40px) rotate(180deg); opacity: 0.7; }
+            75% { transform: translateY(-20px) rotate(270deg); opacity: 1; }
+        }
+
+        .glowing-orb {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,107,107,0.3), rgba(78,205,196,0.3), transparent);
+            animation: drift 15s infinite ease-in-out;
+            filter: blur(1px);
+        }
+
+        @keyframes drift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(50px, -50px) scale(1.1); }
+            50% { transform: translate(-30px, -100px) scale(0.9); }
+            75% { transform: translate(-80px, -30px) scale(1.2); }
+        }
+
+        /* Enhanced button effects */
+        .btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        /* Pulsing effect for important elements */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sparkle::after {
+            content: '✨';
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            font-size: 1.5rem;
+            animation: sparkle-twinkle 2s infinite;
+        }
+
+        @keyframes sparkle-twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.8) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+        }
+
+        /* Enhanced feature cards with 3D effect */
+        .feature-card {
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Glowing text effect */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5),
+                         0 0 20px rgba(255, 107, 107, 0.3),
+                         0 0 30px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Animated gradient border */
+        .gradient-border {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 300% 300%;
+            animation: gradient-rotate 4s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradient-rotate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Interactive hover effects for command items */
+        .command-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .command-item::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+        }
+
+        .command-item:hover::after {
+            width: 200%;
+            height: 200%;
+        }
+
+        /* Stats cards with enhanced effects */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255,107,107,0.1), transparent);
+            animation: rotate 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Money rain effect */
+        .money-rain {
+            position: absolute;
+            top: -10px;
+            font-size: 1.5rem;
+            animation: money-fall 5s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes money-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Enhanced modal with better effects */
+        .modal-content {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 300% 300%;
+            animation: gradient-border 3s ease infinite;
+            border-radius: 22px;
+            z-index: -1;
+        }
+
+        @keyframes gradient-border {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Disco ball effect for special occasions */
+        .disco-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(255,0,150,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0,255,150,0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(150,0,255,0.05) 0%, transparent 50%);
+            animation: disco-rotate 10s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes disco-rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(360deg) scale(1.1); }
+        }
+
+        /* Mobile Navigation */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .nav-links.mobile-open {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .floating-coin, .glowing-orb {
+                display: none; /* Hide decorative elements on mobile for performance */
+            }
             
-            # Price change indicator
-            base_price = item_data["base_price"]
-            current_price = shop_item["price"]
-            if current_price > base_price:
-                price_indicator = f"📈 {CURRENCY}{current_price:,} (↑{((current_price/base_price-1)*100):.0f}%)"
-            elif current_price < base_price:
-                price_indicator = f"📉 {CURRENCY}{current_price:,} (↓{((1-current_price/base_price)*100):.0f}%)"
-            else:
-                price_indicator = f"{CURRENCY}{current_price:,}"
-            
-            embed.add_field(
-                name=f"{item_data['name']} - {price_indicator}",
-                value=f"{item_data['description']}\n{stock_indicator}",
-                inline=False
-            )
-    
-    embed.set_footer(text="Use /buy to purchase items • Prices and stock update every 10 minutes")
-    await interaction.response.send_message(embed=embed)
+            .feature-card:hover {
+                transform: translateY(-5px); /* Reduce 3D effects on mobile */
+            }
 
-class ShopSelect(discord.ui.Select):
-    def __init__(self, shop_data, guild_id):
-        self.shop_data = shop_data
-        self.guild_id = guild_id
-        
-        options = []
-        for item_id, item_data in BASE_SHOP_ITEMS.items():
-            if item_id in shop_data["items"]:
-                shop_item = shop_data["items"][item_id]
-                if shop_item['stock'] > 0:  # Only show in-stock items
-                    options.append(discord.SelectOption(
-                        label=item_data['name'],
-                        description=f"{CURRENCY}{shop_item['price']:,} - {item_data['description'][:50]}...",
-                        emoji=item_data.get('emoji', '🛍️'),
-                        value=item_id
-                    ))
-        
-        super().__init__(placeholder="Choose an item to buy...", options=options, min_values=1, max_values=1)
-    
-    async def callback(self, interaction: discord.Interaction):
-        global CURRENT_LOTTERY_PRIZE
-        item_id = self.values[0]
-        user_id = interaction.user.id
-        current_balance = get_balance(user_id)
-        
-        item_data = BASE_SHOP_ITEMS[item_id]
-        shop_item = self.shop_data["items"][item_id]
-        price = shop_item["price"]
-        
-        if shop_item["stock"] <= 0:
-            embed = create_embed("❌ Out of Stock", f"{item_data['name']} is currently out of stock!", discord.Color.red())
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        if current_balance < price:
-            embed = create_embed("💸 Insufficient Funds", f"You need {CURRENCY}{price-current_balance:,} more to buy {item_data['name']}!", discord.Color.red())
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            return
-        
-        # Handle lottery tickets specially (they get scratched immediately)
-        if item_id == "lotteryticket":
-            # Deduct money first
-            update_balance(user_id, -price, apply_multiplier=False)
-            shop_item["stock"] -= 1
-            save_data()
-            
-            # Auto-scratch the ticket
-            embed = create_embed("🎫 Scratching Your Lottery Ticket...", "✨ Scratching... ✨", discord.Color.yellow())
-            await interaction.response.send_message(embed=embed)
-            
-            await asyncio.sleep(2)
-            
-            # Check for win
-            if random.randint(1, LOTTERY_WIN_CHANCE) == 1:
-                # WINNER!
-                win_amount = CURRENT_LOTTERY_PRIZE
-                new_balance = update_balance(user_id, win_amount, apply_multiplier=False)
-                
-                user_data = get_user_data(user_id)
-                user_data["stats"]["lottery_wins"] += 1
-                save_data()
-                
-                lottery_winners.append({
-                    "user": interaction.user,
-                    "amount": win_amount,
-                    "time": datetime.now()
-                })
-                
-                embed = create_embed("🎉 INSTANT LOTTERY WINNER! 🎉", color=discord.Color.gold())
-                embed.add_field(name="🏆 JACKPOT!", value=f"You won {CURRENCY}{win_amount:,}!", inline=False)
-                embed.add_field(name="💳 New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-                
-                CURRENT_LOTTERY_PRIZE = random.randint(LOTTERY_MIN_PRIZE, LOTTERY_START_PRIZE)
-                update_lottery_description()
-                save_data()
-                
-            else:
-                losing_messages = [
-                    "🍀 Better luck next time!",
-                    "🎯 So close! Try again.",
-                    "⭐ Keep playing - someone has to win!"
-                ]
-                
-                embed = create_embed("🎫 No Win This Time", random.choice(losing_messages), discord.Color.orange())
-                embed.add_field(name="Current Jackpot", value=f"{CURRENCY}{CURRENT_LOTTERY_PRIZE:,}", inline=True)
-            
-            await interaction.edit_original_response(embed=embed)
-            return
-        
-        # For fishing rods, add durability data
-        item_data_to_add = {}
-        if item_id == "fishingrod":
-            item_data_to_add = {"durability": FISHING_ROD_USES}
-        
-        # Process purchase
-        add_item_to_inventory(user_id, item_id, 1, item_data_to_add)
-        shop_item["stock"] -= 1
-        new_balance = update_balance(user_id, -price, apply_multiplier=False)
-        save_data()
-        
-        embed = create_embed("✅ Purchase Successful!", color=discord.Color.green())
-        embed.add_field(name="Item", value=item_data['name'], inline=True)
-        embed.add_field(name="Price", value=f"{CURRENCY}{price:,}", inline=True)
-        embed.add_field(name="New Balance", value=f"{CURRENCY}{new_balance:,}", inline=True)
-        embed.set_thumbnail(url=interaction.user.display_avatar.url)
-        
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+            .hero h1 {
+                font-size: 2.5rem;
+            }
 
-class ShopView(discord.ui.View):
-    def __init__(self, shop_data, guild_id):
-        super().__init__(timeout=300)
-        self.add_item(ShopSelect(shop_data, guild_id))
+            .hero p {
+                font-size: 1.1rem;
+                padding: 0 1rem;
+            }
 
-@bot.tree.command(name="buy", description="🛍️ Buy items from the shop")
-async def buy(interaction: discord.Interaction):
-    shop_data = get_server_shop(interaction.guild.id)
-    
-    # Check if any items are in stock
-    in_stock_items = [item_id for item_id, shop_item in shop_data["items"].items() if shop_item["stock"] > 0]
-    
-    if not in_stock_items:
-        embed = create_embed("🚫 Shop Empty", "All items are currently out of stock! Check back later.", discord.Color.orange())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    embed = create_embed("🛍️ Purchase Menu", "Select an item from the dropdown menu below to buy it!", discord.Color.blue())
-    view = ShopView(shop_data, interaction.guild.id)
-    
-    await interaction.response.send_message(embed=embed, view=view)
+            .nav-toggle {
+                display: block;
+            }
 
-@bot.tree.command(name="inventory", description="🎒 View your or someone else's inventory")
-async def inventory(interaction: discord.Interaction, user: Optional[discord.User] = None):
-    target = user or interaction.user
-    user_data = get_user_data(target.id)
-    inventory = user_data.get("inventory", {})
-    
-    if not inventory:
-        embed = create_embed(f"🎒 {target.display_name}'s Inventory", "This inventory is empty!", discord.Color.orange())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    embed = create_embed(f"🎒 {target.display_name}'s Inventory", color=discord.Color.blue())
-    embed.set_thumbnail(url=target.display_avatar.url)
-    
-    for item_name, item_info in inventory.items():
-        shop_item = BASE_SHOP_ITEMS.get(item_name, {})
-        display_name = shop_item.get("name", item_name.title())
-        
-        value_parts = [f"Quantity: {item_info['quantity']}"]
-        
-        if "durability" in item_info.get("data", {}):
-            value_parts.append(f"Durability: {item_info['data']['durability']}")
-        
-        embed.add_field(
-            name=display_name,
-            value="\n".join(value_parts),
-            inline=True
-        )
-    
-    await interaction.response.send_message(embed=embed)
+            .nav-links {
+                display: none;
+            }
 
-@bot.tree.command(name="use", description="🔧 Use an item from your inventory")
-async def use(interaction: discord.Interaction, item: str):
-    user_id = interaction.user.id
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                justify-content: center;
+            }
+
+            .section {
+                padding: 3rem 0;
+            }
+
+            .section h2 {
+                font-size: 2.2rem;
+                padding: 0 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+
+            .commands-container {
+                padding: 0 1rem;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 0 1rem;
+            }
+
+            .modal-content {
+                margin: 1rem;
+                padding: 1.5rem;
+                max-width: calc(100vw - 2rem);
+                max-height: calc(100vh - 2rem);
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            /* Reduce animations on mobile for better performance */
+            * {
+                animation-duration: 0.3s !important;
+            }
+
+            .bg-animation {
+                animation: none;
+                background: linear-gradient(135deg, #1a1a2e, #16213e);
+            }
+
+            .bg-animation::before {
+                animation: none;
+            }
+        }
+
+        /* Small mobile devices */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .command-category {
+                padding: 1.5rem;
+            }
+
+            .stat-card {
+                padding: 1.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Tablet landscape */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .commands-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Large screens */
+        @media (min-width: 1400px) {
+            .nav-container {
+                max-width: 1400px;
+            }
+
+            .section {
+                max-width: 1400px;
+            }
+
+            .hero h1 {
+                font-size: 5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
     
-    # Find item in inventory (case insensitive)
-    user_data = get_user_data(user_id)
-    inventory = user_data.get("inventory", {})
-    
-    item_key = None
-    for key in inventory.keys():
-        if key.lower() == item.lower():
-            item_key = key
-            break
-    
-    if not item_key:
-        embed = create_embed("❌ Item Not Found", f"You don't have '{item}' in your inventory!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if item_key not in BASE_SHOP_ITEMS:
-        embed = create_embed("❌ Invalid Item", "This item cannot be used!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    if not BASE_SHOP_ITEMS[item_key].get("usable", False):
-        embed = create_embed("❌ Not Usable", "This item cannot be used directly!", discord.Color.red())
-        await interaction.response.send_message(embed=embed)
-        return
-    
-    # Handle specific item usage
-    if item_key == "workboost":
-        set_cooldown(user_id, "workboost", 86400)  # 1 day
-        remove_item_from_inventory(user_id, item_key)
+    <!-- Floating decorative elements -->
+    <div class="floating-elements">
+        <div class="floating-coin" style="top: 10%; left: 10%; animation-delay: 0s;">💰</div>
+        <div class="floating-coin" style="top: 20%; right: 15%; animation-delay: 2s;">🪙</div>
+        <div class="floating-coin" style="top: 60%; left: 5%; animation-delay: 4s;">💎</div>
+        <div class="floating-coin" style="top: 80%; right: 10%; animation-delay: 6s;">🎰</div>
+        <div class="floating-coin" style="top: 40%; left: 80%; animation-delay: 1s;">🎫</div>
+        <div class="floating-coin" style="top: 70%; left: 20%; animation-delay: 3s;">🎣</div>
         
-        embed = create_embed("⚡ Work Boost Activated!", color=discord.Color.yellow())
-        embed.add_field(name="Effect", value="Your work earnings are increased by 50% for the next 24 hours!", inline=False)
-        
-    elif item_key == "energydrink":
-        reduce_cooldowns(user_id, 1800)  # Reduce by 30 minutes
-        remove_item_from_inventory(user_id, item_key)
-        
-        embed = create_embed("⚡ Energy Drink Consumed!", color=discord.Color.green())
-        embed.add_field(name="Effect", value="All your cooldowns have been reduced by 30 minutes!", inline=False)
-        
-    elif item_key == "multiplier":
-        # Activate 2x multiplier for 1 hour
-        user_data["multipliers"]["2x_end"] = datetime.now().timestamp() + 3600
-        remove_item_from_inventory(user_id, item_key)
-        save_data()
-        
-        embed = create_embed("✨ 2x Multiplier Activated!", color=discord.Color.purple())
-        embed.add_field(name="Effect", value="All your earnings are doubled for the next hour!", inline=False)
-        
-    elif item_key in ["luckycoin", "diamondring", "padlock"]:
-        embed = create_embed("ℹ️ Passive Item", color=discord.Color.blue())
-        embed.add_field(
-            name="Auto-Active",
-            value=f"This item is automatically applied when relevant! You have {inventory[item_key]['quantity']} in your inventory.",
-            inline=False
-        )
-        
-    else:
-        embed = create_embed("❌ Unknown Item", "I don't know how to use this item!", discord.Color.red())
-    
-    await interaction.response.send_message(embed=embed)
+        <div class="glowing-orb" style="top: 15%; left: 80%; animation-delay: 0s;"></div>
+        <div class="glowing-orb" style="top: 50%; left: 10%; animation-delay: 5s;"></div>
+        <div class="glowing-orb" style="top: 75%; right: 20%; animation-delay: 10s;"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Fun.Bot</div>
+            <button class="nav-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home" onclick="closeMobileMenu()">Home</a></li>
+                <li><a href="#features" onclick="closeMobileMenu()">Features</a></li>
+                <li><a href="#commands" onclick="closeMobileMenu()">Commands</a></li>
+                <li><a href="#stats" onclick="closeMobileMenu()">Stats</a></li>
+                <li><a href="#support" onclick="closeMobileMenu()">Support</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="glow-text">Fun.Bot</h1>
+            <p class="typing-text">The Ultimate Discord Economy Bot with Advanced Features, Gambling, Shopping, and More!</p>
+            <div class="cta-buttons">
+                <a href="https://discord.com/oauth2/authorize?client_id=1405748450125021355&permissions=412317240384&scope=bot%20applications.commands" target="_blank" class="btn btn-primary pulse sparkle">
+                    <i class="fab fa-discord"></i> Add to Server
+                </a>
+                <a href="https://discord.gg/Xbm9XEFfrf" target="_blank" class="btn btn-secondary">
+                    <i class="fas fa-headset"></i> Support Server
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section">
+        <h2>Features</h2>
+        <div class="features-grid">
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-coins"></i></div>
+                <h3>Advanced Economy</h3>
+                <p>Complete economy system with work, daily rewards, and balance tracking. Start with $1,000 and build your wealth!</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-dice"></i></div>
+                <h3>Gambling Games</h3>
+                <p>Multiple gambling options including slots, coin flip, and lottery tickets with massive jackpots!</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
+                <h3>Dynamic Shop</h3>
+                <p>Server-specific shops with fluctuating prices, limited stock, and special items to enhance your gameplay.</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-fish"></i></div>
+                <h3>Fishing System</h3>
+                <p>Catch rare fish for money! From common sardines to mythic cosmic fish worth thousands!</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-mask"></i></div>
+                <h3>Robbery & Protection</h3>
+                <p>Rob other users or protect yourself with padlocks. High risk, high reward gameplay!</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                <h3>Statistics & Leaderboards</h3>
+                <p>Track your progress with detailed stats and compete on multiple leaderboards!</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Boosts & Multipliers</h3>
+                <p>Use special items to boost earnings, reduce cooldowns, and multiply your income!</p>
+            </div>
+            <div class="feature-card fade-in gradient-border">
+                <div class="feature-icon"><i class="fas fa-ticket-alt"></i></div>
+                <h3>Lottery System</h3>
+                <p>Global lottery with jackpots starting at $50,000! Could you be the next big winner?</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Commands Section -->
+    <section id="commands" class="section">
+        <h2>Commands</h2>
+        <div class="commands-container">
+            
+            <div class="command-category fade-in">
+                <h3><i class="fas fa-coins"></i> Economy Commands</h3>
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <div class="command-name">/balance</div>
+                        <div class="command-desc">Check your or someone else's balance</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/work</div>
+                        <div class="command-desc">Work to earn $50-$150 (1 hour cooldown)</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/daily</div>
+                        <div class="command-desc">Claim daily reward with streak bonuses</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/beg</div>
+                        <div class="command-desc">Beg for money from strangers</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/fish</div>
+                        <div class="command-desc">Go fishing to catch valuable fish</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/pay</div>
+                        <div class="command-desc">Pay money to another user</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category fade-in">
+                <h3><i class="fas fa-dice"></i> Gambling Commands</h3>
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <div class="command-name">/gamble</div>
+                        <div class="command-desc">Gamble money for a chance to double it</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/slots</div>
+                        <div class="command-desc">Play the slot machine with various payouts</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/scratch</div>
+                        <div class="command-desc">Scratch your lottery tickets for jackpots</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/lottery</div>
+                        <div class="command-desc">Check current lottery information</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category fade-in">
+                <h3><i class="fas fa-shopping-cart"></i> Shop Commands</h3>
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <div class="command-name">/shop</div>
+                        <div class="command-desc">Browse the server shop with dynamic prices</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/buy</div>
+                        <div class="command-desc">Buy items from the shop</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/inventory</div>
+                        <div class="command-desc">View your or someone else's inventory</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/use</div>
+                        <div class="command-desc">Use items from your inventory</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category fade-in">
+                <h3><i class="fas fa-users"></i> Social Commands</h3>
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <div class="command-name">/rob</div>
+                        <div class="command-desc">Attempt to rob another user (30% success)</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/baltop</div>
+                        <div class="command-desc">View the richest users leaderboard</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/stats</div>
+                        <div class="command-desc">View detailed user statistics</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/leaderboard</div>
+                        <div class="command-desc">View various category leaderboards</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="command-category fade-in">
+                <h3><i class="fas fa-tools"></i> Utility Commands</h3>
+                <div class="commands-grid">
+                    <div class="command-item">
+                        <div class="command-name">/cooldowns</div>
+                        <div class="command-desc">Check your current cooldowns</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-name">/help</div>
+                        <div class="command-desc">Show all available commands</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="section">
+        <h2>Bot Statistics</h2>
+        <div class="stats-container">
+            <div class="stat-card fade-in">
+                <div class="stat-number" id="servers-count">1,000+</div>
+                <div class="stat-label">Discord Servers</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number" id="users-count">50,000+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number" id="commands-count">25+</div>
+                <div class="stat-label">Slash Commands</div>
+            </div>
+            <div class="stat-card fade-in">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="support">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" onclick="openModal('tos')">Terms of Service</a>
+                <a href="#" onclick="openModal('privacy')">Privacy Policy</a>
+                <a href="https://discord.gg/Xbm9XEFfrf" target="_blank">Support Server</a>
+                <a href="https://discord.com/oauth2/authorize?client_id=1405748450125021355&permissions=412317240384&scope=bot%20applications.commands" target="_blank">Invite Bot</a>
+            </div>
+            <p>&copy; 2024 Fun.Bot. All rights reserved. Made with ❤️ for Discord communities.</p>
+        </div>
+    </footer>
+
+    <!-- Terms of Service Modal -->
+    <div id="tosModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('tos')">&times;</span>
+            <h2>Terms of Service</h2>
+            
+            <h3>1. Acceptance of Terms</h3>
+            <p>By using Fun.Bot ("the Bot"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Bot.</p>
+
+            <h3>2. Description of Service</h3>
+            <p>Fun.Bot is a Discord economy bot that provides entertainment features including virtual economy, gambling games, shopping systems, and social interactions. All currency and items within the bot are virtual and have no real-world value.</p>
+
+            <h3>3. User Conduct</h3>
+            <p>Users agree to:</p>
+            <p>• Use the Bot in compliance with Discord's Terms of Service<br>
+            • Not attempt to exploit, hack, or manipulate the Bot's systems<br>
+            • Not use the Bot for illegal activities or harassment<br>
+            • Not create multiple accounts to gain unfair advantages<br>
+            • Respect other users and maintain appropriate conduct</p>
+
+            <h3>4. Virtual Economy</h3>
+            <p>All virtual currency, items, and assets within Fun.Bot have no real-world value and cannot be exchanged for real money or goods. We reserve the right to reset, modify, or remove virtual assets at any time.</p>
+
+            <h3>5. Gambling Features</h3>
+            <p>Fun.Bot includes simulated gambling features for entertainment purposes only. These features:</p>
+            <p>• Are not real gambling and involve no real money<br>
+            • Are intended for users 13+ in accordance with Discord's age requirements<br>
+            • Should be used responsibly for entertainment only</p>
+
+            <h3>6. Data Collection</h3>
+            <p>Fun.Bot collects and stores minimal data necessary for functionality, including Discord user IDs, server IDs, and game statistics. See our Privacy Policy for details.</p>
+
+            <h3>7. Availability and Support</h3>
+            <p>We strive to maintain Bot availability but do not guarantee 100% uptime. We provide support on a best-effort basis through our support server.</p>
+
+            <h3>8. Modifications</h3>
+            <p>We reserve the right to modify these terms at any time. Continued use of the Bot constitutes acceptance of any changes.</p>
+
+            <h3>9. Limitation of Liability</h3>
+            <p>Fun.Bot is provided "as is" without warranties. We are not liable for any damages arising from use of the Bot.</p>
+
+            <h3>10. Termination</h3>
+            <p>We may terminate or suspend access to the Bot at any time for violations of these terms or for any other reason.</p>
+
+            <p><strong>Last Updated:</strong> December 2024</p>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('privacy')">&times;</span>
+            <h2>Privacy Policy</h2>
+            
+            <h3>1. Information We Collect</h3>
+            <p>Fun.Bot collects minimal data necessary for functionality:</p>
+            <p>• Discord User IDs (for user identification)<br>
+            • Discord Server IDs (for server-specific features)<br>
+            • Game statistics and economy data<br>
+            • Command usage data for analytics</p>
+
+            <h3>2. How We Use Your Information</h3>
+            <p>We use collected information to:</p>
+            <p>• Provide Bot functionality and features<br>
+            • Maintain user economy and statistics<br>
+            • Improve Bot performance and features<br>
+            • Provide customer support</p>
+
+            <h3>3. Data Storage and Security</h3>
+            <p>Your data is stored securely and protected against unauthorized access. We implement appropriate security measures to protect your information.</p>
+
+            <h3>4. Data Sharing</h3>
+            <p>We do not sell, trade, or share your personal information with third parties except:</p>
+            <p>• When required by law<br>
+            • To protect our rights and safety<br>
+            • With your explicit consent</p>
+
+            <h3>5. Data Retention</h3>
+            <p>We retain your data as long as you use the Bot. You may request data deletion by contacting us through our support server.</p>
+
+            <h3>6. Your Rights</h3>
+            <p>You have the right to:</p>
+            <p>• Access your data<br>
+            • Request data correction<br>
+            • Request data deletion<br>
+            • Withdraw consent</p>
+
+            <h3>7. Third-Party Services</h3>
+            <p>Fun.Bot operates on Discord's platform and is subject to Discord's Privacy Policy. We do not integrate with other third-party services that collect personal data.</p>
+
+            <h3>8. Children's Privacy</h3>
+            <p>Fun.Bot is designed to comply with Discord's age requirements (13+). We do not knowingly collect information from children under 13.</p>
+
+            <h3>9. Changes to Privacy Policy</h3>
+            <p>We may update this Privacy Policy periodically. Changes will be posted on this page with an updated date.</p>
+
+            <h3>10. Contact Information</h3>
+            <p>For privacy-related questions or requests, please contact us through our Discord support server.</p>
+
+            <p><strong>Last Updated:</strong> December 2024</p>
+        </div>
+    </div>
+
+    <script>
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Modal functions
+        function openModal(type) {
+            if (!type) return;
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(type) {
+            if (!type) return;
+            const modal = document.getElementById(type + 'Modal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Close modal with escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.modal');
+                openModals.forEach(modal => {
+                    if (modal.style.display === 'block') {
+                        modal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+        });
+
+        // Animated counter for stats
+        function animateCounter(element, target, duration = 2000) {
+            let start = 0;
+            const increment = target / (duration / 16);
+            
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = target.toLocaleString() + '+';
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Trigger counter animations when stats section is visible
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const serversCount = document.getElementById('servers-count');
+                    const usersCount = document.getElementById('users-count');
+                    const commandsCount = document.getElementById('commands-count');
+                    
+                    if (serversCount && !serversCount.classList.contains('animated')) {
+                        serversCount.classList.add('animated');
+                        animateCounter(serversCount, 1000);
+                        animateCounter(usersCount, 50000);
+                        animateCounter(commandsCount, 25);
+                    }
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.getElementById('stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // Particle effect for hero section
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: rgba(255, 255, 255, 0.8);
+                border-radius: 50%;
+                pointer-events: none;
+                animation: particle-float 6s linear infinite;
+            `;
+            
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.top = '100vh';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 6000);
+        }
+
+        // Add particle animation CSS
+        const particleStyle = document.createElement('style');
+        particleStyle.textContent = `
+            @keyframes particle-float {
+                0% {
+                    transform: translateY(0) translateX(0) rotate(0deg);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) translateX(100px) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(particleStyle);
+
+        // Create particles periodically
+        setInterval(createParticle, 300);
+
+        // Add typing effect to hero subtitle
+        const heroSubtitle = document.querySelector('.typing-text');
+        const originalText = heroSubtitle.textContent;
+        let currentText = '';
+        let index = 0;
+
+        function typeEffect() {
+            if (index < originalText.length) {
+                currentText += originalText[index];
+                heroSubtitle.textContent = currentText + '|';
+                index++;
+                setTimeout(typeEffect, 50);
+            } else {
+                heroSubtitle.textContent = originalText;
+                // Add blinking cursor for a few seconds
+                setTimeout(() => {
+                    let blinkCount = 0;
+                    const blinkInterval = setInterval(() => {
+                        heroSubtitle.textContent = blinkCount % 2 === 0 ? originalText + '|' : originalText;
+                        blinkCount++;
+                        if (blinkCount > 6) {
+                            clearInterval(blinkInterval);
+                            heroSubtitle.textContent = originalText;
+                        }
+                    }, 500);
+                }, 1000);
+            }
+        }
+
+        // Start typing effect after page load
+        setTimeout(() => {
+            heroSubtitle.textContent = '';
+            typeEffect();
+        }, 1000);
+
+        // Create money rain effect periodically
+        function createMoneyRain() {
+            const moneySymbols = ['💰', '🪙', '💎', '💵', '💸', '🤑'];
+            const money = document.createElement('div');
+            money.className = 'money-rain';
+            money.textContent = moneySymbols[Math.floor(Math.random() * moneySymbols.length)];
+            money.style.left = Math.random() * 100 + 'vw';
+            money.style.animationDelay = Math.random() * 2 + 's';
+            document.body.appendChild(money);
+            
+            setTimeout(() => {
+                money.remove();
+            }, 5000);
+        }
+
+        // Create money rain every 3 seconds
+        setInterval(createMoneyRain, 3000);
+
+        // Add hover effect to feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) rotateX(5deg) rotateY(5deg)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) rotateX(0deg) rotateY(0deg)';
+            });
+        });
+
+        // Add click effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                    background: rgba(255, 255, 255, 0.3);
+                    border-radius: 50%;
+                    transform: scale(0);
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple animation CSS
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: scale(2);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+
+        // Add some interactive command item effects
+        document.querySelectorAll('.command-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add disco effect on special button hover
+        const primaryButton = document.querySelector('.btn-primary');
+        if (primaryButton) {
+            primaryButton.addEventListener('mouseenter', () => {
+                document.body.style.background = 'linear-gradient(45deg, #ff6b6b20, #4ecdc420, #45b7d120)';
+            });
+            
+            primaryButton.addEventListener('mouseleave', () => {
+                document.body.style.background = '';
+            });
+        }
+
+        // Add keyboard navigation support (removed duplicate)
+        // Already handled above in the close modal with escape key section
+
+        // Mobile navigation functions
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const navToggle = document.querySelector('.nav-toggle i');
+            
+            navLinks.classList.toggle('mobile-open');
+            
+            // Change hamburger to X when open
+            if (navLinks.classList.contains('mobile-open')) {
+                navToggle.className = 'fas fa-times';
+            } else {
+                navToggle.className = 'fas fa-bars';
+            }
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const navToggle = document.querySelector('.nav-toggle i');
+            
+            navLinks.classList.remove('mobile-open');
+            navToggle.className = 'fas fa-bars';
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const nav = document.querySelector('nav');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (!nav.contains(e.target) && navLinks.classList.contains('mobile-open')) {
+                closeMobileMenu();
+            }
+        });
+
+        // Performance optimization: Reduce animations on mobile
+        function isMobileDevice() {
+            return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        if (isMobileDevice()) {
+            // Disable heavy animations on mobile
+            document.querySelectorAll('.floating-coin, .glowing-orb').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Reduce particle creation frequency
+            const originalInterval = 300;
+            clearInterval(createParticle);
+            setInterval(createParticle, originalInterval * 3); // Reduce frequency by 3x
+            
+            // Disable money rain on mobile
+            clearInterval(createMoneyRain);
+        }
+
+        // Add loading state
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            
+            // Start all animations after page is fully loaded
+            setTimeout(() => {
+                document.querySelector('.hero-content').style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
