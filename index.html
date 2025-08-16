@@ -6,24 +6,42 @@
     <title>Fun.Bot - Advanced Discord Economy Bot</title>
     <style>
         :root {
-            --primary: #5865F2;
-            --secondary: #404EED;
-            --dark: #1a1d21;
-            --darker: #121416;
+            --primary: #7289DA;
+            --secondary: #5A6EBB;
+            --dark: #0d0f12;
+            --darker: #08090a;
             --light: #f0f0f0;
             --lighter: #ffffff;
-            --accent: #57F287;
-            --danger: #ED4245;
-            --warning: #FEE75C;
-            --text: #e0e0e0;
-            --text-secondary: #b0b0b0;
+            --accent: #43B581;
+            --danger: #F04747;
+            --warning: #FAA61A;
+            --text: #dcddde;
+            --text-secondary: #8e9297;
+            --card-bg: rgba(25, 28, 32, 0.8);
+            --success: #3ca374;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2') format('woff2');
+        }
+        
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url('https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hiA.woff2') format('woff2');
         }
         
         body {
@@ -31,14 +49,29 @@
             color: var(--text);
             line-height: 1.6;
             scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+        
+        /* Particle background */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background-color: var(--darker);
         }
         
         header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, rgba(25, 28, 32, 0.9), rgba(15, 18, 22, 0.95));
             color: var(--lighter);
             padding: 2rem 0;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .container {
@@ -52,47 +85,70 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 60vh;
+            min-height: 80vh;
             text-align: center;
             padding: 2rem 0;
-            background-color: var(--dark);
+            position: relative;
+            z-index: 1;
         }
         
         .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
             background: linear-gradient(to right, var(--primary), var(--accent));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.2;
         }
         
         .hero p {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             max-width: 800px;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        
+        .beta-badge {
+            background-color: var(--warning);
+            color: var(--darker);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 10px;
+            vertical-align: middle;
         }
         
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             background-color: var(--primary);
             color: var(--lighter);
-            padding: 12px 24px;
-            border-radius: 4px;
+            padding: 14px 28px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             border: none;
             cursor: pointer;
             font-size: 1rem;
             margin: 0.5rem;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .btn:hover {
             background-color: var(--secondary);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
         }
         
         .btn-accent {
@@ -101,131 +157,262 @@
         }
         
         .btn-accent:hover {
-            background-color: #48d874;
+            background-color: #3ca374;
+        }
+        
+        .btn-discord {
+            background-color: #5865F2;
+        }
+        
+        .btn-discord:hover {
+            background-color: #4752C4;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--darker);
+        }
+        
+        .btn-warning:hover {
+            background-color: #e69519;
         }
         
         .features {
-            padding: 4rem 0;
-            background-color: var(--dark);
+            padding: 6rem 0;
+            position: relative;
+            z-index: 1;
         }
         
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 3rem;
         }
         
         .feature-card {
-            background-color: rgba(30, 33, 36, 0.7);
-            border-radius: 8px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-left: 4px solid var(--primary);
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(5px);
         }
         
         .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            background-color: rgba(35, 38, 42, 0.8);
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: rgba(114, 137, 218, 0.3);
         }
         
         .feature-card h3 {
             color: var(--primary);
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .feature-card p {
             color: var(--text-secondary);
+            font-weight: 300;
         }
         
         .feature-icon {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: var(--primary);
         }
         
         section {
-            padding: 4rem 0;
+            padding: 6rem 0;
+            position: relative;
+            z-index: 1;
         }
         
         section:nth-child(even) {
-            background-color: var(--dark);
+            background-color: rgba(13, 15, 18, 0.7);
+            backdrop-filter: blur(5px);
         }
         
         h2 {
             text-align: center;
-            margin-bottom: 3rem;
-            font-size: 2.5rem;
+            margin-bottom: 4rem;
+            font-size: 2.8rem;
             color: var(--lighter);
+            font-weight: 700;
+            position: relative;
+        }
+        
+        h2::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            margin: 1.5rem auto 0;
+            border-radius: 2px;
+        }
+        
+        .command-section {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .command-category {
+            margin-bottom: 4rem;
+        }
+        
+        .command-category h3 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .command-category h3 i {
+            font-size: 1.5rem;
+        }
+        
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .command-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .command-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(114, 137, 218, 0.3);
+        }
+        
+        .command-name {
+            font-family: 'Fira Code', monospace;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .command-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+        
+        .command-params {
+            font-size: 0.85rem;
+            color: var(--warning);
+            font-family: 'Fira Code', monospace;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        
+        .command-example {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-family: 'Fira Code', monospace;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 5px 8px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .shop-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .shop-item {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .shop-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(114, 137, 218, 0.3);
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: var(--lighter);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .item-price {
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        
+        .item-effect {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
         
         .legal-section {
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            background-color: rgba(30, 33, 36, 0.7);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
         }
         
-        .legal-accordion {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .legal-accordion:last-child {
-            border-bottom: none;
-        }
-        
-        .legal-accordion-header {
-            padding: 1.5rem 2rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgba(40, 43, 48, 0.5);
-            transition: background-color 0.3s ease;
-        }
-        
-        .legal-accordion-header:hover {
-            background-color: rgba(50, 53, 58, 0.5);
-        }
-        
-        .legal-accordion-header h3 {
+        .legal-section h3 {
+            margin: 2.5rem 0 1.5rem;
             color: var(--primary);
-            margin: 0;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            position: relative;
+            padding-left: 1.5rem;
         }
         
-        .legal-accordion-header i {
-            transition: transform 0.3s ease;
-        }
-        
-        .legal-accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-        
-        .legal-accordion-content-inner {
-            padding: 0 2rem;
-        }
-        
-        .legal-accordion.active .legal-accordion-header i {
-            transform: rotate(180deg);
-        }
-        
-        .legal-accordion.active .legal-accordion-content {
-            max-height: 2000px;
-            transition: max-height 0.5s ease-in;
+        .legal-section h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary);
+            border-radius: 50%;
         }
         
         .legal-section p, .legal-section ul {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.8;
         }
         
         .legal-section ul {
@@ -233,22 +420,108 @@
         }
         
         .legal-section li {
+            margin-bottom: 0.8rem;
+            position: relative;
+        }
+        
+        .legal-section li::before {
+            content: '•';
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .dev-logs {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .log-entry {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        
+        .log-entry:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+        
+        .log-date {
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .log-date i {
+            font-size: 1.1rem;
+        }
+        
+        .log-title {
+            font-size: 1.5rem;
+            color: var(--lighter);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        .log-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 700;
             margin-bottom: 0.5rem;
         }
         
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        
         footer {
-            background-color: var(--dark);
+            background-color: rgba(8, 9, 10, 0.95);
             color: var(--text);
-            padding: 3rem 0;
+            padding: 4rem 0;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(5px);
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
             gap: 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
             flex-wrap: wrap;
         }
         
@@ -256,24 +529,79 @@
             color: var(--text-secondary);
             text-decoration: none;
             transition: color 0.3s ease;
+            font-weight: 300;
+            position: relative;
         }
         
         .footer-links a:hover {
             color: var(--accent);
         }
         
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.3s ease;
+        }
+        
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+        
         .copyright {
             opacity: 0.6;
             font-size: 0.9rem;
             color: var(--text-secondary);
+            font-weight: 300;
         }
         
         code {
             background-color: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
             color: var(--accent);
+            font-size: 0.9rem;
+            border: 1px solid rgba(114, 137, 218, 0.2);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .badge-primary {
+            background-color: rgba(114, 137, 218, 0.2);
+            color: var(--primary);
+        }
+        
+        .badge-accent {
+            background-color: rgba(67, 181, 129, 0.2);
+            color: var(--accent);
+        }
+        
+        .badge-warning {
+            background-color: rgba(250, 166, 26, 0.2);
+            color: var(--warning);
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            h2 {
+                font-size: 2.2rem;
+            }
         }
         
         @media (max-width: 768px) {
@@ -281,7 +609,11 @@
                 font-size: 2.5rem;
             }
             
-            .features-grid {
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .features-grid, .command-grid, .shop-items, .stats-grid {
                 grid-template-columns: 1fr;
             }
             
@@ -290,21 +622,40 @@
                 gap: 1rem;
             }
             
-            .legal-accordion-header {
-                padding: 1rem 1.5rem;
+            section {
+                padding: 4rem 0;
             }
             
-            .legal-accordion-header h3 {
-                font-size: 1.1rem;
+            .legal-section {
+                padding: 2rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 12px 20px;
+                font-size: 0.9rem;
             }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+    
     <header>
         <div class="container">
-            <h1>Fun.Bot</h1>
+            <h1>Fun.Bot <span class="beta-badge">BETA</span></h1>
             <p>The ultimate economy and entertainment bot for Discord</p>
             <div>
                 <a href="#invite" class="btn btn-accent"><i class="fas fa-robot"></i> Invite to Server</a>
@@ -316,10 +667,10 @@
     <section class="hero">
         <div class="container">
             <h1>Your Server's Economy System</h1>
-            <p>Fun.Bot brings a complete virtual economy to your Discord server with jobs, gambling, fishing, lottery, and more. Engage your community with a fun, interactive currency system.</p>
+            <p>Fun.Bot brings a complete virtual economy to your Discord server with jobs, gambling, fishing, lottery, and more. Engage your community with a fun, interactive currency system that keeps members active and entertained.</p>
             <div>
                 <a href="#invite" class="btn btn-accent"><i class="fas fa-plus"></i> Add to Discord</a>
-                <a href="#commands" class="btn"><i class="fas fa-terminal"></i> View Commands</a>
+                <a href="https://discord.gg/YOUR_SUPPORT_SERVER" class="btn btn-discord"><i class="fab fa-discord"></i> Support Server</a>
             </div>
         </div>
     </section>
@@ -333,7 +684,7 @@
                         <i class="fas fa-coins"></i>
                     </div>
                     <h3>Virtual Economy</h3>
-                    <p>Complete currency system with earning, spending, and trading capabilities. Users can accumulate wealth through various activities.</p>
+                    <p>Complete currency system with earning, spending, and trading capabilities. Users can accumulate wealth through various activities and compete on leaderboards.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -341,7 +692,7 @@
                         <i class="fas fa-briefcase"></i>
                     </div>
                     <h3>Jobs System</h3>
-                    <p>Users can work different jobs with varying pay rates and cooldowns to earn currency regularly.</p>
+                    <p>Users can work different jobs with varying pay rates and cooldowns. Customize jobs to fit your server's theme with unique names and salaries.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -349,7 +700,7 @@
                         <i class="fas fa-dice"></i>
                     </div>
                     <h3>Gambling Games</h3>
-                    <p>Multiple gambling options including slots, roulette, blackjack, and coin flips with configurable odds.</p>
+                    <p>Multiple gambling options including slots, roulette, blackjack, and coin flips with configurable odds. Set limits to prevent excessive gambling.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -357,7 +708,7 @@
                         <i class="fas fa-fish"></i>
                     </div>
                     <h3>Fishing Mini-Game</h3>
-                    <p>Interactive fishing with rare catches, upgrades, and a leaderboard system to track top anglers.</p>
+                    <p>Interactive fishing with rare catches, upgrades, and a leaderboard system. Different fish have different values and rarity levels.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -365,7 +716,7 @@
                         <i class="fas fa-ticket-alt"></i>
                     </div>
                     <h3>Lottery System</h3>
-                    <p>Regular lottery draws with configurable ticket prices and jackpot accumulation for big wins.</p>
+                    <p>Regular lottery draws with configurable ticket prices and jackpot accumulation. Winners take home massive payouts from the pooled tickets.</p>
                 </div>
                 
                 <div class="feature-card">
@@ -373,273 +724,31 @@
                         <i class="fas fa-store"></i>
                     </div>
                     <h3>Item Shop</h3>
-                    <p>Purchase items, roles, or special privileges using your earned currency with server-specific inventories.</p>
+                    <p>Purchase items, roles, or special privileges using your earned currency. Server admins can customize the shop with unique offerings.</p>
                 </div>
             </div>
         </div>
     </section>
     
-    <section id="invite">
+    <section id="devlogs">
         <div class="container">
-            <h2>Ready to Add Fun.Bot?</h2>
-            <div style="text-align: center; margin-top: 2rem;">
-                <a href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&permissions=YOUR_PERMISSIONS&scope=bot" class="btn btn-accent" style="font-size: 1.2rem; padding: 15px 30px;">
-                    <i class="fas fa-plus-circle"></i> Invite to Your Server
-                </a>
-                <p style="margin-top: 1rem; opacity: 0.8; color: var(--text-secondary);">Requires manage server permission to add</p>
-            </div>
-        </div>
-    </section>
-    
-    <section id="tos">
-        <div class="container">
-            <h2>Terms of Service</h2>
-            <div class="legal-section">
-                <div class="legal-accordion active">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>1. Acceptance of Terms</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content" style="max-height: 1000px;">
-                        <div class="legal-accordion-content-inner">
-                            <p>By using Fun.Bot ("the Bot"), you agree to be bound by these Terms of Service ("ToS"). If you do not agree to these terms, you must not use the Bot. We reserve the right to modify these terms at any time without prior notice.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>2. Proper Usage</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>The Bot is provided for entertainment purposes only. You agree not to use the Bot:</p>
-                            <ul>
-                                <li>For any illegal or unauthorized purpose</li>
-                                <li>To violate Discord's Terms of Service or Community Guidelines</li>
-                                <li>To exploit, harass, or harm others</li>
-                                <li>To attempt to reverse engineer, decompile, or discover the source code</li>
-                                <li>To create automated scripts or bots that interact with the Bot</li>
-                                <li>To engage in any form of cheating, exploiting bugs, or using unauthorized third-party software</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>3. Virtual Currency</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>The Bot's virtual currency has no real-world value and cannot be exchanged for cash, goods, or services. All currency and items are provided "as is" and may be reset, modified, or removed at any time without notice.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>4. Prohibited Conduct</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>You specifically agree not to:</p>
-                            <ul>
-                                <li>Use macros, auto-clickers, or other automation tools to interact with the Bot</li>
-                                <li>Create multiple accounts to exploit referral or bonus systems</li>
-                                <li>Attempt to manipulate the economy through coordinated group actions</li>
-                                <li>Use exploits, bugs, or vulnerabilities to gain unfair advantages</li>
-                                <li>Impersonate the Bot or its developers</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>5. Termination</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>We reserve the right to terminate access to the Bot for any user or server at any time, without notice, for conduct that we believe violates these Terms or is otherwise harmful to other users or the Bot.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>6. Disclaimer of Warranties</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>The Bot is provided "as is" without warranties of any kind, either express or implied. We do not guarantee that the Bot will be uninterrupted, error-free, or free from harmful components.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>7. Limitation of Liability</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>In no event shall the developers of Fun.Bot be liable for any damages arising from the use or inability to use the Bot, including but not limited to loss of data, virtual currency, or items.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>8. Intellectual Property</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>All rights, title, and interest in and to the Bot (including all software, text, graphics, and other content) are owned by the developers. You agree not to copy, modify, create derivative works, or attempt to extract the source code.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>9. Governing Law</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>These Terms shall be governed by the laws of [Your Country/State] without regard to its conflict of law provisions.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <section id="privacy">
-        <div class="container">
-            <h2>Privacy Policy</h2>
-            <div class="legal-section">
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>1. Information Collected</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>Fun.Bot collects and stores the following information:</p>
-                            <ul>
-                                <li>Discord user IDs for account identification</li>
-                                <li>Server IDs for configuration purposes</li>
-                                <li>In-game economic data (currency balances, items, etc.)</li>
-                                <li>Command usage statistics</li>
-                                <li>Interaction timestamps</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>2. Use of Information</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>The collected information is used to:</p>
-                            <ul>
-                                <li>Provide and maintain the Bot's services</li>
-                                <li>Prevent abuse and enforce these policies</li>
-                                <li>Improve the Bot's functionality</li>
-                                <li>Generate aggregate, non-identifying statistics</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>3. Data Retention</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>User data is retained indefinitely unless:</p>
-                            <ul>
-                                <li>The user requests deletion (subject to verification)</li>
-                                <li>The data is purged as part of routine maintenance</li>
-                                <li>Required by law to delete the data</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>4. Data Security</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>We implement reasonable security measures to protect against unauthorized access, alteration, or destruction of data. However, no method of electronic storage is 100% secure.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>5. Third-Party Disclosure</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties except:</p>
-                            <ul>
-                                <li>When required by law</li>
-                                <li>To trusted third parties who assist in operating the Bot, provided they agree to keep this information confidential</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>6. Children's Privacy</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>The Bot is not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware of such collection, we will take steps to remove the information.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>7. Changes to This Policy</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>We may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="legal-accordion">
-                    <div class="legal-accordion-header" onclick="toggleAccordion(this.parentElement)">
-                        <h3>8. Contact Information</h3>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="legal-accordion-content">
-                        <div class="legal-accordion-content-inner">
-                            <p>For questions about this Privacy Policy, contact us at [Your Contact Email].</p>
-                        </div>
+            <h2>Development Updates</h2>
+            <div class="dev-logs">
+                <div class="log-entry">
+                    <div class="log-date"><i class="fas fa-calendar-alt"></i> August 16, 2025</div>
+                    <h3 class="log-title">Beta Release Announcement</h3>
+                    <div class="log-content">
+                        <p>We're excited to announce the beta release of Fun.Bot! After months of development and testing, we're ready to share our economy bot with the Discord community. This initial release includes all core features:</p>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li>Complete virtual economy system with currency</li>
+                            <li>Working jobs with cooldowns and varied payouts</li>
+                            <li>Multiple gambling games (slots, coin flip, etc.)</li>
+                            <li>Fishing mini-game with rare catches</li>
+                            <li>Lottery system with growing jackpots</li>
+                            <li>Item shop with useful upgrades</li>
+                        </ul>
+                        <p style="margin-top: 1.5rem;">As this is a beta release, we anticipate some bugs and issues. We appreciate your patience and feedback as we work to improve the bot. Special rewards will be given to early adopters who help identify issues during the beta period!</p>
+                        <p style="margin-top: 1rem; font-weight: 500; color: var(--warning);">Note: Economy data may be reset during the beta period as we make balance adjustments.</p>
                     </div>
                 </div>
             </div>
@@ -649,11 +758,337 @@
     <section id="commands">
         <div class="container">
             <h2>Command List</h2>
+            <div class="command-section">
+                <div class="command-category">
+                    <h3><i class="fas fa-coins"></i> Economy Commands</h3>
+                    <div class="command-grid">
+                        <div class="command-card">
+                            <div class="command-name">/balance <span class="badge badge-primary">user</span></div>
+                            <div class="command-params">[user] (optional)</div>
+                            <div class="command-desc">Check your or another user's balance</div>
+                            <div class="command-example">/balance @User</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/beg</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Beg for random money (70% success)</div>
+                            <div class="command-example">/beg</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/work</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Earn money (1h cooldown)</div>
+                            <div class="command-example">/work</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/daily</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Claim daily reward (24h cooldown)</div>
+                            <div class="command-example">/daily</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/gamble <span class="badge badge-primary">amount</span></div>
+                            <div class="command-params">amount</div>
+                            <div class="command-desc">Gamble money (45% win chance)</div>
+                            <div class="command-example">/gamble 500</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/slots <span class="badge badge-primary">bet</span></div>
+                            <div class="command-params">bet</div>
+                            <div class="command-desc">Play slot machine</div>
+                            <div class="command-example">/slots 200</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/rob <span class="badge badge-primary">user</span></div>
+                            <div class="command-params">user</div>
+                            <div class="command-desc">Attempt to rob another user (30% success)</div>
+                            <div class="command-example">/rob @User</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/pay <span class="badge badge-primary">user</span> <span class="badge badge-primary">amount</span></div>
+                            <div class="command-params">user, amount</div>
+                            <div class="command-desc">Send money to another user</div>
+                            <div class="command-example">/pay @User 300</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/baltop</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Show server's richest players</div>
+                            <div class="command-example">/baltop</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-category">
+                    <h3><i class="fas fa-store"></i> Shop Commands</h3>
+                    <div class="command-grid">
+                        <div class="command-card">
+                            <div class="command-name">/shop</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">View available items</div>
+                            <div class="command-example">/shop</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/buy <span class="badge badge-primary">item</span></div>
+                            <div class="command-params">item</div>
+                            <div class="command-desc">Purchase an item</div>
+                            <div class="command-example">/buy lottery_ticket</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/inventory <span class="badge badge-primary">user</span></div>
+                            <div class="command-params">[user] (optional)</div>
+                            <div class="command-desc">View your/someone's items</div>
+                            <div class="command-example">/inventory @User</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/use <span class="badge badge-primary">item</span></div>
+                            <div class="command-params">item</div>
+                            <div class="command-desc">Use an item from inventory</div>
+                            <div class="command-example">/use work_boost</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/lottery</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Check current lottery status</div>
+                            <div class="command-example">/lottery</div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-top: 3rem;"><i class="fas fa-tags"></i> Shop Items</h3>
+                    <div class="shop-items">
+                        <div class="shop-item">
+                            <div class="item-name">Padlock</div>
+                            <div class="item-price">$800</div>
+                            <div class="item-effect">Blocks one robbery attempt</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Fishing Rod</div>
+                            <div class="item-price">$1,200</div>
+                            <div class="item-effect">Allows fishing (10 uses)</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Lucky Coin</div>
+                            <div class="item-price">$1,500</div>
+                            <div class="item-effect">+10% gambling win chance</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Work Boost</div>
+                            <div class="item-price">$1,000</div>
+                            <div class="item-effect">+50% work earnings for 24h</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Lottery Ticket</div>
+                            <div class="item-price">$500</div>
+                            <div class="item-effect">1 in 650 chance to win jackpot</div>
+                        </div>
+                        <div class="shop-item">
+                            <div class="item-name">Diamond Ring</div>
+                            <div class="item-price">$3,000</div>
+                            <div class="item-effect">+20% begging success rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-category">
+                    <h3><i class="fas fa-fish"></i> Fishing Command</h3>
+                    <div class="command-grid">
+                        <div class="command-card">
+                            <div class="command-name">/fish</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Go fishing (requires Fishing Rod)</div>
+                            <div class="command-example">/fish</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-category">
+                    <h3><i class="fas fa-crown"></i> Owner Commands</h3>
+                    <div class="command-grid">
+                        <div class="command-card">
+                            <div class="command-name">/give <span class="badge badge-primary">user</span> <span class="badge badge-primary">amount</span></div>
+                            <div class="command-params">user, amount</div>
+                            <div class="command-desc">Give money to a user</div>
+                            <div class="command-example">/give @User 1000</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/take <span class="badge badge-primary">user</span> <span class="badge badge-primary">amount</span></div>
+                            <div class="command-params">user, amount</div>
+                            <div class="command-desc">Take money from a user</div>
+                            <div class="command-example">/take @User 500</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/give_all <span class="badge badge-primary">amount</span></div>
+                            <div class="command-params">amount</div>
+                            <div class="command-desc">Give money to everyone</div>
+                            <div class="command-example">/give_all 200</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/global_announcement <span class="badge badge-primary">message</span></div>
+                            <div class="command-params">message</div>
+                            <div class="command-desc">Announce to all servers</div>
+                            <div class="command-example">/global_announcement "News!"</div>
+                        </div>
+                        <div class="command-card">
+                            <div class="command-name">/reset_economy</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Reset all economy data</div>
+                            <div class="command-example">/reset_economy</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="command-category">
+                    <h3><i class="fas fa-question-circle"></i> Utility Command</h3>
+                    <div class="command-grid">
+                        <div class="command-card">
+                            <div class="command-name">/help</div>
+                            <div class="command-params">None</div>
+                            <div class="command-desc">Show all commands</div>
+                            <div class="command-example">/help</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 4rem; text-align: center;"><i class="fas fa-chart-line"></i> Economy Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">$1,000</div>
+                        <div class="stat-label">Starting balance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">$50-$150</div>
+                        <div class="stat-label">Work earnings</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">$500+</div>
+                        <div class="stat-label">Daily reward</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1 in 650</div>
+                        <div class="stat-label">Lottery odds</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 4rem;">
+                    <a href="#invite" class="btn btn-accent" style="font-size: 1.2rem; padding: 16px 32px;">
+                        <i class="fas fa-plus-circle"></i> Invite to Your Server
+                    </a>
+                    <p style="margin-top: 1.5rem; opacity: 0.8; color: var(--text-secondary);">Requires manage server permission to add</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section id="invite">
+        <div class="container">
+            <h2>Ready to Add Fun.Bot?</h2>
             <div style="text-align: center; margin-top: 2rem;">
-                <p>For a complete list of commands, use <code>/help</code> in your Discord server after adding Fun.Bot.</p>
-                <a href="#invite" class="btn btn-accent" style="margin-top: 1rem;">
-                    <i class="fas fa-robot"></i> Add Bot to See Commands
+                <a href="https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID&permissions=YOUR_PERMISSIONS&scope=bot" class="btn btn-accent" style="font-size: 1.2rem; padding: 16px 32px;">
+                    <i class="fas fa-plus-circle"></i> Invite to Your Server
                 </a>
+                <p style="margin-top: 1.5rem; opacity: 0.8; color: var(--text-secondary);">Requires manage server permission to add</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="tos">
+        <div class="container">
+            <h2>Terms of Service</h2>
+            <div class="legal-section">
+                <h3>1. Acceptance of Terms</h3>
+                <p>By using Fun.Bot ("the Bot"), you agree to be bound by these Terms of Service ("ToS"). If you do not agree to these terms, you must not use the Bot. We reserve the right to modify these terms at any time without prior notice.</p>
+                
+                <h3>2. Proper Usage</h3>
+                <p>The Bot is provided for entertainment purposes only. You agree not to use the Bot:</p>
+                <ul>
+                    <li>For any illegal or unauthorized purpose</li>
+                    <li>To violate Discord's Terms of Service or Community Guidelines</li>
+                    <li>To exploit, harass, or harm others</li>
+                    <li>To attempt to reverse engineer, decompile, or discover the source code</li>
+                    <li>To create automated scripts or bots that interact with the Bot</li>
+                    <li>To engage in any form of cheating, exploiting bugs, or using unauthorized third-party software</li>
+                </ul>
+                
+                <h3>3. Virtual Currency</h3>
+                <p>The Bot's virtual currency has no real-world value and cannot be exchanged for cash, goods, or services. All currency and items are provided "as is" and may be reset, modified, or removed at any time without notice.</p>
+                
+                <h3>4. Prohibited Conduct</h3>
+                <p>You specifically agree not to:</p>
+                <ul>
+                    <li>Use macros, auto-clickers, or other automation tools to interact with the Bot</li>
+                    <li>Create multiple accounts to exploit referral or bonus systems</li>
+                    <li>Attempt to manipulate the economy through coordinated group actions</li>
+                    <li>Use exploits, bugs, or vulnerabilities to gain unfair advantages</li>
+                    <li>Impersonate the Bot or its developers</li>
+                </ul>
+                
+                <h3>5. Termination</h3>
+                <p>We reserve the right to terminate access to the Bot for any user or server at any time, without notice, for conduct that we believe violates these Terms or is otherwise harmful to other users or the Bot.</p>
+                
+                <h3>6. Disclaimer of Warranties</h3>
+                <p>The Bot is provided "as is" without warranties of any kind, either express or implied. We do not guarantee that the Bot will be uninterrupted, error-free, or free from harmful components.</p>
+                
+                <h3>7. Limitation of Liability</h3>
+                <p>In no event shall the developers of Fun.Bot be liable for any damages arising from the use or inability to use the Bot, including but not limited to loss of data, virtual currency, or items.</p>
+                
+                <h3>8. Intellectual Property</h3>
+                <p>All rights, title, and interest in and to the Bot (including all software, text, graphics, and other content) are owned by the developers. You agree not to copy, modify, create derivative works, or attempt to extract the source code.</p>
+                
+                <h3>9. Governing Law</h3>
+                <p>These Terms shall be governed by the laws of [Your Country/State] without regard to its conflict of law provisions.</p>
+            </div>
+        </div>
+    </section>
+    
+    <section id="privacy">
+        <div class="container">
+            <h2>Privacy Policy</h2>
+            <div class="legal-section">
+                <h3>1. Information Collected</h3>
+                <p>Fun.Bot collects and stores the following information:</p>
+                <ul>
+                    <li>Discord user IDs for account identification</li>
+                    <li>Server IDs for configuration purposes</li>
+                    <li>In-game economic data (currency balances, items, etc.)</li>
+                    <li>Command usage statistics</li>
+                    <li>Interaction timestamps</li>
+                </ul>
+                
+                <h3>2. Use of Information</h3>
+                <p>The collected information is used to:</p>
+                <ul>
+                    <li>Provide and maintain the Bot's services</li>
+                    <li>Prevent abuse and enforce these policies</li>
+                    <li>Improve the Bot's functionality</li>
+                    <li>Generate aggregate, non-identifying statistics</li>
+                </ul>
+                
+                <h3>3. Data Retention</h3>
+                <p>User data is retained indefinitely unless:</p>
+                <ul>
+                    <li>The user requests deletion (subject to verification)</li>
+                    <li>The data is purged as part of routine maintenance</li>
+                    <li>Required by law to delete the data</li>
+                </ul>
+                
+                <h3>4. Data Security</h3>
+                <p>We implement reasonable security measures to protect against unauthorized access, alteration, or destruction of data. However, no method of electronic storage is 100% secure.</p>
+                
+                <h3>5. Third-Party Disclosure</h3>
+                <p>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties except:</p>
+                <ul>
+                    <li>When required by law</li>
+                    <li>To trusted third parties who assist in operating the Bot, provided they agree to keep this information confidential</li>
+                </ul>
+                
+                <h3>6. Children's Privacy</h3>
+                <p>The Bot is not directed to individuals under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware of such collection, we will take steps to remove the information.</p>
+                
+                <h3>7. Changes to This Policy</h3>
+                <p>We may update this Privacy Policy from time to time. You are advised to review this page periodically for any changes.</p>
+                
+                <h3>8. Contact Information</h3>
+                <p>For questions about this Privacy Policy, contact us at [Your Contact Email].</p>
             </div>
         </div>
     </section>
@@ -661,82 +1096,143 @@
     <footer>
         <div class="container">
             <div class="footer-links">
-                <a href="#tos" onclick="expandTos()">Terms of Service</a>
-                <a href="#privacy" onclick="expandPrivacy()">Privacy Policy</a>
+                <a href="#tos">Terms of Service</a>
+                <a href="#privacy">Privacy Policy</a>
                 <a href="https://discord.gg/YOUR_SUPPORT_SERVER">Support Server</a>
                 <a href="mailto:your@email.com">Contact</a>
             </div>
-            <p class="copyright">© 2023 Fun.Bot. All rights reserved. Not affiliated with Discord Inc.</p>
+            <p class="copyright">© 2025 Fun.Bot. All rights reserved. Not affiliated with Discord Inc.</p>
         </div>
     </footer>
 
+    <!-- Particles.js library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
     <script>
-        // Smooth scrolling for all links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if(targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Accordion functionality
-        function toggleAccordion(accordion) {
-            const isActive = accordion.classList.contains('active');
-            
-            // Close all accordions first
-            document.querySelectorAll('.legal-accordion').forEach(item => {
-                item.classList.remove('active');
-                const content = item.querySelector('.legal-accordion-content');
-                content.style.maxHeight = '0';
-            });
-            
-            // If this wasn't active, open it
-            if(!isActive) {
-                accordion.classList.add('active');
-                const content = accordion.querySelector('.legal-accordion-content');
-                content.style.maxHeight = content.scrollHeight + 'px';
-            }
-        }
-        
-        // Open TOS when clicking TOS link
-        function expandTos() {
-            const tosSection = document.querySelector('#tos');
-            const firstAccordion = tosSection.querySelector('.legal-accordion');
-            
-            tosSection.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                toggleAccordion(firstAccordion);
-            }, 800);
-        }
-        
-        // Open Privacy when clicking Privacy link
-        function expandPrivacy() {
-            const privacySection = document.querySelector('#privacy');
-            const firstAccordion = privacySection.querySelector('.legal-accordion');
-            
-            privacySection.scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => {
-                toggleAccordion(firstAccordion);
-            }, 800);
-        }
-        
-        // Initialize first accordion as open
+        // Initialize particles.js
         document.addEventListener('DOMContentLoaded', function() {
-            const firstTosAccordion = document.querySelector('#tos .legal-accordion');
-            if(firstTosAccordion) {
-                firstTosAccordion.classList.add('active');
-                const content = firstTosAccordion.querySelector('.legal-accordion-content');
-                content.style.maxHeight = content.scrollHeight + 'px';
-            }
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#7289DA"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#7289DA",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 0.5
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            
+            // Smooth scrolling for all links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
         });
     </script>
 </body>
